@@ -1,5 +1,5 @@
 import{emptyFrames,gameComplete,activeFrameIndex,nextRollMax,addRoll,undoRoll,rollMark,scoreGame,summarizeSessions,handicapPins,runningLeagueAverage,isSplitLeave,leaveLabel,filterSessionsByMeta,metadataValues,summarizeBreakdown}from'./scoring.mjs';
-const APP_VERSION='public-v4',DB='popz-bowling-public',STORE='state',KEY='master',$=id=>document.getElementById(id);let state,toastTimer,pendingLeave=null,leaveSelection=new Set(),editingFrameIndex=null;
+const APP_VERSION='public-v5',DB='popz-bowling-public',STORE='state',KEY='master',$=id=>document.getElementById(id);let state,toastTimer,pendingLeave=null,leaveSelection=new Set(),editingFrameIndex=null;
 const uuid=()=>crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(16).slice(2)}`,nowIso=()=>new Date().toISOString();
 const todayLocal=()=>{const d=new Date(),o=d.getTimezoneOffset();return new Date(d.getTime()-o*60000).toISOString().slice(0,10)};
 const defaultState=()=>({version:2,deviceId:uuid(),updatedAt:nowIso(),settingsUpdatedAt:nowIso(),settings:{bowlerName:''},activeSessionId:null,sessions:[],lastBackupAt:null});
