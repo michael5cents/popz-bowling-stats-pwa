@@ -6,7 +6,7 @@ g=rolls(game(),Array(21).fill(5));assert.equal(scoreGame(g).final,150);
 g=rolls(game(),Array(12).fill(10));assert.equal(scoreGame(g).final,300);
 g=game();const a=[];for(let i=0;i<10;i++)a.push(9,0);rolls(g,a);assert.equal(scoreGame(g).final,90);
 g=game();const b=[];for(let i=0;i<10;i++)b.push(5,5);b.push(5);rolls(g,b);assert.equal(scoreGame(g).final,150);assert.equal(gameComplete(g),true);
-assert.equal(handicapPins(180,90,210),27);assert.equal(handicapPins(220,90,210),0);assert.equal(handicapPins(null,90,210),null);
+assert.equal(handicapPins(180,90,210),27);assert.equal(handicapPins(180),36);assert.equal(handicapPins(220,90,210),0);assert.equal(handicapPins(null,90,210),null);
 console.log('scoring and handicap tests passed');
 const ga=rolls(game(),Array(20).fill(0));ga.lane='5-6';ga.ballUsed='Ball A';
 const gb=rolls(game(),Array(21).fill(5));gb.lane='7-8';gb.ballUsed='Ball B';
