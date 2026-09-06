@@ -1,0 +1,40 @@
+# Popz Bowling Stats — User Guide
+
+Production app: https://popzbowling.com
+
+## Install
+Open `popzbowling.com`. On Android/Chrome, tap **Install App**. On iPhone/iPad, open the site in Safari and use **Share → Add to Home Screen → Add**. The app can also be used directly in the browser.
+
+## Set up and start bowling
+1. Open **Settings** and enter your bowler name.
+2. Tap **Bowl**.
+3. Enter the date, league/practice name, bowling center, number of games, oil pattern, entering average, and handicap settings.
+4. The default handicap is **90% of 220**; change it if your league uses another formula.
+5. Tap **Start Series**.
+
+## Record a game
+- Enter the ball used and lane number(s) for the game.
+- Use the on-screen pin keypad after each roll.
+- Strikes, spares, opens, 10th-frame scoring, scratch score, handicap, and handicap score are calculated automatically.
+- After a first ball leaves pins standing, mark the standing pins on the pin deck and tap **Save Leave & Continue**.
+- Use **Undo** for the most recent roll.
+- Tap an older frame to edit it; later frames remain intact and the score recalculates.
+- Tap **New Game** when the next game is ready.
+- Tap **Finish Series** when the session is over.
+
+## Stats and history
+The **Stats** screen shows average, high game, high series, strike/spare percentages, leave conversions, and performance breakdowns. Filters include league/practice, bowling center, lane, ball used, and oil pattern.
+
+Use **History** to review completed series and frame-by-frame game details.
+
+## Back up and restore
+Your scores are stored on the device. Use **Export Backup** regularly and save the JSON file somewhere safe. Use **Import JSON** in Settings to restore a backup.
+
+## Updates
+The app updates through `popzbowling.com`. The current app version is shown in Settings.
+
+## Feedback
+Use **Settings → Email Feedback** to report a problem or suggest an improvement. Feedback is sent to `feedback@popzbowling.com`.
+
+## Privacy
+No account is required. Bowling scores are not uploaded to Popz. Your bowling history remains on the device unless you choose to export a backup.
