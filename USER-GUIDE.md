@@ -30,8 +30,14 @@ Use **History** to review completed series and frame-by-frame game details.
 ## Back up and restore
 Your scores are stored on the device. Use **Export Backup** regularly and save the JSON file somewhere safe. Use **Import JSON** in Settings to restore a backup.
 
-## Updates
-The app updates through `popzbowling.com`. The current app version is shown in Settings.
+## Updating the app
+If Popz Bowling Stats is already installed, you do **not** need to uninstall or reinstall it. Updates replace the cached app files and do **not** erase your bowling history stored on the device.
+
+- **Android:** Make sure the phone is online, fully close Popz Bowling Stats from Recent Apps, and reopen it. If the old version still appears, open `popzbowling.com` in Chrome, refresh once, then reopen the installed app.
+- **iPhone/iPad:** Open `popzbowling.com` in Safari, refresh once, then close and reopen the Home Screen version of Popz Bowling Stats.
+- **Computer:** Open the installed app while online and refresh once (`Ctrl+R` on Windows or `Command+R` on Mac). If needed, close it completely and reopen it.
+
+Check **Settings → App Version** to confirm the installed version.
 
 ## Feedback
 Use **Settings → Email Feedback** to report a problem or suggest an improvement. Feedback is sent to `feedback@popzbowling.com`.

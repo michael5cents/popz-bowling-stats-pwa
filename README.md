@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Current app version: **public-v10**
+Current app version: **public-v11**
 
 A one-device-per-bowler, offline-first bowling scoring and statistics app hosted on Cloudflare Pages.
 
@@ -21,12 +21,12 @@ Open **https://popzbowling.com** in a modern browser.
 - iPhone/iPad: open the site in Safari, tap **Install App**, then follow **Share → Add to Home Screen → Add**.
 - The Install App button hides when the app is already running in standalone installed mode.
 
-## Current public-v10 behavior
+## Current public-v11 behavior
 - Default handicap for new series: **90% of 220**.
 - Bowling-center filtering also limits the lane list and lane breakdown to that center.
 - **Finish Series** first shows statistics for only the just-completed series, then offers **Continue to Overall Stats** for cumulative stats.
 - If the entering average is blank, the app uses the stored running average for the same league or Practice when available; **Entering / Current Average** remains editable during bowling and immediately updates handicap.
-- PWA manifest, icons, service worker, and offline cache are versioned for public-v10.
+- PWA manifest, icons, service worker, and offline cache are versioned for public-v11.
 - Feedback opens an email addressed to `feedback@popzbowling.com` with subject **Popz Bowling Stats** and includes the app version/device information.
 - Built-in **Help** tab provides a complete user guide with Print / Save Guide support.
 
