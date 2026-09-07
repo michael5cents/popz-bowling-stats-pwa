@@ -8,8 +8,8 @@ Open `popzbowling.com`. On Android/Chrome, tap **Install App**. On iPhone/iPad, 
 ## Set up and start bowling
 1. Open **Settings** and enter your bowler name.
 2. Tap **Bowl**.
-3. Enter the date, league/practice name, bowling center, number of games, oil pattern, entering average, and handicap settings.
-4. The default handicap is **90% of 220**; change it if your league uses another formula.
+3. Enter the date, league/practice name, bowling center, number of games, oil pattern, entering average, and handicap settings. If the average is blank, the app uses the running average already stored for that same league or Practice when available.
+4. The default handicap is **90% of 220**; change it if your league uses another formula. The **Entering / Current Average** remains editable after the series starts, and changing it recalculates handicap immediately.
 5. Tap **Start Series**.
 
 ## Record a game
@@ -20,7 +20,7 @@ Open `popzbowling.com`. On Android/Chrome, tap **Install App**. On iPhone/iPad, 
 - Use **Undo** for the most recent roll.
 - Tap an older frame to edit it; later frames remain intact and the score recalculates.
 - Tap **New Game** when the next game is ready.
-- Tap **Finish Series** when the session is over.
+- Tap **Finish Series** when the session is over. The app first shows **This Series** results for only the series you just completed; use **Continue to Overall Stats** to open cumulative stats.
 
 ## Stats and history
 The **Stats** screen shows average, high game, high series, strike/spare percentages, leave conversions, and performance breakdowns. Filters include league/practice, bowling center, lane, ball used, and oil pattern.
