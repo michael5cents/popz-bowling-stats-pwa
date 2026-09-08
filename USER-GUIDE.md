@@ -28,7 +28,7 @@ The **Stats** screen shows average, high game, high series, strike/spare percent
 Use **History** to review completed series and frame-by-frame game details.
 
 ## Back up and restore
-Your scores are stored on the device. Use **Export Backup** regularly and save the JSON file somewhere safe. Use **Import JSON** in Settings to restore a backup.
+Your scores are stored on the device. The app requests persistent browser storage and automatically downloads a JSON safety backup whenever you finish a series. Keep those backup files somewhere safe. You can also use **Export Backup** anytime and **Import JSON** in Settings to restore a backup.
 
 ## Updating the app
 If Popz Bowling Stats is already installed, you do **not** need to uninstall or reinstall it. Updates replace the cached app files and do **not** erase your bowling history stored on the device.
