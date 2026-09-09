@@ -1,0 +1,60 @@
+const stamp=value=>{
+  const t=Date.parse(value||'');
+  return Number.isFinite(t)?t:0;
+};
+
+const sessionStamp=session=>Math.max(
+  stamp(session?.updatedAt),
+  stamp(session?.finishedAt),
+  stamp(session?.createdAt)
+);
+
+export function mergeBowlingStates(current,incoming,mergedAt=new Date().toISOString()){
+  if(!current||!Array.isArray(current.sessions))throw Error('Current bowling data is invalid');
+  if(!incoming||!Array.isArray(incoming.sessions))throw Error('Invalid bowling backup');
+
+  const localActiveId=current.activeSessionId||null;
+  const mergedSessions=[...current.sessions];
+  const byId=new Map();
+  mergedSessions.forEach((session,index)=>{if(session?.id)byId.set(session.id,index)});
+
+  let added=0,updated=0,kept=0;
+  for(const remote of incoming.sessions){
+    if(!remote||!remote.id){kept++;continue}
+    const index=byId.get(remote.id);
+    if(index==null){
+      byId.set(remote.id,mergedSessions.length);
+      mergedSessions.push(remote);
+      added++;
+      continue;
+    }
+    const local=mergedSessions[index];
+    if(remote.id===localActiveId){kept++;continue}
+    if(sessionStamp(remote)>sessionStamp(local)){
+      mergedSessions[index]=remote;
+      updated++;
+    }else kept++;
+  }
+
+  const localSettings=current.settings||{};
+  const remoteSettings=incoming.settings||{};
+  const settings={...remoteSettings,...localSettings};
+  if(!String(localSettings.bowlerName||'').trim()&&String(remoteSettings.bowlerName||'').trim())settings.bowlerName=remoteSettings.bowlerName;
+
+  return {
+    state:{
+      ...incoming,
+      ...current,
+      version:Math.max(Number(current.version)||0,Number(incoming.version)||0,2),
+      deviceId:current.deviceId,
+      settings,
+      settingsUpdatedAt:current.settingsUpdatedAt||incoming.settingsUpdatedAt||mergedAt,
+      storagePersistent:current.storagePersistent??null,
+      activeSessionId:localActiveId,
+      sessions:mergedSessions,
+      lastBackupAt:(()=>{const values=[current.lastBackupAt,incoming.lastBackupAt].filter(Boolean).sort();return values.length?values[values.length-1]:null})(),
+      updatedAt:mergedAt
+    },
+    summary:{added,updated,kept,total:mergedSessions.length}
+  };
+}
