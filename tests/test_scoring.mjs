@@ -17,3 +17,12 @@ assert.equal(filterSessionsByMeta(ss,{center:'center a',oil:'house',ball:'ball b
 const gc=rolls(game(),Array(20).fill(0));gc.ballUsed='BALL A';gc.lane='5-6';const ss2=[{center:'CENTER A',oilPattern:'house',games:[ga,gc]}];assert.deepEqual(metadataValues(ss2,'ball'),['BALL A']);assert.equal(summarizeBreakdown(ss2,'ball').length,1);
 const bd=summarizeBreakdown(ss,'ball');assert.equal(bd.length,2);assert.equal(bd.find(x=>x.label==='Ball B').average,150);
 console.log('metadata analytics tests passed');
+
+const histGame=rolls(game(),Array(21).fill(5));
+const histSession={league:'Example League',date:'2026-09-08',gameCount:3,enteringAverage:180,games:[histGame]};
+const beforeCorrect=runningLeagueAverage([histSession]).currentAverage;
+histSession.enteringAverage=190;
+const afterCorrect=runningLeagueAverage([histSession]).currentAverage;
+assert.equal(runningLeagueAverage([histSession]).seedAverage,190);
+assert.ok(afterCorrect>beforeCorrect);
+console.log('historical entering-average recalculation test passed');

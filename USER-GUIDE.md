@@ -25,7 +25,7 @@ Open `popzbowling.com`. On Android/Chrome, tap **Install App**. On iPhone/iPad, 
 ## Stats and history
 The **Stats** screen shows average, high game, high series, strike/spare percentages, leave conversions, and performance breakdowns. Filters include league/practice, bowling center, lane, ball used, and oil pattern.
 
-Use **History** to review completed series and frame-by-frame game details.
+Use **History** to review completed series and frame-by-frame game details. Expand a completed series to enter or correct its **Entering Average** later. Saving it immediately updates that series handicap and the league running-average calculations.
 
 ## Back up and restore
 Your scores are stored on the device. The app requests persistent browser storage and automatically downloads a JSON safety backup whenever you finish a series. Keep those backup files somewhere safe. You can also use **Export Backup** anytime and **Import JSON** in Settings to restore a backup.
@@ -40,7 +40,9 @@ If Popz Bowling Stats is already installed, you do **not** need to uninstall or 
 - **iPhone/iPad:** Open `popzbowling.com` in Safari, refresh once, then close and reopen the Home Screen version of Popz Bowling Stats.
 - **Computer:** Open the installed app while online and refresh once (`Ctrl+R` on Windows or `Command+R` on Mac). If needed, close it completely and reopen it.
 
-Check **Settings → App Version** to confirm the installed version.
+Starting with public-v15, Popz Bowling checks the live production version automatically. If a newer version exists, an **Update available** banner appears and tells you to fully close and reopen the app while online. The banner disappears only after the running app successfully confirms it matches production. If it remains after reopening, refresh `popzbowling.com` once in Chrome or Safari, then reopen the installed app.
+
+Check **Settings → App Version** to see the version currently running.
 
 ## Feedback
 Use **Settings → Email Feedback** to report a problem or suggest an improvement. Feedback is sent to `feedback@popzbowling.com`.
