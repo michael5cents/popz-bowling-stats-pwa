@@ -37,3 +37,25 @@ remote={...base,sessions:[s('same','2026-09-08T07:00:00Z',{name:'remote older'})
 out=mergeBowlingStates(local,remote);
 assert.equal(out.state.sessions[0].name,'local newer');
 console.log('two-device and idempotency tests passed');
+
+// A deleted arbitrary league/session must not return from an older device backup.
+local={...base,deletedSessions:[{id:'league-old',deletedAt:'2026-09-10T22:00:00Z'}],sessions:[s('keep','2026-09-10T21:00:00Z',{league:'Thursday Trios Fall'})]};
+remote={...base,deviceId:'phone',deletedSessions:[],sessions:[s('league-old','2026-09-10T20:00:00Z',{league:'Tuesday Night Open'}),s('keep','2026-09-10T21:00:00Z',{league:'Thursday Trios Fall'})]};
+out=mergeBowlingStates(local,remote,'2026-09-10T23:00:00Z');
+assert.deepEqual(out.state.sessions.map(x=>x.id),['keep']);
+assert.equal(out.state.deletedSessions.some(x=>x.id==='league-old'),true);
+
+// A deletion marker imported from another device removes the matching completed local session.
+local={...base,deletedSessions:[],sessions:[s('gone','2026-09-10T20:00:00Z',{league:'League A'}),s('stay','2026-09-10T20:00:00Z',{league:'League B'})]};
+remote={...base,deviceId:'phone',deletedSessions:[{id:'gone',deletedAt:'2026-09-10T22:00:00Z'}],sessions:[]};
+out=mergeBowlingStates(local,remote,'2026-09-10T23:00:00Z');
+assert.deepEqual(out.state.sessions.map(x=>x.id),['stay']);
+
+// An active receiving-device series is never removed by an imported tombstone.
+local={...base,activeSessionId:'active-delete',deletedSessions:[],sessions:[s('active-delete','2026-09-10T20:00:00Z',{league:'League A'})]};
+remote={...base,deviceId:'phone',deletedSessions:[{id:'active-delete',deletedAt:'2026-09-10T22:00:00Z'}],sessions:[]};
+out=mergeBowlingStates(local,remote,'2026-09-10T23:00:00Z');
+assert.equal(out.state.sessions.length,1);
+assert.equal(out.state.sessions[0].id,'active-delete');
+assert.equal(out.state.deletedSessions.some(x=>x.id==='active-delete'),false);
+console.log('deleted-league tombstone tests passed');

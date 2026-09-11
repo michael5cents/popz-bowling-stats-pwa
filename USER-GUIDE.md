@@ -49,3 +49,6 @@ Use **Settings → Email Feedback** to report a problem or suggest an improvemen
 
 ## Privacy
 No account is required. Bowling scores are not uploaded to Popz. Your bowling history remains on the device unless you choose to export a backup.
+
+## Delete a league or category
+In **Settings → Delete League / Category**, choose any recorded league or category and confirm. Every saved series under that exact name is removed. The deletion is saved in exported/shared backups so importing an older device backup does not bring those deleted series back. An in-progress series is protected from imported deletion markers.
