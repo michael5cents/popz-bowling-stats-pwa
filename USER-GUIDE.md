@@ -52,3 +52,6 @@ No account is required. Bowling scores are not uploaded to Popz. Your bowling hi
 
 ## Delete a league or category
 In **Settings → Delete League / Category**, choose any recorded league or category and confirm. Every saved series under that exact name is removed. The deletion is saved in exported/shared backups so importing an older device backup does not bring those deleted series back. An in-progress series is protected from imported deletion markers.
+
+## Grouped History
+History is organized by **League / Category**, with each league containing date subgroups in newest-first order. Expand a series under its date to review games, frames, scores, and entering-average corrections.

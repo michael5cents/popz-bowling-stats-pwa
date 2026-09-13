@@ -57,3 +57,5 @@ npx --yes wrangler@latest pages deploy . --project-name=popzbowling --branch=mai
 Then open `http://localhost:8080`.
 
 - **Delete League / Category** removes every saved series under any selected league/category name. Deletion markers travel with backups/imports so older device backups do not resurrect deleted history; an active receiving-device series remains protected.
+
+- **History is grouped by League / Category first, then by Date** so all series from the same league stay together while each bowling date remains easy to scan.
