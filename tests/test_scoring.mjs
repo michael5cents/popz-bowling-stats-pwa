@@ -16,6 +16,7 @@ assert.equal(filterSessionsByMeta(ss,{center:'Center A',oil:'House',ball:'Ball B
 assert.equal(filterSessionsByMeta(ss,{center:'center a',oil:'house',ball:'ball b'})[0].games.length,1);
 const gc=rolls(game(),Array(20).fill(0));gc.ballUsed='BALL A';gc.lane='5-6';const ss2=[{center:'CENTER A',oilPattern:'house',games:[ga,gc]}];assert.deepEqual(metadataValues(ss2,'ball'),['BALL A']);assert.equal(summarizeBreakdown(ss2,'ball').length,1);
 const bd=summarizeBreakdown(ss,'ball');assert.equal(bd.length,2);assert.equal(bd.find(x=>x.label==='Ball B').average,150);
+const filteredCenter=filterSessionsByMeta([{center:'Center A',oilPattern:'House',games:[ga]},{center:'Center B',oilPattern:'House',games:[gb]}],{center:'Center A'});const centerBalls=summarizeBreakdown(filteredCenter,'ball');assert.deepEqual(centerBalls.map(x=>x.label),['Ball A']);
 console.log('metadata analytics tests passed');
 
 const histGame=rolls(game(),Array(21).fill(5));
