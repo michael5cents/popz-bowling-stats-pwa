@@ -27,3 +27,11 @@ const afterCorrect=runningLeagueAverage([histSession]).currentAverage;
 assert.equal(runningLeagueAverage([histSession]).seedAverage,190);
 assert.ok(afterCorrect>beforeCorrect);
 console.log('historical entering-average recalculation test passed');
+
+const makeOpen=(first,second)=>{const a=[];for(let i=0;i<10;i++)a.push(first,second);return rolls(game(),a)};
+const establishGames=[makeOpen(8,1),makeOpen(7,2),makeOpen(6,3)];
+const establishSession={league:'Test Establish',date:'2026-09-01',gameCount:3,enteringAverage:180,games:establishGames};
+const beforeEstablished=runningLeagueAverage([establishSession],{mode:'establish',games:9});assert.equal(beforeEstablished.currentAverage,180);assert.equal(beforeEstablished.established,false);
+const establishSessions=[0,1,2].map((n)=>({league:'Test Establish',date:'2026-09-0'+(n+1),gameCount:3,enteringAverage:180,games:[makeOpen(6+n,3-n),makeOpen(6+n,3-n),makeOpen(6+n,3-n)]}));
+const afterEstablished=runningLeagueAverage(establishSessions,{mode:'establish',games:9});assert.equal(afterEstablished.games,9);assert.equal(afterEstablished.established,true);assert.equal(afterEstablished.currentAverage,Math.floor(afterEstablished.pins/9));assert.notEqual(afterEstablished.currentAverage,180);
+console.log('league average establishment tests passed');

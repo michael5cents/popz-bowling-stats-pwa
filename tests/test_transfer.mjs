@@ -24,6 +24,11 @@ remote={...base,deviceId:'phone',settings:{bowlerName:'Imported Bowler'},session
 out=mergeBowlingStates(local,remote);
 assert.equal(out.state.settings.bowlerName,'Imported Bowler');assert.equal(out.state.deviceId,'tablet');
 console.log('device-transfer merge tests passed');
+local={...base,settings:{bowlerName:'Mike',leagueAverageRules:{'league a':{name:'League A',mode:'carry',games:0}}},sessions:[]};
+remote={...base,deviceId:'phone',settings:{bowlerName:'Mike',leagueAverageRules:{'league b':{name:'League B',mode:'establish',games:9}}},sessions:[]};
+out=mergeBowlingStates(local,remote);
+assert.equal(out.state.settings.leagueAverageRules['league a'].mode,'carry');assert.equal(out.state.settings.leagueAverageRules['league b'].games,9);
+console.log('league-rule transfer merge test passed');
 
 local={...base,sessions:[s('common','2026-09-01T01:00:00Z'),s('tablet-new','2026-09-08T20:00:00Z')]};
 remote={...base,deviceId:'phone',sessions:[s('common','2026-09-01T01:00:00Z'),s('phone-new','2026-09-08T21:00:00Z')]};

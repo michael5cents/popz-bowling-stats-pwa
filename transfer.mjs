@@ -58,6 +58,7 @@ export function mergeBowlingStates(current,incoming,mergedAt=new Date().toISOStr
   const localSettings=current.settings||{};
   const remoteSettings=incoming.settings||{};
   const settings={...remoteSettings,...localSettings};
+  settings.leagueAverageRules={...(remoteSettings.leagueAverageRules||{}),...(localSettings.leagueAverageRules||{})};
   if(!String(localSettings.bowlerName||'').trim()&&String(remoteSettings.bowlerName||'').trim())settings.bowlerName=remoteSettings.bowlerName;
 
   return {
