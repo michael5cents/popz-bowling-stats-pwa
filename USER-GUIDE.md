@@ -27,6 +27,10 @@ The **Stats** screen shows average, high game, high series, strike/spare percent
 
 Use **History** to review completed series and frame-by-frame game details. Expand a completed series to enter or correct its **Entering Average** later. Saving it immediately updates that series handicap and the league running-average calculations.
 
+
+## League average rules
+In **Settings → League Average Rule**, choose a recorded league and select how that league establishes its average. **Carry Book Average** preserves the original behavior. **Establish After X Games** uses the book/entering average until the selected number of completed actual games is reached, then switches to total actual pinfall divided by actual games with the fraction dropped. The rule is saved separately for each league and is included when backups are transferred between devices.
+
 ## Back up and restore
 Your scores are stored on the device. The app requests persistent browser storage and automatically downloads a JSON safety backup whenever you finish a series. Keep those backup files somewhere safe. You can also use **Export Backup** anytime and **Import JSON** in Settings to restore a backup.
 
