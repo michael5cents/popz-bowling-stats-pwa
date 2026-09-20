@@ -9,3 +9,8 @@ database_name = "popz-bowling-telemetry"
 database_id = "6491ea01-4d72-4121-9eb6-a96d159b316b"
 
 [env.production]
+
+[[env.production.d1_databases]]
+binding = "TELEMETRY_DB"
+database_name = "popz-bowling-telemetry"
+database_id = "6491ea01-4d72-4121-9eb6-a96d159b316b"
