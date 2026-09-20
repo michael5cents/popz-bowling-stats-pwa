@@ -52,3 +52,6 @@ main{width:min(1100px,100%);margin:0 auto;padding:18px}.view{display:none}.view.
 
 .compact-select{width:auto;min-width:110px}
 @media(max-width:600px){.compact-select{width:100%}}
+
+.google-sync-row{align-items:flex-start}.setting-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.cloud-account,.cloud-status{display:block;margin-top:6px;color:var(--muted)}.cloud-account{color:#dbeafe;font-weight:800}.cloud-status{font-size:12px}
+@media(max-width:600px){.setting-actions{width:100%;display:grid;grid-template-columns:1fr}.setting-actions button{width:100%}}

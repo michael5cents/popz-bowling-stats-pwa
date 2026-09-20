@@ -32,10 +32,12 @@ Use **History** to review completed series and frame-by-frame game details. Expa
 In **Settings → League Average Rule**, choose a recorded league and select how that league establishes its average. **Carry Book Average** preserves the original behavior. **Establish After X Games** uses the book/entering average until the selected number of completed actual games is reached, then switches to total actual pinfall divided by actual games with the fraction dropped. The rule is saved separately for each league and is included when backups are transferred between devices.
 
 ## Back up and restore
-Your scores are stored on the device. The app requests persistent browser storage and automatically downloads a JSON safety backup whenever you finish a series. Keep those backup files somewhere safe. You can also use **Export Backup** anytime and **Import JSON** in Settings to restore a backup.
+Your scores are always stored locally on the device so scoring continues to work offline. If you enable **Google Sync**, completed series are also stored privately under your signed-in Firebase account and synchronize when internet access is available. The app still keeps Export Backup / Import JSON as an extra recovery option.
 
-### Move your bowling history to another device
-On the device that already has your history, use **Settings → Share / Transfer Backup**. Choose Quick Share, AirDrop, Google Drive, email, Messages, or another available sharing option. On the other phone or tablet, open Popz Bowling Stats and use **Settings → Import JSON** to select the transferred backup. Import **merges** histories rather than replacing the receiving device: series unique to either device are kept, and when the same series exists on both devices, the newer copy is kept. Any series currently in progress on the receiving device is protected from being overwritten. The backup includes saved games and frame-by-frame history. If the browser cannot share files directly, the app downloads the backup instead so you can send that file manually.
+### Use your bowling history on another device
+The easiest method in public-v23 is **Settings → Google Sync → Sign in with Google**. Sign in with the same Google account on each phone, tablet, or computer. Your completed series and stats merge automatically, along with your bowler name and per-league average rules. An unfinished series remains only on the device where you started it until you choose **Finish Series**, so another device cannot accidentally change a live game.
+
+**Share / Transfer Backup** and **Import JSON** remain available as a manual transfer or recovery fallback. Manual import still merges rather than replaces history: unique series are kept, newer copies win, and an in-progress local series is protected.
 
 ## Updating the app
 If Popz Bowling Stats is already installed, you do **not** need to uninstall or reinstall it. Updates replace the cached app files and do **not** erase your bowling history stored on the device.
@@ -52,7 +54,7 @@ Check **Settings → App Version** to see the version currently running.
 Use **Settings → Email Feedback** to report a problem or suggest an improvement. Feedback is sent to `feedback@popzbowling.com`.
 
 ## Privacy
-No account is required. Bowling scores and bowling history are not uploaded to Popz. Popz Bowling may send anonymous usage counts such as app opens, series started/completed, and feature views so Popz can understand whether the app is being used. Names, scores, league names, bowling centers, ball names, oil patterns, averages, pin leaves, frame history, and backup contents are not sent. You can turn **Anonymous usage statistics** Off in Settings.
+No account is required. Without Google Sync, bowling history stays on the device. If you choose **Sign in with Google**, completed bowling history is stored in the Popz Bowling Firebase project under your Firebase user ID so it can synchronize across devices. Firestore security rules allow each authenticated user to access only their own `/users/{uid}` data. Anonymous product telemetry is separate from Google Sync and does not contain bowling scores or bowling history; it can be turned Off in Settings.
 
 ## Delete a league or category
 In **Settings → Delete League / Category**, choose any recorded league or category and confirm. Every saved series under that exact name is removed. The deletion is saved in exported/shared backups so importing an older device backup does not bring those deleted series back. An in-progress series is protected from imported deletion markers.
