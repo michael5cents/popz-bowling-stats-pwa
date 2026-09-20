@@ -52,7 +52,7 @@ Check **Settings → App Version** to see the version currently running.
 Use **Settings → Email Feedback** to report a problem or suggest an improvement. Feedback is sent to `feedback@popzbowling.com`.
 
 ## Privacy
-No account is required. Bowling scores are not uploaded to Popz. Your bowling history remains on the device unless you choose to export a backup.
+No account is required. Bowling scores and bowling history are not uploaded to Popz. Popz Bowling may send anonymous usage counts such as app opens, series started/completed, and feature views so Popz can understand whether the app is being used. Names, scores, league names, bowling centers, ball names, oil patterns, averages, pin leaves, frame history, and backup contents are not sent. You can turn **Anonymous usage statistics** Off in Settings.
 
 ## Delete a league or category
 In **Settings → Delete League / Category**, choose any recorded league or category and confirm. Every saved series under that exact name is removed. The deletion is saved in exported/shared backups so importing an older device backup does not bring those deleted series back. An in-progress series is protected from imported deletion markers.

@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Current app version: **public-v15**
+Current app version: **public-v22**
 
 A one-device-per-bowler, offline-first bowling scoring and statistics app hosted on Cloudflare Pages.
 
@@ -11,7 +11,9 @@ This repository is the public/friends version only. It is completely separate fr
 
 ## Privacy and storage
 - Bowling data is stored locally in IndexedDB on the bowler's device.
-- No account, login, Michael server backend, or server-side bowling database is used.
+- No account or login is used, and there is no server-side bowling-history database.
+- public-v22 sends privacy-minimal anonymous product-usage events to a dedicated Cloudflare D1 telemetry database. Events identify only the random device ID, event type, app version, timestamp, installed/browser mode, and coarse platform. Scores, names, league names, centers, balls, oil patterns, averages, leaves, frames, and backup contents are never accepted by the telemetry endpoint.
+- Anonymous usage statistics are On by default and can be turned Off in Settings; the telemetry queue is stored separately from bowling backups.
 - The installed PWA works offline after its files have been cached.
 - Users protect their history with **Export Backup** and restore it with **Import JSON**.
 
@@ -21,13 +23,14 @@ Open **https://popzbowling.com** in a modern browser.
 - iPhone/iPad: open the site in Safari, tap **Install App**, then follow **Share → Add to Home Screen → Add**.
 - The Install App button hides when the app is already running in standalone installed mode.
 
-## Current public-v21 behavior
+## Current public-v22 behavior
 - Default handicap for new series: **90% of 220**.
 - Bowling-center filtering also limits the lane list and lane breakdown to that center.
 - **Finish Series** first shows statistics for only the just-completed series, then offers **Continue to Overall Stats** for cumulative stats.
 - If the entering average is blank, the app uses the stored running average for the same league or Practice when available; **Entering / Current Average** remains editable during bowling and immediately updates handicap.
 - League average rules are configurable per league in **Settings → League Average Rule**. A league can keep carrying its book average, or use the book average only until a chosen number of actual games is completed; after that threshold, the app uses the whole-number actual pinfall average with the fraction dropped.
-- PWA manifest, icons, service worker, and offline cache are versioned for public-v15.
+- PWA manifest, icons, service worker, and offline cache are versioned for public-v22.
+- Anonymous telemetry tracks first seen/app opens, install events, series started/completed, Stats/History/Help views, and backup export/share/import usage. Events queue locally while offline and flush when connectivity returns.
 - Feedback opens an email addressed to `feedback@popzbowling.com` with subject **Popz Bowling Stats** and includes the app version/device information.
 - Built-in **Help** tab provides a complete user guide with Print / Save Guide support.
 - Storage protection: requests persistent browser storage and automatically downloads a JSON safety backup after every finished series.
@@ -42,6 +45,7 @@ Open **https://popzbowling.com** in a modern browser.
 - Source of truth: GitHub `michael5cents/popz-bowling-stats-pwa`.
 - Secondary backup: Gitea `michael5cents/popz-bowling-stats-pwa` on the private LAN.
 - Cloudflare deployment is currently performed with Wrangler rather than Git integration.
+- Pages Functions endpoint `/api/telemetry` writes to D1 database `popz-bowling-telemetry` through binding `TELEMETRY_DB`; `scripts/telemetry-report.sh` returns aggregate usage counts without exposing bowling content.
 
 Release rule: every public release must update `APP_VERSION`, service-worker/cache asset versions, and `latest-version.json` to the same version. `latest-version.json` is deliberately excluded from the offline cache and served with `Cache-Control: no-store` so installed copies can detect a newer production release.
 
