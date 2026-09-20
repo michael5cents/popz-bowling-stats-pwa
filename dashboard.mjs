@@ -22,7 +22,7 @@ export function renderTelemetryDashboard(data,generatedAt=new Date().toISOString
  const events=(data.events||[]).map(r=>`<tr><td>${esc(r.event)}</td><td>${n(r.events)}</td><td>${n(r.devices)}</td></tr>`).join('');
  const platforms=(data.platforms||[]).map(r=>`<tr><td>${esc(r.platform)}</td><td>${n(r.devices)}</td></tr>`).join('');
  const modes=(data.modes||[]).map(r=>`<tr><td>${esc(r.install_mode)}</td><td>${n(r.devices)}</td></tr>`).join('');
- return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Popz Bowling Telemetry</title><style>
+ return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="60"><title>Popz Bowling Telemetry</title><style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#f8fafc;background:#0b1020}
 *{box-sizing:border-box}body{margin:0;background:#0b1020;color:#f8fafc}main{width:min(1100px,100%);margin:auto;padding:22px}
 header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:18px}h1{margin:4px 0 0;font-size:28px}
@@ -33,7 +33,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:16px;ma
 th,td{padding:9px 8px;border-bottom:1px solid #2d3a58;text-align:left;font-size:13px}th{color:#94a3b8;font-size:11px;text-transform:uppercase}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}.note{padding:14px;border-radius:12px;background:#0f172a;color:#cbd5e1;margin-top:16px;font-size:13px}
 @media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}}@media(max-width:480px){.grid{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}}
-</style></head><body><main><header><div><div class="eyebrow">PRIVATE ADMIN</div><h1>Popz Bowling Telemetry</h1><div class="muted">Generated ${esc(new Date(generatedAt).toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short'}))}</div></div><a class="btn" href="/telemetry-dashboard">Refresh</a></header>
+</style></head><body><main><header><div><div class="eyebrow">PRIVATE ADMIN</div><h1>Popz Bowling Telemetry</h1><div class="muted">Generated ${esc(new Date(generatedAt).toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short'}))} • Auto-refreshes every 60 seconds</div></div><a class="btn" href="/telemetry-dashboard">Refresh now</a></header>
 <div class="grid">${cards.map(([label,value])=>`<div class="card"><span>${esc(label)}</span><strong>${n(value)}</strong></div>`).join('')}</div>
 <div class="note"><strong>How to read this:</strong> a device is an anonymous installation/browser profile, not guaranteed to be one unique person. Completed-series devices and repeat activity across multiple days are stronger adoption signals than raw app opens.</div>
 <div class="panel"><h2>Recent daily activity</h2><table><thead><tr><th>Date</th><th>Devices</th><th>App opens</th><th>Series started</th><th>Series completed</th></tr></thead><tbody>${rows||'<tr><td colspan="5">No telemetry yet.</td></tr>'}</tbody></table></div>

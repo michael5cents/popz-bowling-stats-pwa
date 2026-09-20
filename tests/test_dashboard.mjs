@@ -14,6 +14,8 @@ const page=renderTelemetryDashboard({
 },'2026-09-20T21:00:00Z');
 assert.match(page,/Popz Bowling Telemetry/);
 assert.match(page,/Active devices • 7d/);
+assert.match(page,/http-equiv="refresh" content="60"/);
+assert.match(page,/Auto-refreshes every 60 seconds/);
 assert.match(page,/series_completed/);
 assert.doesNotMatch(page,/device_id/);
 assert.doesNotMatch(page,/dev-/);
