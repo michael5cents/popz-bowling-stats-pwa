@@ -46,7 +46,7 @@ Open **https://popzbowling.com** in a modern browser.
 - Secondary backup: Gitea `michael5cents/popz-bowling-stats-pwa` on the private LAN.
 - Cloudflare deployment is currently performed with Wrangler rather than Git integration.
 - Pages Functions endpoint `/api/telemetry` writes to D1 database `popz-bowling-telemetry` through binding `TELEMETRY_DB`; `scripts/telemetry-report.sh` returns aggregate usage counts without exposing bowling content.
-- Private aggregate dashboard: `https://popzbowling.com/telemetry-dashboard`. It is protected by HTTP Basic Auth (`michael` + Cloudflare secret `TELEMETRY_DASHBOARD_PASSWORD`), is `noindex`, uses `no-store`, and renders only aggregate metrics/tables—never raw device IDs or bowling data.
+- Private aggregate dashboard: `https://popzbowling.com/telemetry-dashboard`. It is protected by HTTP Basic Auth (`michael` + Cloudflare secret `TELEMETRY_DASHBOARD_PASSWORD`), is `noindex`, uses `no-store`, renders only aggregate metrics/tables—never raw device IDs or bowling data—and automatically refreshes every 60 seconds.
 
 Release rule: every public release must update `APP_VERSION`, service-worker/cache asset versions, and `latest-version.json` to the same version. `latest-version.json` is deliberately excluded from the offline cache and served with `Cache-Control: no-store` so installed copies can detect a newer production release.
 
