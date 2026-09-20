@@ -1,6 +1,6 @@
-const SW_VERSION='public-v25';
-const CACHE='popz-bowling-public-v25';
-const ASSETS=['./','./index.html','./style.css?v=25','./app.js?v=25','./scoring.mjs?v=25','./history.mjs?v=25','./transfer.mjs?v=25','./update.mjs?v=25','./telemetry.mjs?v=25','./telemetry-client.mjs?v=25','./cloud-sync-core.mjs?v=25','./cloud-sync.mjs?v=25','./entitlements.mjs?v=25','./manifest.webmanifest','./icon-192.png?v=25','./icon-512.png?v=25','./apple-touch-icon.png?v=25'];
+const SW_VERSION='public-v26';
+const CACHE='popz-bowling-public-v26';
+const ASSETS=['./','./index.html','./style.css?v=26','./app.js?v=26','./scoring.mjs?v=26','./history.mjs?v=26','./transfer.mjs?v=26','./update.mjs?v=26','./telemetry.mjs?v=26','./telemetry-client.mjs?v=26','./cloud-sync-core.mjs?v=26','./cloud-sync.mjs?v=26','./entitlements.mjs?v=26','./manifest.webmanifest','./icon-192.png?v=26','./icon-512.png?v=26','./apple-touch-icon.png?v=26'];
 
 self.addEventListener('install',e=>e.waitUntil(
   caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())
@@ -21,7 +21,7 @@ self.addEventListener('fetch',e=>{
   e.respondWith(caches.match(e.request).then(async hit=>{
     if(hit)return hit;
     if(u.origin===self.location.origin&&!u.search&&u.pathname.endsWith('.mjs')){
-      const versioned=await caches.match(`${u.pathname}?v=25`);
+      const versioned=await caches.match(`${u.pathname}?v=26`);
       if(versioned)return versioned;
     }
     return fetch(e.request).then(r=>{

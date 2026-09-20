@@ -55,3 +55,16 @@ main{width:min(1100px,100%);margin:0 auto;padding:18px}.view{display:none}.view.
 
 .google-sync-row{align-items:flex-start}.setting-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.cloud-account,.cloud-status{display:block;margin-top:6px;color:var(--muted)}.cloud-account{color:#dbeafe;font-weight:800}.cloud-status{font-size:12px}
 @media(max-width:600px){.setting-actions{width:100%;display:grid;grid-template-columns:1fr}.setting-actions button{width:100%}}
+
+/* public-v26 Pro Preview + Advanced Shot Tracking */
+.plan-badge,.pro-pill{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;font-weight:900;letter-spacing:.04em;white-space:nowrap}
+.plan-badge{padding:7px 10px;font-size:10px;border:1px solid #a16207;background:#422006;color:#fde68a}
+.plan-badge.free{border-color:#475569;background:#1e293b;color:#cbd5e1}.plan-badge.pro{border-color:#a16207;background:#422006;color:#fde68a}
+.pro-pill{padding:3px 7px;margin-left:6px;font-size:9px;border:1px solid #a16207;background:#422006;color:#fde68a;vertical-align:middle}
+.version-badge.plan.pro{background:#422006;color:#fde68a;border-color:#a16207}.version-badge.plan.free{background:#1e293b;color:#cbd5e1;border-color:#475569}
+.first-ball-setup{background:linear-gradient(145deg,#182238,#111a2e);border:1px solid #a16207;border-radius:18px;padding:14px;margin-bottom:12px}
+.setup-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.setup-heading strong{display:block;font-size:16px}.setup-heading small{display:block;color:var(--muted);margin-top:4px}
+.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.frame-setup{font-size:9px;text-align:center;padding:3px;color:#a7f3d0;border-top:1px solid var(--line);white-space:nowrap}
+.setup-history{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.setup-history span{padding:6px 9px;border-radius:999px;background:#172033;border:1px solid var(--line);font-size:11px}.setup-history b{color:#a7f3d0;margin-right:4px}
+.pro-lock{display:flex;align-items:center;gap:12px;background:#111827;border:1px dashed #a16207;border-radius:18px;padding:14px;margin-bottom:12px}.pro-lock p{margin:4px 0 0;color:var(--muted);font-size:12px}
+@media(max-width:600px){.plan-badge{font-size:9px;padding:6px 8px}.setup-heading{align-items:stretch;flex-direction:column}.setup-heading button{width:100%}.setup-grid{grid-template-columns:1fr}}

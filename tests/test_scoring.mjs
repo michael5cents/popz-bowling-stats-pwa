@@ -1,5 +1,5 @@
 import assert from'node:assert/strict';
-import{emptyFrames,addRoll,scoreGame,gameComplete,handicapPins,filterSessionsByMeta,metadataValues,summarizeBreakdown,runningLeagueAverage}from'../scoring.mjs';
+import{emptyFrames,addRoll,scoreGame,gameComplete,handicapPins,filterSessionsByMeta,metadataValues,summarizeBreakdown,runningLeagueAverage,getCurrentFirstBallSetup,setCurrentFirstBallSetup,captureFirstBallSetup,undoRoll}from'../scoring.mjs';
 const game=()=>({frames:emptyFrames()}),rolls=(g,a)=>(a.forEach(x=>addRoll(g,x)),g);
 let g=rolls(game(),Array(20).fill(0));assert.equal(scoreGame(g).final,0);
 g=rolls(game(),Array(21).fill(5));assert.equal(scoreGame(g).final,150);
@@ -35,3 +35,17 @@ const beforeEstablished=runningLeagueAverage([establishSession],{mode:'establish
 const establishSessions=[0,1,2].map((n)=>({league:'Test Establish',date:'2026-09-0'+(n+1),gameCount:3,enteringAverage:180,games:[makeOpen(6+n,3-n),makeOpen(6+n,3-n),makeOpen(6+n,3-n)]}));
 const afterEstablished=runningLeagueAverage(establishSessions,{mode:'establish',games:9});assert.equal(afterEstablished.games,9);assert.equal(afterEstablished.established,true);assert.equal(afterEstablished.currentAverage,Math.floor(afterEstablished.pins/9));assert.notEqual(afterEstablished.currentAverage,180);
 console.log('league average establishment tests passed');
+
+const setupGame=game();
+setCurrentFirstBallSetup(setupGame,{ballUsed:'Venom Cobra',standBoard:28,targetBoard:13});
+captureFirstBallSetup(setupGame,0);addRoll(setupGame,10);
+setCurrentFirstBallSetup(setupGame,{ballUsed:'Venom Cobra',standBoard:30,targetBoard:13});
+captureFirstBallSetup(setupGame,1);addRoll(setupGame,10);
+assert.deepEqual(setupGame.frames[0].firstBallSetup,{ballUsed:'Venom Cobra',standBoard:28,targetBoard:13});
+assert.deepEqual(setupGame.frames[1].firstBallSetup,{ballUsed:'Venom Cobra',standBoard:30,targetBoard:13});
+assert.deepEqual(getCurrentFirstBallSetup(setupGame),{ballUsed:'Venom Cobra',standBoard:30,targetBoard:13});
+assert.equal(undoRoll(setupGame),true);assert.equal(setupGame.frames[1].firstBallSetup,undefined);
+assert.deepEqual(setupGame.frames[0].firstBallSetup,{ballUsed:'Venom Cobra',standBoard:28,targetBoard:13});
+const legacySetupGame=game();legacySetupGame.ballUsed='Legacy Ball';
+assert.deepEqual(getCurrentFirstBallSetup(legacySetupGame),{ballUsed:'Legacy Ball',standBoard:null,targetBoard:null});
+console.log('first-ball setup and legacy compatibility tests passed');
