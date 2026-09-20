@@ -35,7 +35,7 @@ In **Settings → League Average Rule**, choose a recorded league and select how
 Your scores are always stored locally on the device so scoring continues to work offline. If you enable **Google Sync**, completed series are also stored privately under your signed-in Firebase account and synchronize when internet access is available. The app still keeps Export Backup / Import JSON as an extra recovery option.
 
 ### Use your bowling history on another device
-The easiest method in public-v23 is **Settings → Google Sync → Sign in with Google**. Sign in with the same Google account on each phone, tablet, or computer. Your completed series and stats merge automatically, along with your bowler name and per-league average rules. An unfinished series remains only on the device where you started it until you choose **Finish Series**, so another device cannot accidentally change a live game.
+The easiest method in public-v23 and later is **Settings → Google Sync → Sign in with Google**. Sign in with the same Google account on each phone, tablet, or computer. Your completed series and stats merge automatically, along with your bowler name and per-league average rules. An unfinished series remains only on the device where you started it until you choose **Finish Series**, so another device cannot accidentally change a live game.
 
 **Share / Transfer Backup** and **Import JSON** remain available as a manual transfer or recovery fallback. Manual import still merges rather than replaces history: unique series are kept, newer copies win, and an in-progress local series is protected.
 
@@ -46,7 +46,7 @@ If Popz Bowling Stats is already installed, you do **not** need to uninstall or 
 - **iPhone/iPad:** Open `popzbowling.com` in Safari, refresh once, then close and reopen the Home Screen version of Popz Bowling Stats.
 - **Computer:** Open the installed app while online and refresh once (`Ctrl+R` on Windows or `Command+R` on Mac). If needed, close it completely and reopen it.
 
-Starting with public-v15, Popz Bowling checks the live production version automatically. If a newer version exists, an **Update available** banner appears and tells you to fully close and reopen the app while online. The banner disappears only after the running app successfully confirms it matches production. If it remains after reopening, refresh `popzbowling.com` once in Chrome or Safari, then reopen the installed app.
+Starting with public-v24, Popz Bowling uses two independent update signals: the live production version file and the service worker itself. If either says newer app files are ready, an **Update available** banner appears and tells you to fully close and reopen the app while online. The app rechecks at startup, shortly after startup, when it returns to the foreground, when internet returns, and periodically while open.
 
 Check **Settings → App Version** to see the version currently running.
 

@@ -1,2 +1,5 @@
 /latest-version.json
   Cache-Control: no-store, max-age=0
+
+/service-worker.js
+  Cache-Control: no-store, max-age=0

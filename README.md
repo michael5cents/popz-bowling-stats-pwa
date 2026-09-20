@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Current app version: **public-v23**
+Current app version: **public-v24**
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 
@@ -25,13 +25,13 @@ Open **https://popzbowling.com** in a modern browser.
 - iPhone/iPad: open the site in Safari, tap **Install App**, then follow **Share → Add to Home Screen → Add**.
 - The Install App button hides when the app is already running in standalone installed mode.
 
-## Current public-v23 behavior
+## Current public-v24 behavior
 - Default handicap for new series: **90% of 220**.
 - Bowling-center filtering also limits the lane list and lane breakdown to that center.
 - **Finish Series** first shows statistics for only the just-completed series, then offers **Continue to Overall Stats** for cumulative stats.
 - If the entering average is blank, the app uses the stored running average for the same league or Practice when available; **Entering / Current Average** remains editable during bowling and immediately updates handicap.
 - League average rules are configurable per league in **Settings → League Average Rule**. A league can keep carrying its book average, or use the book average only until a chosen number of actual games is completed; after that threshold, the app uses the whole-number actual pinfall average with the fraction dropped.
-- PWA manifest, icons, service worker, and offline cache are versioned for public-v23.
+- PWA manifest, icons, service worker, and offline cache are versioned for public-v24.
 - **Google Sync** is optional. First sign-in merges existing local completed history with the user's private Firestore history, then subsequent devices use the same merge/tombstone rules automatically. Bowler name and per-league average rules sync; device-specific Stats filters do not.
 - Signed-in users sync when the app opens/returns online or foreground, after important completed-history/settings changes, and on a 60-second background check while open. Manual **Sync now** is also available.
 - Export / Import / Share Backup remains available as recovery and manual-transfer fallback.
@@ -41,7 +41,7 @@ Open **https://popzbowling.com** in a modern browser.
 - Storage protection: requests persistent browser storage and automatically downloads a JSON safety backup after every finished series.
 - **Share / Transfer Backup** sends the full JSON backup through the device share sheet when file sharing is supported, with automatic download fallback. **Import JSON now merges histories**: device-only series are retained, missing series are added, and a matching series ID uses the newer copy. An in-progress local series is never overwritten by import.
 - Completed series can be expanded in **History** to enter or correct the official **Entering Average** later; handicap and league running-average stats recalculate immediately.
-- Update awareness: the app checks the uncached production `latest-version.json` at startup, when returning to the foreground, when connectivity returns, and every 10 minutes while open. If the running version is behind, a persistent **Update available** banner instructs the user to fully close/reopen. The banner hides only after a successful version check confirms the running app matches production.
+- Update awareness is dual-signal in public-v24. The app checks uncached production `latest-version.json` at startup, again after 2 and 10 seconds, when returning to the foreground, when connectivity returns, and every 10 minutes while open. It also forces a service-worker update check; newly activated workers broadcast `POPZ_UPDATE_READY` to open clients. Either signal can raise the persistent **Update available — close and reopen** banner, and a service-worker signal stays authoritative even if an edge briefly serves a stale version file.
 
 ## Hosting and deployment
 - Production: Cloudflare Pages project `popzbowling`.
@@ -54,7 +54,7 @@ Open **https://popzbowling.com** in a modern browser.
 - Google Sync backend: Firebase project `popz-bowling-stats`, Google Authentication, and Firestore `(default)` in `nam5`. Firebase configuration/rules are kept in `.firebaserc`, `firebase.json`, `firestore.rules`, and `firestore.indexes.json`.
 - Private aggregate dashboard: `https://popzbowling.com/telemetry-dashboard`. It is protected by HTTP Basic Auth (`michael` + Cloudflare secret `TELEMETRY_DASHBOARD_PASSWORD`), is `noindex`, uses `no-store`, renders only aggregate metrics/tables—never raw device IDs or bowling data—and automatically refreshes every 60 seconds.
 
-Release rule: every public release must update `APP_VERSION`, service-worker/cache asset versions, and `latest-version.json` to the same version. `latest-version.json` is deliberately excluded from the offline cache and served with `Cache-Control: no-store` so installed copies can detect a newer production release.
+Release rule: every public release must update `APP_VERSION`, `SW_VERSION`, service-worker/cache asset versions, and `latest-version.json` to the same version. Both `latest-version.json` and `service-worker.js` are served with `Cache-Control: no-store`; service-worker registration uses `updateViaCache: 'none'` so installed copies always check the current worker.
 
 Example production deploy from this repository:
 ```bash
