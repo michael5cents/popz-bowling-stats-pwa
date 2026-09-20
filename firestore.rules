@@ -2,12 +2,30 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
 
-      match /{document=**} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
-      }
+    match /users/{userId} {
+      allow read, create, update, delete: if isOwner(userId);
+    }
+
+    match /users/{userId}/sessions/{sessionId} {
+      allow read, create, update, delete: if isOwner(userId);
+    }
+
+    match /users/{userId}/deletedSessions/{sessionId} {
+      allow read, create, update, delete: if isOwner(userId);
+    }
+
+    match /users/{userId}/entitlements/{entitlementId} {
+      allow read: if isOwner(userId);
+      allow write: if false;
+    }
+
+    match /users/{userId}/billing/{document=**} {
+      allow read: if isOwner(userId);
+      allow write: if false;
     }
 
     match /{document=**} {

@@ -1,4 +1,5 @@
 import{mergeCloudBowlingState,stateForCloud,cloudSnapshotToState,cloudDocForSession}from'./cloud-sync-core.mjs';
+import{PRO_FEATURES,effectiveAccess,canUseFeature}from'./entitlements.mjs';
 
 const FIREBASE_VERSION='12.19.0';
 const config={
@@ -10,8 +11,8 @@ const config={
   messagingSenderId:'730420372180'
 };
 const base=`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}`;
-let api=null,appApi=null,authApi=null,storeApi=null,auth=null,db=null,currentUser=null,syncing=null;
-let callbacks={getState:null,setState:null,onStatus:null,onSignedIn:null};
+let api=null,appApi=null,authApi=null,storeApi=null,auth=null,db=null,currentUser=null,currentEntitlement={},syncing=null;
+let callbacks={getState:null,setState:null,onStatus:null,onSignedIn:null,onEntitlement:null};
 const stamp=v=>{const t=Date.parse(v||'');return Number.isFinite(t)?t:0};
 const sessionStamp=s=>Math.max(stamp(s?.updatedAt),stamp(s?.finishedAt),stamp(s?.createdAt));
 
@@ -33,6 +34,14 @@ async function loadFirebase(){
   db=storeApi.getFirestore(firebaseApp);
   api={appApi,authApi,storeApi};
   return api;
+}
+
+async function refreshEntitlement(uid=currentUser?.uid){
+  if(!uid){currentEntitlement={};callbacks.onEntitlement?.(effectiveAccess(currentEntitlement));return currentEntitlement}
+  const snap=await storeApi.getDoc(storeApi.doc(db,'users',uid,'entitlements','pro'));
+  currentEntitlement=snap.exists()?snap.data():{};
+  callbacks.onEntitlement?.(effectiveAccess(currentEntitlement));
+  return currentEntitlement;
 }
 
 async function pullCloud(uid){
@@ -89,6 +98,8 @@ async function pushCloud(uid,state,remote){
 
 export function cloudUser(){return currentUser}
 export function cloudAvailable(){return !!currentUser}
+export function accountAccess(){return effectiveAccess(currentEntitlement)}
+export function cloudFeatureAvailable(feature){return canUseFeature(feature,currentEntitlement)}
 
 export async function syncCloudNow(){
   if(syncing)return syncing;
@@ -96,6 +107,8 @@ export async function syncCloudNow(){
     try{
       await loadFirebase();
       if(!currentUser){status('signed-out','Sign in with Google to sync across devices');return null}
+      await refreshEntitlement(currentUser.uid);
+      if(!canUseFeature(PRO_FEATURES.GOOGLE_SYNC,currentEntitlement)){status('pro-required','Google Sync requires Popz Bowling Pro');return null}
       status('syncing','Syncing bowling data…');
       const remote=await pullCloud(currentUser.uid);
       const local=callbacks.getState?.();
@@ -120,6 +133,7 @@ export async function signInGoogle(){
   const result=await authApi.signInWithPopup(auth,provider);
   currentUser=result.user;
   callbacks.onSignedIn?.(currentUser);
+  await refreshEntitlement(currentUser.uid);
   await syncCloudNow();
   return currentUser;
 }
@@ -128,6 +142,8 @@ export async function signOutGoogle(){
   await loadFirebase();
   await authApi.signOut(auth);
   currentUser=null;
+  currentEntitlement={};
+  callbacks.onEntitlement?.(effectiveAccess(currentEntitlement));
   status('signed-out','Cloud sync off • local data stays on this device');
 }
 
@@ -139,8 +155,8 @@ export async function initCloudSync(options){
     authApi.onAuthStateChanged(auth,async user=>{
       currentUser=user||null;
       callbacks.onSignedIn?.(currentUser);
-      if(currentUser){try{await syncCloudNow()}catch{}}
-      else status('signed-out','Sign in with Google to sync across devices');
+      if(currentUser){try{await refreshEntitlement(currentUser.uid);await syncCloudNow()}catch{}}
+      else{currentEntitlement={};callbacks.onEntitlement?.(effectiveAccess(currentEntitlement));status('signed-out','Sign in with Google to sync across devices')}
     });
   }catch(e){status('error',e?.message||'Cloud sync unavailable')}
 }

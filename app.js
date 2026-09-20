@@ -4,7 +4,7 @@ import{mergeBowlingStates}from'./transfer.mjs';
 import{versionNeedsUpdate,resolveUpdateNotice}from'./update.mjs';
 import{configureTelemetry,startTelemetry,trackTelemetry,flushTelemetry,telemetryEnabled,setTelemetryEnabled}from'./telemetry-client.mjs';
 import{initCloudSync,startCloudSyncWatch,signInGoogle,signOutGoogle,syncCloudNow,cloudUser}from'./cloud-sync.mjs';
-const APP_VERSION='public-v24',DB='popz-bowling-public',STORE='state',KEY='master',$=id=>document.getElementById(id);let state,toastTimer,pendingLeave=null,leaveSelection=new Set(),editingFrameIndex=null,deferredInstallPrompt=null,cloudStatus={state:'loading',message:'Checking Google Sync…'},updateSignalVersion='';
+const APP_VERSION='public-v25',DB='popz-bowling-public',STORE='state',KEY='master',$=id=>document.getElementById(id);let state,toastTimer,pendingLeave=null,leaveSelection=new Set(),editingFrameIndex=null,deferredInstallPrompt=null,cloudStatus={state:'loading',message:'Checking Google Sync…'},updateSignalVersion='';
 const uuid=()=>crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(16).slice(2)}`,nowIso=()=>new Date().toISOString();
 const todayLocal=()=>{const d=new Date(),o=d.getTimezoneOffset();return new Date(d.getTime()-o*60000).toISOString().slice(0,10)};
 const defaultState=()=>({version:2,deviceId:uuid(),updatedAt:nowIso(),settingsUpdatedAt:nowIso(),settings:{bowlerName:''},activeSessionId:null,sessions:[],deletedSessions:[],lastBackupAt:null,storagePersistent:null});
