@@ -12,6 +12,7 @@ export function validDashboardAuth(header,password,user='michael'){
 }
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const n=v=>Number(v||0).toLocaleString('en-US');
+export const formatDashboardGeneratedAt=value=>new Date(value).toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short',timeZone:'America/Chicago'});
 export function renderTelemetryDashboard(data,generatedAt=new Date().toISOString()){
  const cards=[
   ['Total devices',data.totalDevices],['Active devices • 7d',data.active7],['Active devices • 30d',data.active30],
@@ -33,7 +34,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:16px;ma
 th,td{padding:9px 8px;border-bottom:1px solid #2d3a58;text-align:left;font-size:13px}th{color:#94a3b8;font-size:11px;text-transform:uppercase}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}.note{padding:14px;border-radius:12px;background:#0f172a;color:#cbd5e1;margin-top:16px;font-size:13px}
 @media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}}@media(max-width:480px){.grid{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}}
-</style></head><body><main><header><div><div class="eyebrow">PRIVATE ADMIN</div><h1>Popz Bowling Telemetry</h1><div class="muted">Generated ${esc(new Date(generatedAt).toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short'}))} • Auto-refreshes every 60 seconds</div></div><a class="btn" href="/telemetry-dashboard">Refresh now</a></header>
+</style></head><body><main><header><div><div class="eyebrow">PRIVATE ADMIN</div><h1>Popz Bowling Telemetry</h1><div class="muted">Generated ${esc(formatDashboardGeneratedAt(generatedAt))} CT • Auto-refreshes every 60 seconds</div></div><a class="btn" href="/telemetry-dashboard">Refresh now</a></header>
 <div class="grid">${cards.map(([label,value])=>`<div class="card"><span>${esc(label)}</span><strong>${n(value)}</strong></div>`).join('')}</div>
 <div class="note"><strong>How to read this:</strong> a device is an anonymous installation/browser profile, not guaranteed to be one unique person. Completed-series devices and repeat activity across multiple days are stronger adoption signals than raw app opens.</div>
 <div class="panel"><h2>Recent daily activity</h2><table><thead><tr><th>Date</th><th>Devices</th><th>App opens</th><th>Series started</th><th>Series completed</th></tr></thead><tbody>${rows||'<tr><td colspan="5">No telemetry yet.</td></tr>'}</tbody></table></div>

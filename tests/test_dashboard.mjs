@@ -1,5 +1,5 @@
 import assert from'node:assert/strict';
-import{validDashboardAuth,renderTelemetryDashboard}from'../dashboard.mjs';
+import{validDashboardAuth,renderTelemetryDashboard,formatDashboardGeneratedAt}from'../dashboard.mjs';
 const basic=(u,p)=>'Basic '+Buffer.from(u+':'+p).toString('base64');
 assert.equal(validDashboardAuth(basic('michael','secret123'),'secret123'),true);
 assert.equal(validDashboardAuth(basic('michael','wrong'),'secret123'),false);
@@ -16,6 +16,8 @@ assert.match(page,/Popz Bowling Telemetry/);
 assert.match(page,/Active devices • 7d/);
 assert.match(page,/http-equiv="refresh" content="60"/);
 assert.match(page,/Auto-refreshes every 60 seconds/);
+assert.equal(formatDashboardGeneratedAt('2026-09-21T01:00:00Z'),'Sep 20, 2026, 8:00 PM');
+assert.match(page,/Generated Sep 20, 2026, 4:00 PM CT/);
 assert.match(page,/series_completed/);
 assert.doesNotMatch(page,/device_id/);
 assert.doesNotMatch(page,/dev-/);
