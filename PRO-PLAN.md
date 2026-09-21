@@ -22,6 +22,7 @@ Current/future Pro features:
 - Automatic cloud backup/restore — future
 - Line-change and lane-transition analytics — future
 - Advanced line/ball/oil analytics — future
+- **AI Bowling Coach / Analyze My Bowling** — research candidate and possible future Pro incentive. The app should compute the statistics first, then give an AI a compact evidence packet to produce post-series observations, confidence-aware interpretations, and suggested experiments. Validate usefulness and model requirements in the private Bowling app before any public rollout.
 - Future premium analysis built from the bowler's own history
 
 ## Entitlement architecture
