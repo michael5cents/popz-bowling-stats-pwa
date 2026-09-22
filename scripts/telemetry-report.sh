@@ -7,6 +7,10 @@ UNION ALL SELECT 'active_devices_7d', COUNT(DISTINCT device_id) FROM telemetry_e
 UNION ALL SELECT 'active_devices_30d', COUNT(DISTINCT device_id) FROM telemetry_events WHERE occurred_at >= datetime('now','-30 days')
 UNION ALL SELECT 'devices_completed_series_30d', COUNT(DISTINCT device_id) FROM telemetry_events WHERE event='series_completed' AND occurred_at >= datetime('now','-30 days')
 UNION ALL SELECT 'series_completed_30d', COUNT(*) FROM telemetry_events WHERE event='series_completed' AND occurred_at >= datetime('now','-30 days');"
+# Normal dashboard review does not require Wrangler/D1 authorization. Use:
+#   ./scripts/telemetry-dashboard-fetch.sh > /tmp/popz-telemetry-dashboard.html
+# See TELEMETRY-ACCESS.md for Keychain setup and fallback instructions.
+
 echo "Popz Bowling telemetry summary"
 npx --yes wrangler d1 execute "$DB" --remote --command "$SQL"
 echo
