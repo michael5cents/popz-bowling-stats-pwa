@@ -23,6 +23,7 @@ Current/future Pro features:
 - Line-change and lane-transition analytics — future
 - Advanced line/ball/oil analytics — future
 - **AI Bowling Coach / Analyze My Bowling** — research candidate and possible future Pro incentive. The app should compute the statistics first, then give an AI a compact evidence packet to produce post-series observations, confidence-aware interpretations, and suggested experiments. Validate usefulness and model requirements in the private Bowling app before any public rollout.
+- **Multi-player league/session scoring** — possible future Pro incentive. Planning only; not implemented. One device would score multiple bowlers in bowling order while keeping each bowler's averages, handicap, History, Stats, backup data, and cloud records separate. Preferred architecture is linked per-bowler series under a shared group-session ID so single-player data and the existing scoring engine remain compatible.
 - Future premium analysis built from the bowler's own history
 
 ## Public usability research
