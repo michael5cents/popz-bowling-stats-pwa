@@ -26,7 +26,7 @@ Current/future Pro features:
 - Future premium analysis built from the bowler's own history
 
 ## Public usability research
-- **Simplified scoring mode — research candidate, not implemented yet.** Test a Quick Scoring option for bowlers who only want to enter strikes/spares/open pin counts without identifying every standing pin after each first ball. Keep the current pin-deck/leave workflow as Detailed Scoring for users who want leave and conversion analytics. Do not remove detailed data collection; make the extra detail optional.
+- **Quick Scoring is implemented in public-v29 and is the default.** It records roll pinfall without asking users to identify the exact standing pins after each first ball. A one-tap **Mark Split** flag is available after a non-strike first ball, and the frame editor can correct that flag later; flagged Quick-mode splits count toward overall Split Conversion %. The existing pin-deck workflow remains available as **Detailed Scoring** for bowlers who want the exact leave pattern, single-pin/10-pin detail, and per-leave conversion analytics. Scoring mode is a device-local usability preference.
 - Current adoption is still very early. On September 21, 2026 the telemetry dashboard showed 6 devices but no meaningful bowling use yet. Do not over-optimize pricing, Founder caps, or advanced workflows from that sample; continue collecting real usage before making those decisions.
 
 ## Entitlement architecture

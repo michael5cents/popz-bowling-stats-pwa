@@ -15,16 +15,16 @@ Open `popzbowling.com`. On Android/Chrome, tap **Install App**. On iPhone/iPad, 
 ## Record a game
 - Enter the ball used and lane number(s) for the game.
 - **Advanced Shot Tracking is off by default.** During **PRO PREVIEW** it is unlocked, but you must first open **Settings -> Advanced Shot Tracking** and turn it on. Then Stand Board and Target Board appear while bowling and Ball + Stand + Target are snapshotted with the first ball of each frame and carry forward until you change them. Spare shots do not replace the first-ball setup. Turning the setting off hides those inputs and stops new frame-level setup recording without deleting existing tracked history.
-- Use the on-screen pin keypad after each roll.
-- Strikes, spares, opens, 10th-frame scoring, scratch score, handicap, and handicap score are calculated automatically.
-- After a first ball leaves pins standing, mark the standing pins on the pin deck and tap **Save Leave & Continue**.
+- **Quick Scoring is the default.** Use the on-screen pin keypad after each roll and enter only how many pins fell. Strikes, spares, opens, 10th-frame scoring, scratch score, handicap, and handicap score are calculated automatically. If the first ball leaves a split, tap **Mark Split** before entering the second ball so Split Conversion % stays accurate.
+- To collect the exact standing-pin pattern and per-leave conversion analytics, open **Settings -> Scoring Mode** and choose **Detailed Scoring**. After a non-strike first ball, mark the exact pins still standing and tap **Save Leave & Continue**.
+- Quick Scoring skips the standing-pin step. It still records the score and spare result; if you use **Mark Split**, that frame counts in overall Split Conversion %. Quick mode does not invent the exact split pattern, single-pin leave, or 10-pin leave. You can correct a forgotten Split flag later by editing the frame.
 - Use **Undo** for the most recent roll.
 - Tap an older frame to edit it; later frames remain intact and the score recalculates.
 - Tap **New Game** when the next game is ready.
 - Tap **Finish Series** when the session is over. The app first shows **This Series** results for only the series you just completed; use **Continue to Overall Stats** to open cumulative stats.
 
 ## Stats and history
-The **Stats** screen shows average, high game, high series, strike/spare percentages, leave conversions, and performance breakdowns. Filters include league/practice, bowling center, lane, ball used, and oil pattern.
+The **Stats** screen shows average, high game, high series, strike/spare percentages, leave conversions, and performance breakdowns. Filters include league/practice, bowling center, lane, ball used, and oil pattern. Quick-mode frames contribute normal scoring/spare statistics and any manually flagged split attempts/conversions. Exact standing-pin patterns, single-pin/10-pin stats, and per-leave conversion rows come from Detailed Scoring.
 
 Use **History** to review completed series and frame-by-frame game details. Expand a completed series to enter or correct its **Entering Average** later. Saving it immediately updates that series handicap and the league running-average calculations.
 

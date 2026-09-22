@@ -25,4 +25,35 @@ function metaValue(s,g,kind){if(kind==='center')return metaText(s.center);if(kin
 export function filterSessionsByMeta(sessions=[],filters={}){return sessions.filter(s=>!filters.center||metaKey(metaValue(s,null,'center'))===metaKey(filters.center)).filter(s=>!filters.oil||metaKey(metaValue(s,null,'oil'))===metaKey(filters.oil)).map(s=>({...s,games:(s.games||[]).filter(g=>(!filters.lane||metaKey(metaValue(s,g,'lane'))===metaKey(filters.lane))&&(!filters.ball||metaKey(metaValue(s,g,'ball'))===metaKey(filters.ball)))})).filter(s=>s.games.length);}
 export function metadataValues(sessions=[],kind){const vals=new Map();for(const s of sessions){if(kind==='center'||kind==='oil'){const v=metaValue(s,null,kind),k=metaKey(v);if(k)vals.set(k,v);continue}for(const g of(s.games||[])){if(!gameComplete(g))continue;const v=metaValue(s,g,kind),k=metaKey(v);if(k)vals.set(k,v)}}return[...vals.values()].sort((a,b)=>a.localeCompare(b));}
 export function summarizeBreakdown(sessions=[],kind){return metadataValues(sessions,kind).map(label=>{const subset=(kind==='center'||kind==='oil')?sessions.filter(s=>metaKey(metaValue(s,null,kind))===metaKey(label)):sessions.map(s=>({...s,games:(s.games||[]).filter(g=>metaKey(metaValue(s,g,kind))===metaKey(label))})).filter(s=>s.games.length),st=summarizeSessions(subset);return{label,...st}}).filter(x=>x.games).sort((a,b)=>b.games-a.games||(b.average??0)-(a.average??0)||a.label.localeCompare(b.label));}
-export function summarizeSessions(sessions=[]){const scores=[],leaveStats={};let strikes=0,strikeOpps=0,spares=0,spareOpps=0,highSeries=null,splitOpps=0,splitMade=0,singleOpps=0,singleMade=0,tenOpps=0,tenMade=0;for(const s of sessions){let series=0,games=0;for(const g of(s.games||[])){if(!gameComplete(g))continue;const sc=scoreGame(g).final;scores.push(sc);series+=sc;games++;g.frames.slice(0,10).forEach((f,i)=>{if(!f.rolls.length)return;strikeOpps++;if(f.rolls[0]===10){strikes++;return}if(f.rolls.length>=2){spareOpps++;const made=f.rolls[0]+f.rolls[1]===10;if(made)spares++;const leave=(f.leave||[]).map(Number).sort((a,b)=>a-b);if(leave.length){const key=leave.join('-'),split=!!(f.split||isSplitLeave(leave)),row=leaveStats[key]||(leaveStats[key]={label:key,attempts:0,made:0,split,pins:leave});row.attempts++;if(made)row.made++;row.split=row.split||split;if(leave.length===1){singleOpps++;if(made)singleMade++;if(leave[0]===10){tenOpps++;if(made)tenMade++;}}if(split){splitOpps++;if(made)splitMade++;}}}});}if(games)highSeries=Math.max(highSeries??0,series);}const sum=scores.reduce((a,b)=>a+b,0),leaveDetails=Object.values(leaveStats).map(x=>({...x,pct:x.attempts?x.made/x.attempts*100:null})).sort((a,b)=>b.attempts-a.attempts||b.made-a.made||a.label.localeCompare(b.label)).slice(0,12),topLeaves=leaveDetails.map(x=>[x.label,x.attempts]);return{games:scores.length,average:scores.length?sum/scores.length:null,highGame:scores.length?Math.max(...scores):null,highSeries,strikePct:strikeOpps?strikes/strikeOpps*100:null,sparePct:spareOpps?spares/spareOpps*100:null,splitPct:splitOpps?splitMade/splitOpps*100:null,singlePinPct:singleOpps?singleMade/singleOpps*100:null,tenPinPct:tenOpps?tenMade/tenOpps*100:null,splitOpps,splitMade,singleOpps,singleMade,tenOpps,tenMade,topLeaves,leaveDetails};}
+export function summarizeSessions(sessions=[]){
+ const scores=[],leaveStats={};
+ let strikes=0,strikeOpps=0,spares=0,spareOpps=0,highSeries=null,splitOpps=0,splitMade=0,singleOpps=0,singleMade=0,tenOpps=0,tenMade=0;
+ for(const s of sessions){
+  let series=0,games=0;
+  for(const g of(s.games||[])){
+   if(!gameComplete(g))continue;
+   const sc=scoreGame(g).final;scores.push(sc);series+=sc;games++;
+   g.frames.slice(0,10).forEach(f=>{
+    if(!f.rolls.length)return;
+    strikeOpps++;
+    if(f.rolls[0]===10){strikes++;return}
+    if(f.rolls.length<2)return;
+    spareOpps++;
+    const made=f.rolls[0]+f.rolls[1]===10;
+    if(made)spares++;
+    const leave=(f.leave||[]).map(Number).sort((a,b)=>a-b);
+    const split=!!(f.split||(leave.length&&isSplitLeave(leave)));
+    if(split){splitOpps++;if(made)splitMade++}
+    if(!leave.length)return;
+    const key=leave.join('-'),row=leaveStats[key]||(leaveStats[key]={label:key,attempts:0,made:0,split,pins:leave});
+    row.attempts++;if(made)row.made++;row.split=row.split||split;
+    if(leave.length===1){singleOpps++;if(made)singleMade++;if(leave[0]===10){tenOpps++;if(made)tenMade++;}}
+   });
+  }
+  if(games)highSeries=Math.max(highSeries??0,series);
+ }
+ const sum=scores.reduce((a,b)=>a+b,0),
+  leaveDetails=Object.values(leaveStats).map(x=>({...x,pct:x.attempts?x.made/x.attempts*100:null})).sort((a,b)=>b.attempts-a.attempts||b.made-a.made||a.label.localeCompare(b.label)).slice(0,12),
+  topLeaves=leaveDetails.map(x=>[x.label,x.attempts]);
+ return{games:scores.length,average:scores.length?sum/scores.length:null,highGame:scores.length?Math.max(...scores):null,highSeries,strikePct:strikeOpps?strikes/strikeOpps*100:null,sparePct:spareOpps?spares/spareOpps*100:null,splitPct:splitOpps?splitMade/splitOpps*100:null,singlePinPct:singleOpps?singleMade/singleOpps*100:null,tenPinPct:tenOpps?tenMade/tenOpps*100:null,splitOpps,splitMade,singleOpps,singleMade,tenOpps,tenMade,topLeaves,leaveDetails};
+}
