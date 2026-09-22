@@ -1,5 +1,5 @@
 export const TELEMETRY_EVENTS=new Set([
-'first_seen','app_open','app_installed','series_started','series_completed',
+'first_seen','app_open','app_installed','bowl_viewed','series_setup_viewed','series_started','first_roll_recorded','game_completed','series_completed',
 'stats_viewed','history_viewed','help_viewed','settings_viewed','backup_exported','backup_share_used','backup_imported','cloud_sign_in','cloud_sync'
 ]);
 const text=(v,n=80)=>String(v??'').trim().slice(0,n);

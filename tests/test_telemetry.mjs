@@ -1,12 +1,11 @@
 import assert from'node:assert/strict';
 import{normalizeTelemetryEvent,normalizeTelemetryBatch,telemetryPlatform}from'../telemetry.mjs';
-const good={id:'evt-12345678',deviceId:'dev-12345678',event:'series_completed',appVersion:'public-v23',occurredAt:'2026-09-20T20:00:00Z',installMode:'installed',platform:'android',score:300,league:'Secret League'};
-assert.deepEqual(normalizeTelemetryEvent(good),{id:'evt-12345678',deviceId:'dev-12345678',event:'series_completed',appVersion:'public-v23',occurredAt:'2026-09-20T20:00:00.000Z',installMode:'installed',platform:'android'});
+const good={id:'evt-12345678',deviceId:'dev-12345678',event:'series_completed',appVersion:'public-v30',occurredAt:'2026-09-20T20:00:00Z',installMode:'installed',platform:'android',score:300,league:'Secret League'};
+assert.deepEqual(normalizeTelemetryEvent(good),{id:'evt-12345678',deviceId:'dev-12345678',event:'series_completed',appVersion:'public-v30',occurredAt:'2026-09-20T20:00:00.000Z',installMode:'installed',platform:'android'});
 assert.equal(normalizeTelemetryEvent({...good,event:'score_saved'}),null);
 assert.equal(normalizeTelemetryEvent({...good,id:'bad'}),null);
 const batch=normalizeTelemetryBatch({events:Array(30).fill(good)});assert.equal(batch.length,25);
 assert.equal('score'in batch[0],false);assert.equal('league'in batch[0],false);
 assert.equal(telemetryPlatform('Mozilla Android'),'android');assert.equal(telemetryPlatform('iPhone'),'ios');
-assert.equal(normalizeTelemetryEvent({...good,event:'cloud_sign_in'})?.event,'cloud_sign_in');
-assert.equal(normalizeTelemetryEvent({...good,event:'cloud_sync'})?.event,'cloud_sync');
+for(const event of ['cloud_sign_in','cloud_sync','bowl_viewed','series_setup_viewed','first_roll_recorded','game_completed'])assert.equal(normalizeTelemetryEvent({...good,event})?.event,event);
 console.log('telemetry privacy allowlist tests passed');
