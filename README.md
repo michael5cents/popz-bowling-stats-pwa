@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Current app version: **public-v27**
+Current app version: **public-v28**
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 
@@ -25,15 +25,15 @@ Open **https://popzbowling.com** in a modern browser.
 - iPhone/iPad: open the site in Safari, tap **Install App**, then follow **Share → Add to Home Screen → Add**.
 - The Install App button hides when the app is already running in standalone installed mode.
 
-## Current public-v27 behavior
+## Current public-v28 behavior
 - Default handicap for new series: **90% of 220**.
 - Bowling-center filtering also limits the lane list and lane breakdown to that center.
 - **Finish Series** first shows statistics for only the just-completed series, then offers **Continue to Overall Stats** for cumulative stats.
 - If the entering average is blank, the app uses the stored running average for the same league or Practice when available; **Entering / Current Average** remains editable during bowling and immediately updates handicap.
 - League average rules are configurable per league in **Settings → League Average Rule**. A league can keep carrying its book average, or use the book average only until a chosen number of actual games is completed; after that threshold, the app uses the whole-number actual pinfall average with the fraction dropped.
-- PWA manifest, icons, service worker, and offline cache are versioned for public-v27.
+- PWA manifest, icons, service worker, and offline cache are versioned for public-v28.
 - **Google Sync** is a Pro-designated feature and is visibly labeled **PRO PREVIEW** while preview access is enabled. First sign-in merges existing local completed history with the user's private Firestore history, then subsequent devices use the same merge/tombstone rules automatically. Bowler name and per-league average rules sync; device-specific Stats filters do not.
-- **Advanced Shot Tracking** is implemented in public-v26 as a Pro-designated feature: Ball + Stand Board + Target Board carry forward until changed, snapshot on the first ball of each frame, preserve mid-game moves and ball changes, do not get overwritten by spare shots, carry into the next game, and appear as frame ranges in History. Previously recorded setup history remains visible even if Pro access later lapses; the entitlement gate controls recording new setup data.
+- **Advanced Shot Tracking** is a Pro-designated feature, but public-v28 makes it **off by default**. A bowler must explicitly enable it in **Settings -> Advanced Shot Tracking** before the Ball + Stand Board + Target Board controls appear or new frame-level setup snapshots are recorded. Normal game-level Ball and Lane tracking remains available while it is off. The preference is device-local, so enabling it on one device does not silently enable it on another. Previously recorded setup history remains visible and is never erased by turning the preference off.
 - Signed-in users sync when the app opens/returns online or foreground, after important completed-history/settings changes, and on a 60-second background check while open. Manual **Sync now** is also available.
 - Export / Import / Share Backup remains available as recovery and manual-transfer fallback.
 - Anonymous telemetry tracks first seen/app opens, install events, series started/completed, Stats/History/Help/Settings views, backup export/share/import usage, Google sign-in use, and manual cloud-sync use. It does not receive the Google identity, bowling content, or cloud documents. Events queue locally while offline and flush when connectivity returns.

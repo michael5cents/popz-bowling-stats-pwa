@@ -25,6 +25,10 @@ Current/future Pro features:
 - **AI Bowling Coach / Analyze My Bowling** — research candidate and possible future Pro incentive. The app should compute the statistics first, then give an AI a compact evidence packet to produce post-series observations, confidence-aware interpretations, and suggested experiments. Validate usefulness and model requirements in the private Bowling app before any public rollout.
 - Future premium analysis built from the bowler's own history
 
+## Public usability research
+- **Simplified scoring mode — research candidate, not implemented yet.** Test a Quick Scoring option for bowlers who only want to enter strikes/spares/open pin counts without identifying every standing pin after each first ball. Keep the current pin-deck/leave workflow as Detailed Scoring for users who want leave and conversion analytics. Do not remove detailed data collection; make the extra detail optional.
+- Current adoption is still very early. On September 21, 2026 the telemetry dashboard showed 6 devices but no meaningful bowling use yet. Do not over-optimize pricing, Founder caps, or advanced workflows from that sample; continue collecting real usage before making those decisions.
+
 ## Entitlement architecture
 Firestore path: `/users/{uid}/entitlements/pro`
 
@@ -38,7 +42,7 @@ Schema:
 Client apps may **read** their own entitlement but may never write it. Firestore rules reserve entitlement and billing paths for a trusted future billing/admin backend.
 
 ## Preview period
-`PRO_PREVIEW_ENABLED=true` currently unlocks all Pro-designated features without payment. public-v26 makes that status visible in the header and **Settings → Account & Plan**, labels Google Sync and Advanced Shot Tracking as **PRO PREVIEW**, and lets current testers exercise the paid-feature workflow before pricing is chosen.
+`PRO_PREVIEW_ENABLED=true` currently grants access to all Pro-designated features without payment. The header and **Settings -> Account & Plan** show that status and label Google Sync and Advanced Shot Tracking as **PRO PREVIEW**. Starting in public-v28, Advanced Shot Tracking remains available during preview but is **off by default**; each device must explicitly enable it in Settings before Ball + Stand + Target inputs appear or new frame-level setup snapshots are recorded.
 
 When paid access is ready, preview can be disabled after the payment/entitlement backend exists. Existing testers can be assigned `founder` or `complimentary` entitlement before enforcement.
 

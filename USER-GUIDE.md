@@ -14,7 +14,7 @@ Open `popzbowling.com`. On Android/Chrome, tap **Install App**. On iPhone/iPad, 
 
 ## Record a game
 - Enter the ball used and lane number(s) for the game.
-- During **PRO PREVIEW**, Advanced Shot Tracking is unlocked. Enter **Stand Board** and **Target Board**; Ball + Stand + Target are snapshotted with the first ball of each frame and carry forward until you change them. Spare shots do not replace the first-ball setup.
+- **Advanced Shot Tracking is off by default.** During **PRO PREVIEW** it is unlocked, but you must first open **Settings -> Advanced Shot Tracking** and turn it on. Then Stand Board and Target Board appear while bowling and Ball + Stand + Target are snapshotted with the first ball of each frame and carry forward until you change them. Spare shots do not replace the first-ball setup. Turning the setting off hides those inputs and stops new frame-level setup recording without deleting existing tracked history.
 - Use the on-screen pin keypad after each roll.
 - Strikes, spares, opens, 10th-frame scoring, scratch score, handicap, and handicap score are calculated automatically.
 - After a first ball leaves pins standing, mark the standing pins on the pin deck and tap **Save Leave & Continue**.
@@ -33,7 +33,7 @@ Use **History** to review completed series and frame-by-frame game details. Expa
 In **Settings → League Average Rule**, choose a recorded league and select how that league establishes its average. **Carry Book Average** preserves the original behavior. **Establish After X Games** uses the book/entering average until the selected number of completed actual games is reached, then switches to total actual pinfall divided by actual games with the fraction dropped. The rule is saved separately for each league and is included when backups are transferred between devices.
 
 ## Free vs Pro Preview
-The header and **Settings → Account & Plan** show whether the app is running as Free, Pro Preview, or Pro. During the current public test, **Pro Preview** is enabled for everyone, so Google Sync and Advanced Shot Tracking are unlocked without payment. Core scoring, handicap, history, existing statistics, leave tracking, league-average rules, offline use, and manual backup remain the intended Free baseline.
+The header and **Settings -> Account & Plan** show whether the app is running as Free, Pro Preview, or Pro. During the current public test, **Pro Preview** is enabled for everyone, so Google Sync and Advanced Shot Tracking are available without payment. Advanced Shot Tracking still requires an explicit device-local opt-in in Settings. Core scoring, handicap, history, existing statistics, leave tracking, league-average rules, offline use, and manual backup remain the intended Free baseline.
 
 ## Back up and restore
 Your scores are always stored locally on the device so scoring continues to work offline. If you enable **Google Sync**, completed series are also stored privately under your signed-in Firebase account and synchronize when internet access is available. The app still keeps Export Backup / Import JSON as an extra recovery option.
