@@ -7,8 +7,8 @@ const app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
 const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
 const latest=JSON.parse(readFileSync(new URL('../latest-version.json',import.meta.url),'utf8'));
 
-assert.equal(latest.version,'public-v30');
-assert.match(app,/APP_VERSION='public-v30'/);
+assert.equal(latest.version,'public-v31');
+assert.match(app,/APP_VERSION='public-v31'/);
 assert.match(app,/scoringMode:'simplified'/);
 assert.match(app,/const scoringMode=\(\)=>state\?\.settings\?\.scoringMode==='detailed'\?'detailed':'simplified'/);
 assert.match(app,/before===0&&pins<10&&detailedScoring\(\)/);

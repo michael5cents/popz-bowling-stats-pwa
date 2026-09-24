@@ -16,6 +16,8 @@ assert.deepEqual(effectiveAccess({}, {preview:false,now}),{tier:'free',label:'Po
 assert.deepEqual(effectiveAccess({}, {preview:true,now}),{tier:'pro-preview',label:'Pro Preview',pro:true,preview:true});
 assert.equal(canUseFeature(PRO_FEATURES.GOOGLE_SYNC,{}, {preview:true,now}),true);
 assert.equal(canUseFeature(PRO_FEATURES.GOOGLE_SYNC,{}, {preview:false,now}),false);
+assert.equal(canUseFeature(PRO_FEATURES.MULTI_PLAYER_SCORING,{}, {preview:true,now}),true);
+assert.equal(canUseFeature(PRO_FEATURES.MULTI_PLAYER_SCORING,{}, {preview:false,now}),false);
 assert.equal(canUseFeature('basic_scoring',{}, {preview:false,now}),true);
 
 console.log('entitlement and Pro Preview tests passed');

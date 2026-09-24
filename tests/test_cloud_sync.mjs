@@ -37,4 +37,6 @@ assert.equal(merged.deletedSessions.some(x=>x.id==='x'),true);
 
 const withActive={...local,activeSessionId:'a'};
 assert.equal(stateForCloud(withActive).sessions.length,0);
+const grouped={...base(),activeSessionId:'b',activeGroup:{id:'g',sessionIds:['a','b'],activeIndex:1},sessions:[session('a','2026-09-20T23:00:00Z'),session('b','2026-09-20T23:00:00Z'),session('c','2026-09-20T22:00:00Z')]};
+assert.deepEqual(stateForCloud(grouped).sessions.map(s=>s.id),['c'],'active team series stay local until the team session is finished');
 console.log('cloud sync merge and active-series protection tests passed');

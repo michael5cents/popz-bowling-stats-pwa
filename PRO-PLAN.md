@@ -23,7 +23,7 @@ Current/future Pro features:
 - Line-change and lane-transition analytics — future
 - Advanced line/ball/oil analytics — future
 - **AI Bowling Coach / Analyze My Bowling** — research candidate and possible future Pro incentive. The app should compute the statistics first, then give an AI a compact evidence packet to produce post-series observations, confidence-aware interpretations, and suggested experiments. Validate usefulness and model requirements in the private Bowling app before any public rollout.
-- **Multi-player league/session scoring** — possible future Pro incentive. Planning only; not implemented. One device would score multiple bowlers in bowling order while keeping each bowler's averages, handicap, History, Stats, backup data, and cloud records separate. Preferred architecture is linked per-bowler series under a shared group-session ID so single-player data and the existing scoring engine remain compatible.
+- **Multi-player league/session scoring** — implemented in public-v31 as a Pro feature. One device scores 2–12 bowlers in bowling order while keeping each bowler's averages, handicap, History, Stats, backup data, and cloud records separate. The implementation uses linked per-bowler series under a shared group-session ID so single-player data and the existing scoring engine remain compatible.
 - Future premium analysis built from the bowler's own history
 
 ## Public usability research
@@ -43,13 +43,13 @@ Schema:
 Client apps may **read** their own entitlement but may never write it. Firestore rules reserve entitlement and billing paths for a trusted future billing/admin backend.
 
 ## Preview period
-`PRO_PREVIEW_ENABLED=true` currently grants access to all Pro-designated features without payment. The header and **Settings -> Account & Plan** show that status and label Google Sync and Advanced Shot Tracking as **PRO PREVIEW**. Starting in public-v28, Advanced Shot Tracking remains available during preview but is **off by default**; each device must explicitly enable it in Settings before Ball + Stand + Target inputs appear or new frame-level setup snapshots are recorded.
+`PRO_PREVIEW_ENABLED=true` currently grants access to all Pro-designated features without payment. The header and **Settings -> Account & Plan** show that status and label Google Sync, Advanced Shot Tracking, and Team / Multi-Bowler scoring as **PRO PREVIEW**. Starting in public-v28, Advanced Shot Tracking remains available during preview but is **off by default**; each device must explicitly enable it in Settings before Ball + Stand + Target inputs appear or new frame-level setup snapshots are recorded.
 
 When paid access is ready, preview can be disabled after the payment/entitlement backend exists. Existing testers can be assigned `founder` or `complimentary` entitlement before enforcement.
 
 ## Commercial production checklist — saved for review
 
-1. **Define Pro clearly.** Keep the Free app permanently useful; Pro is for Google Sync, Advanced Shot Tracking, future cloud recovery, and deeper bowling analytics.
+1. **Define Pro clearly.** Keep the Free app permanently useful; Pro is for Google Sync, Advanced Shot Tracking, Team / Multi-Bowler scoring, future cloud recovery, and deeper bowling analytics.
 2. **Choose billing structure.** Decide monthly, annual, and whether Lifetime is sold at all. Architecture already supports any combination.
 3. **Founder treatment.** Existing qualifying testers receive **Founder Pro free for life** before Pro Preview ends.
 4. **Trial policy.** Decide no trial vs 7/14/30 days. A 14-day trial is the current working recommendation because it spans multiple bowling nights.

@@ -1,4 +1,5 @@
 import{mergeBowlingStates}from'./transfer.mjs';
+import{activeSessionIds}from'./multiplayer.mjs';
 
 const stamp=value=>{
   const t=Date.parse(value||'');
@@ -10,7 +11,7 @@ export function mergeCloudBowlingState(local,remote,mergedAt=new Date().toISOStr
   const localSettingsAt=stamp(local?.settingsUpdatedAt);
   const remoteSettingsAt=stamp(remote?.settingsUpdatedAt);
   const localRules=local?.settings?.leagueAverageRules||{};
-  const hasMeaningfulLocalSettings=!!String(local?.settings?.bowlerName||'').trim()||Object.keys(localRules).length>0;
+  const hasMeaningfulLocalSettings=!!String(local?.settings?.bowlerName||'').trim()||(local?.settings?.bowlerProfiles||[]).length>0||Object.keys(localRules).length>0;
   if(remoteSettingsAt>0&&(!hasMeaningfulLocalSettings||remoteSettingsAt>localSettingsAt)){
     merged.state.settings={...(local.settings||{}),...(remote.settings||{})};
     merged.state.settings.leagueAverageRules={
@@ -23,15 +24,16 @@ export function mergeCloudBowlingState(local,remote,mergedAt=new Date().toISOStr
 }
 
 export function stateForCloud(state){
-  const active=state?.activeSessionId||null;
+  const active=activeSessionIds(state);
   const settings={
     bowlerName:state?.settings?.bowlerName||'',
+    bowlerProfiles:state?.settings?.bowlerProfiles||[],
     leagueAverageRules:state?.settings?.leagueAverageRules||{}
   };
   return{
     settings,
     settingsUpdatedAt:state?.settingsUpdatedAt||state?.updatedAt||null,
-    sessions:(state?.sessions||[]).filter(s=>s?.id&&s.id!==active),
+    sessions:(state?.sessions||[]).filter(s=>s?.id&&!active.has(s.id)),
     deletedSessions:(state?.deletedSessions||[]).filter(x=>x?.id),
     updatedAt:state?.updatedAt||null
   };
@@ -45,6 +47,7 @@ export function cloudSnapshotToState(profile={},sessions=[],deletedSessions=[]){
     settingsUpdatedAt:profile.settingsUpdatedAt||profile.updatedAt||null,
     settings:profile.settings||{},
     activeSessionId:null,
+    activeGroup:null,
     sessions:sessions.filter(Boolean),
     deletedSessions:deletedSessions.filter(Boolean),
     lastBackupAt:null,

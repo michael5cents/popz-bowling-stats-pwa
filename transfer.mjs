@@ -1,3 +1,5 @@
+import{activeSessionIds}from'./multiplayer.mjs';
+
 const stamp=value=>{
   const t=Date.parse(value||'');
   return Number.isFinite(t)?t:0;
@@ -14,6 +16,7 @@ export function mergeBowlingStates(current,incoming,mergedAt=new Date().toISOStr
   if(!incoming||!Array.isArray(incoming.sessions))throw Error('Invalid bowling backup');
 
   const localActiveId=current.activeSessionId||null;
+  const localActiveIds=activeSessionIds(current);
   const deleted=new Map();
   for(const item of [...(current.deletedSessions||[]),...(incoming.deletedSessions||[])]){
     if(!item?.id)continue;
@@ -21,7 +24,7 @@ export function mergeBowlingStates(current,incoming,mergedAt=new Date().toISOStr
     if(!old||stamp(item.deletedAt)>=stamp(old.deletedAt))deleted.set(item.id,item);
   }
 
-  if(localActiveId)deleted.delete(localActiveId);
+  for(const id of localActiveIds)deleted.delete(id);
 
   const mergedSessions=[...current.sessions];
   const byId=new Map();
@@ -40,14 +43,14 @@ export function mergeBowlingStates(current,incoming,mergedAt=new Date().toISOStr
       continue;
     }
     const local=mergedSessions[index];
-    if(remote.id===localActiveId){kept++;continue}
+    if(localActiveIds.has(remote.id)){kept++;continue}
     if(sessionStamp(remote)>sessionStamp(local)){
       mergedSessions[index]=remote;
       updated++;
     }else kept++;
   }
   const survivingSessions=mergedSessions.filter(session=>{
-    if(!session?.id||session.id===localActiveId)return true;
+    if(!session?.id||localActiveIds.has(session.id))return true;
     const tomb=deleted.get(session.id);
     if(!tomb)return true;
     const remove=stamp(tomb.deletedAt)>=sessionStamp(session);

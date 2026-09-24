@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Current app version: **public-v30**
+Current app version: **public-v31**
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 
@@ -25,16 +25,17 @@ Open **https://popzbowling.com** in a modern browser.
 - iPhone/iPad: open the site in Safari, tap **Install App**, then follow **Share → Add to Home Screen → Add**.
 - The Install App button hides when the app is already running in standalone installed mode.
 
-## Current public-v30 behavior
+## Current public-v31 behavior
 - Default handicap for new series: **90% of 220**.
 - Bowling-center filtering also limits the lane list and lane breakdown to that center.
 - **Finish Series** first shows statistics for only the just-completed series, then offers **Continue to Overall Stats** for cumulative stats.
 - If the entering average is blank, the app uses the stored running average for the same league or Practice when available; **Entering / Current Average** remains editable during bowling and immediately updates handicap.
 - League average rules are configurable per league in **Settings → League Average Rule**. A league can keep carrying its book average, or use the book average only until a chosen number of actual games is completed; after that threshold, the app uses the whole-number actual pinfall average with the fraction dropped.
-- PWA manifest, icons, service worker, and offline cache are versioned for public-v30.
-- **Google Sync** is a Pro-designated feature and is visibly labeled **PRO PREVIEW** while preview access is enabled. First sign-in merges existing local completed history with the user's private Firestore history, then subsequent devices use the same merge/tombstone rules automatically. Bowler name and per-league average rules sync; device-specific Stats filters do not.
-- **Quick Scoring is the default in public-v30.** Users enter only how many pins fell on each roll; scoring, strikes, spares, opens, 10th-frame logic, handicap, history, and normal statistics continue to work without a standing-pin step. After a non-strike first ball, Quick mode offers a one-tap **Mark Split** flag so overall Split Conversion % remains accurate without identifying exact pins. The Split flag can also be corrected later in the frame editor. **Detailed Scoring** is available in Settings for users who want the exact standing-pin pattern, single-pin/10-pin detail, and per-leave conversion analytics.
+- PWA manifest, icons, service worker, and offline cache are versioned for public-v31.
+- **Google Sync** is a Pro-designated feature and is visibly labeled **PRO PREVIEW** while preview access is enabled. First sign-in merges existing local completed history with the user's private Firestore history, then subsequent devices use the same merge/tombstone rules automatically. Bowler name, saved team-bowler profiles, and per-league average rules sync; device-specific Stats filters do not.
+- **Quick Scoring remains the default in public-v31.** Users enter only how many pins fell on each roll; scoring, strikes, spares, opens, 10th-frame logic, handicap, history, and normal statistics continue to work without a standing-pin step. After a non-strike first ball, Quick mode offers a one-tap **Mark Split** flag so overall Split Conversion % remains accurate without identifying exact pins. The Split flag can also be corrected later in the frame editor. **Detailed Scoring** is available in Settings for users who want the exact standing-pin pattern, single-pin/10-pin detail, and per-leave conversion analytics.
 - **Advanced Shot Tracking** is a Pro-designated feature and remains **off by default**. A bowler must explicitly enable it in **Settings -> Advanced Shot Tracking** before the Ball + Stand Board + Target Board controls appear or new frame-level setup snapshots are recorded. Normal game-level Ball and Lane tracking remains available while it is off. The preference is device-local, so enabling it on one device does not silently enable it on another. Previously recorded setup history remains visible and is never erased by turning the preference off.
+- **Team / Multi-Bowler scoring is a Popz Bowling Pro feature in public-v31.** One device can score 2–12 bowlers in bowling order. Each bowler gets an independent linked series with separate entering average, handicap, scores, History, Stats, backup data, and cloud records. The scorer can tap a bowler tab to switch manually between frames, and the app advances automatically after each completed frame. During **PRO PREVIEW** it is unlocked for testing.
 - Signed-in users sync when the app opens/returns online or foreground, after important completed-history/settings changes, and on a 60-second background check while open. Manual **Sync now** is also available.
 - Export / Import / Share Backup remains available as recovery and manual-transfer fallback.
 - Anonymous telemetry tracks first seen/app opens plus the activation funnel: Bowl viewed, series setup shown, series started, first roll recorded, game completed, and series completed. It also tracks Stats/History/Help/Settings views, backup export/share/import usage, Google sign-in use, and manual cloud-sync use. It does not receive the Google identity, bowling content, or cloud documents. Events queue locally while offline and flush when connectivity returns. The private dashboard shows the 30-day funnel and notes that early device/open counts include owner QA checks on at least one personal device, possibly two.
@@ -77,4 +78,4 @@ Then open `http://localhost:8080`.
 - **History is grouped by League / Category first, then by Date** so all series from the same league stay together while each bowling date remains easy to scan.
 
 ## Commercialization note
-public-v26 is the first visible **Pro Preview** release. The header and Settings show the effective plan (`Free`, `Pro Preview`, or `Pro`), premium features carry PRO labels, Google Sync is gated, and Advanced Shot Tracking is now implemented behind the same entitlement system. Pro Preview remains enabled, so current testers lose nothing. Pricing and checkout are still undecided. See `PRO-PLAN.md`.
+public-v26 is the first visible **Pro Preview** release. The header and Settings show the effective plan (`Free`, `Pro Preview`, or `Pro`), and premium features use the same entitlement system. Google Sync and Advanced Shot Tracking are gated there, and public-v31 adds Team / Multi-Bowler scoring to that Pro family. Pro Preview remains enabled, so current testers lose nothing. Pricing and checkout are still undecided. See `PRO-PLAN.md`.

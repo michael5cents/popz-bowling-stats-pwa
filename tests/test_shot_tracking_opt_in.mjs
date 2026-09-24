@@ -13,7 +13,7 @@ assert.match(app,/advancedShotTrackingEnabled:false/);
 assert.match(app,/shotTrackingPreference=\(\)=>state\?\.settings\?\.advancedShotTrackingEnabled===true/);
 assert.match(app,/shotTrackingActive=\(\)=>shotTrackingPreference\(\)&&hasProFeature\(PRO_FEATURES\.ADVANCED_SHOT_TRACKING\)/);
 assert.match(app,/if\(before===0&&shotTrackingActive\(\)\)/);
-assert.match(app,/if\(shotTrackingActive\(\)\)game\.currentFirstBallSetup=/);
+assert.match(app,/function makeGame\(previous=null\).*shotTrackingActive\(\).*game\.currentFirstBallSetup=\{\.\.\.setup\}/s);
 assert.match(app,/currentBallUsed'\)\.addEventListener\('change',\(\)=>shotTrackingActive\(\)\?/);
 assert.match(app,/panel\.classList\.toggle\('hidden',!shotWanted\|\|!shotAllowed\)/);
 assert.match(app,/toggle\.disabled=!shotAllowed/);
@@ -24,9 +24,9 @@ const cloud=stateForCloud({
 });
 assert.equal(cloud.settings.advancedShotTrackingEnabled,undefined,'shot-tracking opt-in must remain device-local');
 
-assert.equal(latest.version,'public-v30');
-assert.match(app,/APP_VERSION='public-v30'/);
-assert.match(sw,/SW_VERSION='public-v30'/);
-assert.match(sw,/popz-bowling-public-v30/);
+assert.equal(latest.version,'public-v31');
+assert.match(app,/APP_VERSION='public-v31'/);
+assert.match(sw,/SW_VERSION='public-v31'/);
+assert.match(sw,/popz-bowling-public-v31/);
 assert(!sw.includes('v=27'));
 console.log('Advanced Shot Tracking opt-in defaults and device-local behavior passed');

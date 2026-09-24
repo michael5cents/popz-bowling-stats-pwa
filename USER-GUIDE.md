@@ -10,7 +10,8 @@ Open `popzbowling.com`. On Android/Chrome, tap **Install App**. On iPhone/iPad, 
 2. Tap **Bowl**.
 3. Enter the date, league/practice name, bowling center, number of games, oil pattern, entering average, and handicap settings. If the average is blank, the app uses the running average already stored for that same league or Practice when available.
 4. The default handicap is **90% of 220**; change it if your league uses another formula. The **Entering / Current Average** remains editable after the series starts, and changing it recalculates handicap immediately.
-5. Tap **Start Series**.
+5. For normal scoring, leave **Scoring Session** on **Single Bowler**. For a spouse or team, choose **Team / Multi-Bowler — PRO**, enter 2–12 bowlers in bowling order, and give each bowler an entering average if needed. During **PRO PREVIEW** this Pro feature is unlocked for testing.
+6. Tap **Start Series**.
 
 ## Record a game
 - Enter the ball used and lane number(s) for the game.
@@ -21,10 +22,11 @@ Open `popzbowling.com`. On Android/Chrome, tap **Install App**. On iPhone/iPad, 
 - Use **Undo** for the most recent roll.
 - Tap an older frame to edit it; later frames remain intact and the score recalculates.
 - Tap **New Game** when the next game is ready.
-- Tap **Finish Series** when the session is over. The app first shows **This Series** results for only the series you just completed; use **Continue to Overall Stats** to open cumulative stats.
+- In **Team / Multi-Bowler** mode, Popz advances to the next bowler after each completed frame. The bowler tabs show the current order and score, and you can tap another bowler between frames if the lane order changes. **Start Next Team Game** creates the next game for every bowler together.
+- Tap **Finish Series** when the session is over. In team mode this finishes every linked bowler series together and shows a team summary. The app then lets you continue to Overall Stats or History.
 
 ## Stats and history
-The **Stats** screen shows average, high game, high series, strike/spare percentages, leave conversions, and performance breakdowns. Filters include league/practice, bowling center, lane, ball used, and oil pattern. Quick-mode frames contribute normal scoring/spare statistics and any manually flagged split attempts/conversions. Exact standing-pin patterns, single-pin/10-pin stats, and per-leave conversion rows come from Detailed Scoring.
+The **Stats** screen shows average, high game, high series, strike/spare percentages, leave conversions, and performance breakdowns. Filters include bowler, league/practice, bowling center, lane, ball used, and oil pattern. Team-scored bowlers remain separate: choose **My Bowling**, a spouse/teammate, or **All Bowlers**. Quick-mode frames contribute normal scoring/spare statistics and any manually flagged split attempts/conversions. Exact standing-pin patterns, single-pin/10-pin stats, and per-leave conversion rows come from Detailed Scoring.
 
 Use **History** to review completed series and frame-by-frame game details. Expand a completed series to enter or correct its **Entering Average** later. Saving it immediately updates that series handicap and the league running-average calculations.
 
@@ -33,13 +35,13 @@ Use **History** to review completed series and frame-by-frame game details. Expa
 In **Settings → League Average Rule**, choose a recorded league and select how that league establishes its average. **Carry Book Average** preserves the original behavior. **Establish After X Games** uses the book/entering average until the selected number of completed actual games is reached, then switches to total actual pinfall divided by actual games with the fraction dropped. The rule is saved separately for each league and is included when backups are transferred between devices.
 
 ## Free vs Pro Preview
-The header and **Settings -> Account & Plan** show whether the app is running as Free, Pro Preview, or Pro. During the current public test, **Pro Preview** is enabled for everyone, so Google Sync and Advanced Shot Tracking are available without payment. Advanced Shot Tracking still requires an explicit device-local opt-in in Settings. Core scoring, handicap, history, existing statistics, leave tracking, league-average rules, offline use, and manual backup remain the intended Free baseline.
+The header and **Settings -> Account & Plan** show whether the app is running as Free, Pro Preview, or Pro. During the current public test, **Pro Preview** is enabled for everyone, so Google Sync, Advanced Shot Tracking, and Team / Multi-Bowler scoring are available without payment. Advanced Shot Tracking still requires an explicit device-local opt-in in Settings. Core scoring, handicap, history, existing statistics, leave tracking, league-average rules, offline use, and manual backup remain the intended Free baseline.
 
 ## Back up and restore
 Your scores are always stored locally on the device so scoring continues to work offline. If you enable **Google Sync**, completed series are also stored privately under your signed-in Firebase account and synchronize when internet access is available. The app still keeps Export Backup / Import JSON as an extra recovery option.
 
 ### Use your bowling history on another device
-The easiest method in public-v23 and later is **Settings → Google Sync → Sign in with Google**. Sign in with the same Google account on each phone, tablet, or computer. Your completed series and stats merge automatically, along with your bowler name and per-league average rules. An unfinished series remains only on the device where you started it until you choose **Finish Series**, so another device cannot accidentally change a live game.
+The easiest method in public-v23 and later is **Settings → Google Sync → Sign in with Google**. Sign in with the same Google account on each phone, tablet, or computer. Your completed series and stats merge automatically, along with your bowler name, saved team-bowler profiles, and per-league average rules. An unfinished series remains only on the device where you started it until you choose **Finish Series**, so another device cannot accidentally change a live game.
 
 **Share / Transfer Backup** and **Import JSON** remain available as a manual transfer or recovery fallback. Manual import still merges rather than replaces history: unique series are kept, newer copies win, and an in-progress local series is protected.
 
