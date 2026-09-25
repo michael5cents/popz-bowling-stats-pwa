@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 import { normalizeTelemetryEvent } from '../telemetry.mjs';
-import { configureTelemetry, trackTelemetry, flushTelemetry, setTelemetryEnabled } from '../telemetry-client.mjs';
+import { configureTelemetry, trackTelemetry, flushTelemetry, setTelemetryEnabled, startTelemetry, telemetrySuppressed } from '../telemetry-client.mjs';
 import { onRequestPost } from '../functions/api/telemetry.js';
 import { renderTelemetryDashboard } from '../dashboard.mjs';
 
@@ -76,4 +76,32 @@ assert.equal(JSON.stringify(inserts).includes('PRIVATE_SETTINGS_SENTINEL'), fals
 const html = renderTelemetryDashboard({events:[{event:'settings_viewed',events:1,devices:1}]});
 assert.match(html, /<td>settings_viewed<\/td><td>1<\/td><td>1<\/td>/);
 assert.doesNotMatch(html, /dev-settings-test|PRIVATE_SETTINGS_SENTINEL/);
-console.log('Settings navigation, privacy, opt-out, offline queue, ingestion and dashboard tests passed');
+
+// Automated/headless QA must never enter the adoption telemetry dataset.
+navigator.onLine = false;
+Object.defineProperty(globalThis, 'location', { configurable:true, value:{search:''} });
+navigator.webdriver = false;
+navigator.userAgent = 'Android';
+trackTelemetry('app_open');
+assert.equal(queue().length, 1, 'normal offline telemetry still queues');
+location.search = '?qa=1';
+assert.equal(telemetrySuppressed(), true, 'qa=1 explicitly suppresses telemetry');
+startTelemetry();
+assert.equal(queue().length, 0, 'QA mode clears stale queued test telemetry');
+trackTelemetry('app_open');
+assert.equal(queue().length, 0, 'QA mode does not queue events');
+location.search = '';
+navigator.webdriver = true;
+assert.equal(telemetrySuppressed(), true, 'WebDriver automation is suppressed');
+trackTelemetry('app_open');
+assert.equal(queue().length, 0, 'WebDriver automation does not queue events');
+navigator.webdriver = false;
+navigator.userAgent = 'Mozilla/5.0 HeadlessChrome/153.0';
+assert.equal(telemetrySuppressed(), true, 'HeadlessChrome is suppressed');
+trackTelemetry('app_open');
+assert.equal(queue().length, 0, 'HeadlessChrome does not queue events');
+navigator.userAgent = 'Android';
+location.search = '?telemetry=off';
+assert.equal(telemetrySuppressed(), true, 'manual telemetry-off QA URL is suppressed');
+
+console.log('Settings navigation, privacy, opt-out, offline queue, QA suppression, ingestion and dashboard tests passed');

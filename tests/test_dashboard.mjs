@@ -14,10 +14,11 @@ const page=renderTelemetryDashboard({
  daily:[{day:'2026-09-20',devices:4,opens:5,bowl_views:4,started:3,first_rolls:2,games_completed:1,completed:1}]
 },'2026-09-20T21:00:00Z');
 assert.match(page,/Popz Bowling Telemetry/);
-assert.match(page,/Active devices • 7d/);
+assert.match(page,/Profiles seen • 7d/);
 assert.match(page,/Activation funnel/);
 assert.match(page,/First roll recorded/);
-assert.match(page,/owner QA checks/);
+assert.match(page,/QA protection/);
+assert.match(page,/simply opening the app qualifies/);
 assert.match(page,/http-equiv="refresh" content="60"/);
 assert.match(page,/Auto-refreshes every 60 seconds/);
 assert.equal(formatDashboardGeneratedAt('2026-09-21T01:00:00Z'),'Sep 20, 2026, 8:00 PM');

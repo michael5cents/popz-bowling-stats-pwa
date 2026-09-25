@@ -25,6 +25,9 @@ If the fetch script says the credential is missing:
 
 Enter the current dashboard password once. The initializer stores it in macOS Keychain only.
 
+## Production QA rule
+Automated browser tests must not contaminate adoption telemetry. public-v32 automatically suppresses WebDriver and HeadlessChrome sessions. For any manual production QA browser/profile, open `https://popzbowling.com/?qa=1` (or add `?telemetry=off`) before testing. QA suppression does not change the user's saved Anonymous usage statistics preference; it only prevents that QA session from queuing/sending adoption events.
+
 ## Security rule
 Never put the dashboard password itself in GitHub, Gitea, Markdown, Obsidian, Collective, Wiki, shell scripts, or chat handoff notes. Those locations should store only the URL, username, Cloudflare secret name, Keychain service name, and access procedure.
 
