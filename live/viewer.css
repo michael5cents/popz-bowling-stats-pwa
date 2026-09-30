@@ -1,0 +1,14 @@
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#08111f;color:#f8fafc}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at top,#172554 0,#08111f 45%);padding:20px}
+main{width:min(980px,100%);margin:0 auto}.card{background:rgba(15,23,42,.94);border:1px solid rgba(255,255,255,.1);border-radius:22px;padding:20px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px}.eyebrow{font-size:11px;font-weight:900;letter-spacing:.12em;color:#7dd3fc}
+h1{font-size:clamp(24px,5vw,38px);margin:5px 0 7px}.meta,.muted{color:#94a3b8}.badge{padding:8px 12px;border-radius:999px;font-size:12px;font-weight:900;background:#123a2a;color:#86efac;white-space:nowrap}
+.badge.final{background:#312e81;color:#c4b5fd}.badge.stale{background:#4a3218;color:#fde68a}.scorebar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
+.metric{background:#0b1324;border:1px solid #263451;border-radius:16px;padding:15px}.metric span{display:block;color:#94a3b8;font-size:11px;font-weight:800;text-transform:uppercase}.metric strong{display:block;font-size:30px;margin-top:6px}
+.game-stack{display:grid;gap:18px}.game-panel{border:1px solid #263451;border-radius:18px;background:#0b1324;overflow:hidden}.game-heading{display:flex;justify-content:space-between;gap:12px;padding:12px 14px;border-bottom:1px solid #263451}.game-heading span{color:#94a3b8}
+.frames{display:grid;grid-template-columns:repeat(10,minmax(84px,1fr));overflow-x:auto}.frame{min-width:84px;border-right:1px solid #263451}.frame:last-child{border-right:0;min-width:110px}.frame-no{text-align:center;color:#94a3b8;font-size:11px;padding:7px;border-bottom:1px solid #263451}
+.rolls{display:grid;grid-template-columns:repeat(3,1fr);min-height:38px}.roll{display:grid;place-items:center;border-left:1px solid #263451;font-weight:900;min-width:28px}.roll:first-child{border-left:0}
+.cum{min-height:48px;display:grid;place-items:center;font-size:22px;font-weight:900}.final-summary{margin-top:20px;padding:18px;border-radius:18px;background:#111936;border:1px solid #4338ca}
+.final-summary h2{margin:0 0 4px}.final-summary p{margin:0 0 14px;color:#c4b5fd}.final-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.final-grid .metric strong{font-size:24px}
+#message{text-align:center;padding:36px 16px}.hidden{display:none!important}
+@media(max-width:650px){body{padding:10px}.card{padding:15px}.scorebar{grid-template-columns:1fr 1fr}.final-grid{grid-template-columns:1fr 1fr}}

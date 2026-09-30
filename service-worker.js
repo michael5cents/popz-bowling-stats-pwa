@@ -3,7 +3,7 @@ const CACHE='popz-bowling-public-v33';
 const ASSETS=['./','./index.html','./style.css?v=33','./app.js?v=33','./scoring.mjs?v=33','./history.mjs?v=33','./transfer.mjs?v=33','./update.mjs?v=33','./telemetry.mjs?v=33','./telemetry-client.mjs?v=33','./telemetry-milestones.mjs?v=33','./cloud-sync-core.mjs?v=33','./cloud-sync.mjs?v=33','./entitlements.mjs?v=33','./multiplayer.mjs?v=33','./manifest.webmanifest','./icon-192.png?v=33','./icon-512.png?v=33','./apple-touch-icon.png?v=33'];
 
 self.addEventListener('install',e=>e.waitUntil(
-  caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())
+  caches.open(CACHE).then(c=>c.addAll([...ASSETS,'./live-share.mjs','./live-share-client.mjs','./live-share-ui.mjs','./live-share.css'])).then(()=>self.skipWaiting())
 ));
 
 self.addEventListener('activate',e=>e.waitUntil((async()=>{
@@ -16,6 +16,8 @@ self.addEventListener('activate',e=>e.waitUntil((async()=>{
 
 self.addEventListener('fetch',e=>{
   const u=new URL(e.request.url);
+  // Never store spectator snapshots or turn a network failure into the scoring app shell.
+  if(u.origin===self.location.origin&&(u.pathname.startsWith('/api/live/')||u.pathname.startsWith('/live/'))){e.respondWith(fetch(e.request));return}
   if(u.pathname.endsWith('/latest-version.json')){e.respondWith(fetch(e.request));return}
   if(e.request.method!=='GET')return;
   e.respondWith(caches.match(e.request).then(async hit=>{

@@ -1,0 +1,6 @@
+.live-share-panel { margin-bottom:16px; border:1px solid var(--accent,#557ec7); }
+.live-share-heading strong { font-size:1.08rem; }
+.live-share-heading p { margin:8px 0; }
+.live-share-actions { display:flex;flex-wrap:wrap;gap:8px;margin:12px 0; }
+.live-share-panel label { display:grid;gap:6px;font-size:.85rem; }
+.live-share-panel input { width:100%;min-width:0;font-size:.8rem; }

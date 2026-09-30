@@ -2,6 +2,7 @@ export const PRO_FEATURES=Object.freeze({
   GOOGLE_SYNC:'google_sync',
   ADVANCED_SHOT_TRACKING:'advanced_shot_tracking',
   MULTI_PLAYER_SCORING:'multi_player_scoring',
+  LIVE_SCORE_SHARING:'live_score_sharing',
   ADVANCED_LINE_ANALYTICS:'advanced_line_analytics',
   CLOUD_BACKUP:'cloud_backup'
 });
