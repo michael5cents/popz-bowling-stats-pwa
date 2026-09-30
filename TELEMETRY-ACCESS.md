@@ -39,3 +39,10 @@ It uses the same scripts. If its Keychain entry is absent, run the initializer o
 
 ## Raw D1 report
 `scripts/telemetry-report.sh` remains useful when Wrangler has valid Cloudflare/D1 authorization. If that path fails, use the Keychain-backed dashboard fetch script instead of searching old chats or reconstructing credentials.
+
+## public-v33 milestone durability
+- New v33+ series carry a local telemetry eligibility/origin marker so bowling milestones can be reconciled from saved IndexedDB state after an offline period or app restart.
+- `series_started`, `first_roll_recorded`, `game_completed`, and `series_completed` use deterministic milestone IDs. Team / Multi-Bowler sessions emit one milestone per team stage rather than one per bowler.
+- The local queue is removed only after `/api/telemetry` returns a complete acknowledgement for the submitted batch. A local acknowledgement ledger prevents already-accepted milestones from being requeued on every launch; D1 `INSERT OR IGNORE` remains the final duplicate guard.
+- Reconciliation runs at app start, connectivity/foreground return, and periodically while the app is open. Synced/imported series from another device are not replayed as local telemetry.
+- Telemetry-off and QA-suppressed series are ineligible for later milestone backfill. Pre-v33 history is intentionally not reconstructed into the cleaned telemetry baseline.
