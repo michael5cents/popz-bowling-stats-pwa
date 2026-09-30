@@ -17,6 +17,12 @@ database_name = "popz-bowling-live"
 database_id = "4e13df82-3fb9-4225-8174-6c99c7fa7590"
 migrations_dir = "live-migrations"
 
+[[d1_databases]]
+binding = "RUNTIME_DB"
+database_name = "popz-bowling-runtime"
+database_id = "177005c0-0b95-4187-8a39-bfc0fa564f9a"
+migrations_dir = "runtime-migrations"
+
 [env.production]
 
 [env.production.vars]
@@ -32,3 +38,9 @@ binding = "LIVE_SHARE_DB"
 database_name = "popz-bowling-live"
 database_id = "4e13df82-3fb9-4225-8174-6c99c7fa7590"
 migrations_dir = "live-migrations"
+
+[[env.production.d1_databases]]
+binding = "RUNTIME_DB"
+database_name = "popz-bowling-runtime"
+database_id = "177005c0-0b95-4187-8a39-bfc0fa564f9a"
+migrations_dir = "runtime-migrations"

@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Current app version: **public-v33**
+Current app version: **public-v35**
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 
@@ -15,7 +15,7 @@ This repository is the public/friends version only. It is completely separate fr
 - public-v23 adds optional Google sign-in + Firestore sync. Signed-in users store completed series and the small set of cross-device settings under their Firebase UID so the same history appears after signing into another device with the same Google account. An in-progress series stays local until Finish Series.
 - Firestore rules restrict `/users/{uid}` and every nested sync document to that authenticated UID; all other reads/writes are denied.
 - public-v23 continues privacy-minimal anonymous product-usage events in the separate Cloudflare D1 telemetry database. Events identify only the random device ID, event type, app version, timestamp, installed/browser mode, and coarse platform. Scores, names, league names, centers, balls, oil patterns, averages, leaves, frames, and backup contents are never accepted by the telemetry endpoint.
-- Anonymous usage statistics are On by default and can be turned Off in Settings; the telemetry queue is stored separately from bowling backups.
+- Anonymous usage & diagnostics are On by default and can be turned Off in Settings; adoption telemetry and runtime-diagnostic queues are stored separately from bowling backups.
 - The installed PWA works offline after its files have been cached.
 - Users protect their history with **Export Backup** and restore it with **Import JSON**.
 
@@ -51,15 +51,16 @@ Open **https://popzbowling.com** in a modern browser.
 
 ## Hosting and deployment
 - **public-v34 adds Share My Scores (Pro / Pro Preview)** while retaining public-v33 telemetry. Start sharing from Bowl, send the read-only link, and stop anytime, including after finishing. Team sharing stays with the chosen bowler. Live snapshots use their own D1 database, never telemetry; the private app is untouched. See [LIVE-SHARING.md](LIVE-SHARING.md) for usage, privacy, expiry and deployment details.
+- **public-v35 adds runtime-health monitoring without depending on the main app module.** `runtime-monitor.js` loads before `app.js`, records privacy-safe `boot_started` / `app_ready` milestones plus sanitized script/stylesheet load errors, uncaught errors, and unhandled promise rejections. Reports use a separate D1 database (`popz-bowling-runtime`) and endpoint (`/api/runtime`), are suppressed for WebDriver/HeadlessChrome/`?qa=1`, and follow the same Anonymous usage & diagnostics On/Off setting. If the main app does not become ready within 8 seconds, the user sees a recovery message while their saved bowling data remains untouched. `/api/health` checks telemetry/live-share/runtime database bindings and reports only coarse recent-error/startup-failure flags for external availability monitoring.
 - Production: Cloudflare Pages project `popzbowling`.
 - Primary custom domain: `popzbowling.com`.
 - Cloudflare Pages default domain: `popzbowling.pages.dev`.
 - Source of truth: GitHub `michael5cents/popz-bowling-stats-pwa`.
 - Secondary backup: Gitea `michael5cents/popz-bowling-stats-pwa` on the private LAN.
 - Cloudflare deployment is currently performed with Wrangler rather than Git integration.
-- Pages Functions endpoint `/api/telemetry` writes to D1 database `popz-bowling-telemetry` through binding `TELEMETRY_DB`; `scripts/telemetry-report.sh` returns aggregate usage counts without exposing bowling content.
+- Pages Functions endpoint `/api/telemetry` writes adoption events to D1 database `popz-bowling-telemetry` through binding `TELEMETRY_DB`. `/api/runtime` writes privacy-safe startup/error diagnostics to separate D1 `popz-bowling-runtime` through `RUNTIME_DB`. `/api/health` probes telemetry, live-sharing, and runtime dependencies without returning bowling or identity data; `scripts/telemetry-report.sh` remains available for aggregate usage counts.
 - Google Sync backend: Firebase project `popz-bowling-stats`, Google Authentication, and Firestore `(default)` in `nam5`. Firebase configuration/rules are kept in `.firebaserc`, `firebase.json`, `firestore.rules`, and `firestore.indexes.json`.
-- Private aggregate dashboard: `https://popzbowling.com/telemetry-dashboard`. It is protected by HTTP Basic Auth (`michael` + Cloudflare secret `TELEMETRY_DASHBOARD_PASSWORD`), is `noindex`, uses `no-store`, renders only aggregate metrics/tables—never raw device IDs or bowling data—and automatically refreshes every 60 seconds.
+- Private aggregate dashboard: `https://popzbowling.com/telemetry-dashboard`. It is protected by HTTP Basic Auth (`michael` + Cloudflare secret `TELEMETRY_DASHBOARD_PASSWORD`), is `noindex`, uses `no-store`, renders adoption metrics plus runtime-health cards/latest sanitized errors—never raw device/runtime IDs or bowling data—and automatically refreshes every 60 seconds.
 - Dashboard access runbook: `TELEMETRY-ACCESS.md`. Normal terminal access is one command: `./scripts/telemetry-dashboard-fetch.sh > /tmp/popz-telemetry-dashboard.html`. The password itself is never committed; the script reads it from macOS Keychain service `popzbowling-telemetry-dashboard`, account `michael`. If Keychain is missing the credential, run `./scripts/telemetry-dashboard-init.sh` once.
 
 Release rule: every public release must update `APP_VERSION`, `SW_VERSION`, service-worker/cache asset versions, and `latest-version.json` to the same version. Both `latest-version.json` and `service-worker.js` are served with `Cache-Control: no-store`; service-worker registration uses `updateViaCache: 'none'` so installed copies always check the current worker.
