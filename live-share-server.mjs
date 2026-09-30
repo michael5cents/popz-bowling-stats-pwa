@@ -60,6 +60,16 @@ async function readBody(request) {
   try{return JSON.parse(await new Blob(parts).text());}catch{throw fail(400,'Invalid JSON');}
 }
 
+async function limitNewRecord(db,request,now) {
+  // No raw IP is retained. Both link creation and unknown-token Stop tombstones are bounded.
+  const bucket=await hash(Math.floor(now/3600000)+':'+(request.headers.get('CF-Connecting-IP')||'local'));
+  await db.prepare('DELETE FROM live_create_limits WHERE expires_at <= ?').bind(now).run();
+  const limit=await db.prepare(`INSERT INTO live_create_limits (bucket,count,expires_at) VALUES (?,1,?)
+    ON CONFLICT(bucket) DO UPDATE SET count=count+1 RETURNING count`).bind(bucket,now+3600000).first();
+  if(limit.count>30)throw fail(429,'Too many new links. Please try again later.');
+  await db.prepare('DELETE FROM live_shares WHERE expires_at <= ?').bind(now-ACTIVE_TTL).run();
+}
+
 export async function handleLiveRequest({request,env,params},options={}) {
   const now=options.now??Date.now(),authorize=options.authorize??authorizeLiveCreate;
   try {
@@ -73,6 +83,7 @@ export async function handleLiveRequest({request,env,params},options={}) {
     if(method==='GET') {
       if(!row)throw fail(404,'This link is unavailable');
       if(row.status==='stopped'||row.expires_at<=now)throw fail(410,'This link has stopped or expired');
+      if(!row.snapshot)throw fail(503,'This link is starting. Please retry.');
       return reply({status:row.status,updatedAt:new Date(row.updated_at).toISOString(),expiresAt:row.expires_at,snapshot:JSON.parse(row.snapshot)});
     }
     const secret=(request.headers.get('Authorization')||'').replace(/^Bearer /,'');
@@ -80,6 +91,7 @@ export async function handleLiveRequest({request,env,params},options={}) {
     const secretHash=await hash(secret);
     if(row&&row.secret_hash!==secretHash)throw fail(403,'Publisher authorization required');
     if(method==='DELETE') {
+      if(!row)await limitNewRecord(db,request,now);
       // A tombstone also blocks a timed-out creation request arriving AFTER Stop.
       await db.prepare(`INSERT INTO live_shares (token,secret_hash,status,snapshot,revision,created_at,updated_at,expires_at)
         VALUES (?,?,'stopped',NULL,0,?,?,?) ON CONFLICT(token) DO UPDATE SET status='stopped',snapshot=NULL,updated_at=excluded.updated_at
@@ -92,14 +104,7 @@ export async function handleLiveRequest({request,env,params},options={}) {
     if(!Number.isSafeInteger(revision)||revision<1)throw fail(400,'Invalid revision');
     if(method==='POST'&&!row) {
       if(!await authorize(request,env))throw fail(403,'Share My Scores requires Popz Bowling Pro');
-      // Limit anonymous preview creation. IPs are never stored; buckets expire after one hour.
-      const bucket=await hash(Math.floor(now/3600000)+':'+(request.headers.get('CF-Connecting-IP')||'local'));
-      await db.prepare('DELETE FROM live_create_limits WHERE expires_at <= ?').bind(now).run();
-      const limit=await db.prepare(`INSERT INTO live_create_limits (bucket,count,expires_at) VALUES (?,1,?)
-        ON CONFLICT(bucket) DO UPDATE SET count=count+1 RETURNING count`).bind(bucket,now+3600000).first();
-      if(limit.count>30)throw fail(429,'Too many new links. Please try again later.');
-      // Opportunistic cleanup only touches this independent live-sharing database.
-      await db.prepare('DELETE FROM live_shares WHERE expires_at <= ?').bind(now-ACTIVE_TTL).run();
+      await limitNewRecord(db,request,now);
       await db.prepare(`INSERT INTO live_shares (token,secret_hash,status,snapshot,revision,created_at,updated_at,expires_at)
         VALUES (?,?,'active',NULL,0,?,?,?) ON CONFLICT(token) DO NOTHING`).bind(token,secretHash,now,now,now+ACTIVE_TTL).run();
       row=await db.prepare('SELECT * FROM live_shares WHERE token = ?').bind(token).first();

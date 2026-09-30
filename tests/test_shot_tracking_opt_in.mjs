@@ -24,9 +24,9 @@ const cloud=stateForCloud({
 });
 assert.equal(cloud.settings.advancedShotTrackingEnabled,undefined,'shot-tracking opt-in must remain device-local');
 
-assert.equal(latest.version,'public-v33');
-assert.match(app,/APP_VERSION='public-v33'/);
-assert.match(sw,/SW_VERSION='public-v33'/);
-assert.match(sw,/popz-bowling-public-v33/);
+assert.equal(latest.version,'public-v34');
+assert.match(app,/APP_VERSION='public-v34'/);
+assert.match(sw,/SW_VERSION='public-v34'/);
+assert.match(sw,/popz-bowling-public-v34/);
 assert(!sw.includes('v=27'));
 console.log('Advanced Shot Tracking opt-in defaults and device-local behavior passed');

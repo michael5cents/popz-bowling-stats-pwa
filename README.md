@@ -50,6 +50,7 @@ Open **https://popzbowling.com** in a modern browser.
 - Update awareness is dual-signal in public-v24. The app checks uncached production `latest-version.json` at startup, again after 2 and 10 seconds, when returning to the foreground, when connectivity returns, and every 10 minutes while open. It also forces a service-worker update check; newly activated workers broadcast `POPZ_UPDATE_READY` to open clients. Either signal can raise the persistent **Update available — close and reopen** banner, and a service-worker signal stays authoritative even if an edge briefly serves a stale version file.
 
 ## Hosting and deployment
+- **public-v34 adds Share My Scores (Pro / Pro Preview)** while retaining public-v33 telemetry. Start sharing from Bowl, send the read-only link, and stop anytime, including after finishing. Team sharing stays with the chosen bowler. Live snapshots use their own D1 database, never telemetry; the private app is untouched. See [LIVE-SHARING.md](LIVE-SHARING.md) for usage, privacy, expiry and deployment details.
 - Production: Cloudflare Pages project `popzbowling`.
 - Primary custom domain: `popzbowling.com`.
 - Cloudflare Pages default domain: `popzbowling.pages.dev`.

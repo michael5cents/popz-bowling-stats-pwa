@@ -30,7 +30,7 @@ export function mountLiveShare({getState,getSession,nameForSession,hasFeature,ge
     el('liveShareStatus').textContent=r?(r.error||(r.stopping?'Stopping…':!r.created?'Starting…':r.snapshot.finished?(r.ackRevision<r.revision?'Final scores waiting to send':'Final results shared'):`Sharing ${r.snapshot.bowlerName} • ${r.ackRevision<r.revision?'sending latest score':'link ready'}`)):
       allowed()?'Off — your scores are private. In team mode, select the bowler you want to share first.':'Requires Popz Bowling Pro. Normal scoring stays free.';
   }
-  client=createLiveShareClient({storage:localStorage,allowed,changed:render,request:async(method,r,body)=>{
+  client=createLiveShareClient({storage:{getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)},allowed,changed:render,request:async(method,r,body)=>{
     if(navigator.onLine===false)throw Error('Offline — scores saved locally. Sharing will retry when online.');
     const headers={'Content-Type':'application/json','Authorization':`Bearer ${r.publisherSecret}`};
     if(method==='POST'){const idToken=await getIdToken();if(idToken)headers['X-Firebase-Token']=idToken;}
