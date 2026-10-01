@@ -1,8 +1,17 @@
-const APP_VERSION='public-v35';
+const VERSION_RE=/^public-v\d+(?:\.\d+)*$/;
 const reply=(body,status=200)=>new Response(JSON.stringify(body),{status,headers:{'content-type':'application/json','cache-control':'no-store, max-age=0','x-robots-tag':'noindex, nofollow'}});
 const probe=async db=>{if(!db)throw Error('missing binding');await db.prepare('SELECT 1 value').first();return true};
-export async function onRequestGet({env}){
- const checkedAt=new Date().toISOString(),checks={telemetry:false,liveSharing:false,runtime:false};
+async function currentVersion(request,env){
+ try{
+  const url=new URL('/latest-version.json',request.url),assetRequest=new Request(url,{headers:{'cache-control':'no-cache'}});
+  const res=env?.ASSETS?.fetch?await env.ASSETS.fetch(assetRequest):await fetch(assetRequest);
+  if(!res.ok)return'unknown';
+  const version=String((await res.json())?.version||'').trim();
+  return VERSION_RE.test(version)?version:'unknown';
+ }catch{return'unknown'}
+}
+export async function onRequestGet({request,env}){
+ const checkedAt=new Date().toISOString(),checks={telemetry:false,liveSharing:false,runtime:false},version=await currentVersion(request,env);
  let recentErrors=false,recentStartupFailures=false;
  try{await probe(env.TELEMETRY_DB);checks.telemetry=true}catch{}
  try{await probe(env.LIVE_SHARE_DB);checks.liveSharing=true}catch{}
@@ -13,6 +22,6 @@ export async function onRequestGet({env}){
   recentErrors=Number(err?.value||0)>0;recentStartupFailures=Number(fail?.value||0)>0;
  }catch{}
  const dependenciesOk=checks.telemetry&&checks.liveSharing&&checks.runtime,issues=recentErrors||recentStartupFailures;
- return reply({ok:dependenciesOk&&!issues,status:!dependenciesOk?'down':issues?'degraded':'ok',version:APP_VERSION,checkedAt,checks,runtime:{recentErrors,recentStartupFailures}},dependenciesOk?200:503);
+ return reply({ok:dependenciesOk&&!issues,status:!dependenciesOk?'down':issues?'degraded':'ok',version,checkedAt,checks,runtime:{recentErrors,recentStartupFailures}},dependenciesOk?200:503);
 }
 export function onRequest(){return reply({ok:false,status:'method_not_allowed'},405)}

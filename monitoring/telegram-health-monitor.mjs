@@ -49,7 +49,7 @@ async function runChecks(){
  try{
   const r=await request(BASE+'/latest-version.json',{json:true});
   if(!r.ok)add(issues,'Version endpoint',`HTTP ${r.status}`);
-  else if(!/^public-v\d+$/.test(String(r.data?.version||'')))add(issues,'Version endpoint','invalid version payload');
+  else if(!/^public-v\d+(?:\.\d+)*$/.test(String(r.data?.version||'')))add(issues,'Version endpoint','invalid version payload');
   else{version=String(r.data.version);n=version.replace('public-v','')}
  }catch(e){add(issues,'Version endpoint',e.message)}
 
