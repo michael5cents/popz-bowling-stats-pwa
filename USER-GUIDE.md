@@ -19,6 +19,8 @@ Open **Settings → Layout** to choose **Automatic**, **Compact Phone**, or **Fu
 Compact Phone keeps the main Start Series fields visible and puts secondary setup choices under **More Series Options**. During scoring it shows Game / Frame / Score / Series at the top, larger scoring buttons, Ball Used and Lane Number close at hand, a compact scorecard, **More Scoring Details** for secondary/Advanced Shot Tracking controls, and a large **Finish Series** button. Share Live Scores keeps its normal behavior: it is absent during setup, then appears collapsed after Start Series and remains available while scoring.
 
 ## Set up and start bowling
+Popz Bowling opens on **Bowl** by default on phones, tablets, and Full Layout so you can get to scoring immediately. **Stats**, History, Help, and Settings remain available from the bottom navigation at any time.
+
 1. Open **Settings** and enter your bowler name.
 2. Tap **Bowl**.
 3. Enter the date, league/practice name, bowling center, number of games, oil pattern, entering average, and handicap settings. If the average is blank, the app uses the running average already stored for that same league or Practice when available.

@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Current app version: **public-v39.001**
+Current app version: **public-v39.002**
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 
@@ -140,3 +140,11 @@ public-v26 is the first visible **Pro Preview** release. The header and Settings
 - The install gate now explicitly marks the entry as successfully loaded before intentionally stopping bowling-app initialization, so the 8-second runtime watchdog stays quiet on a healthy install screen.
 - The real installed-PWA startup watchdog is unchanged and still reports genuine app startup failures.
 - Regression QA leaves the browser install gate open beyond 8 seconds and confirms no load-failure alert appears; Compact Phone and live/offline scoring regressions remain green.
+
+## public-v39.002 — Bowl is the universal landing screen
+- The installed Popz Bowling app now opens directly on **Bowl** on every supported layout: Compact Phone, Full Layout, phones, tablets, and larger installed devices.
+- **Stats** remains one tap away in the bottom navigation for review at any time; it is no longer the startup landing panel.
+- **Reopen App** also returns to Bowl instead of Stats.
+- If an active series already exists, landing on Bowl immediately shows that active scoring session; otherwise the user sees Start a Series.
+- This release also includes the v39.001 install-gate startup-watchdog correction so a healthy install page no longer shows the false red load-failure warning after 8 seconds.
+- Regression QA verifies phone/tablet Bowl landing, Reopen -> Bowl, install-gate watchdog behavior, Compact Phone, live sharing, offline scoring, team isolation, and service-worker behavior.
