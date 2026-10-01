@@ -10,7 +10,7 @@ assert.match(css,/\.install-check #appShell,\.install-required #appShell\{displa
 assert.match(css,/\.install-required \.install-gate\{display:grid\}/);
 assert.match(app,/isProductionWebHost=.*popzbowling/);
 assert.match(app,/installGateRequired=.*isProductionWebHost\(\).*isInstalled\(\)/);
-assert.match(app,/if\(installGateRequired\(\)\)\{showInstallGate\(\);.*setupServiceWorkerUpdates\(true\);return\}/);
+assert.match(app,/if\(installGateRequired\(\)\)\{showInstallGate\(\);.*setupServiceWorkerUpdates\(true\);window\.PopzRuntimeMonitor\?\.ready\(\);return\}/);
 const init=app.slice(app.indexOf('async function init()'));
 assert.ok(init.indexOf('installGateRequired()')<init.indexOf('state=await loadState()'),'install gate must run before bowling state loads');
 assert.ok(init.indexOf('installGateRequired()')<init.indexOf('configureTelemetry'),'install gate must run before adoption telemetry config');

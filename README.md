@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Current app version: **public-v39**
+Current app version: **public-v39.001**
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 
@@ -134,3 +134,9 @@ public-v26 is the first visible **Pro Preview** release. The header and Settings
 - `/live/` spectator pages and API endpoints are not gated.
 - The v39 service worker uses network-first navigation with the cached `index.html` fallback so installed PWAs continue to work offline while online launches pick up current entry/update behavior promptly.
 - Regression coverage verifies production-host browser gating, no bowling IndexedDB/adoption telemetry boot on the gate, iOS instructions, Android native-prompt handling, installed-PWA access, and spectator-page bypass.
+
+## public-v39.001 — install-gate startup watchdog fix
+- Fixes a false red `Popz Bowling did not finish loading` warning introduced by the v39 install-only website entry.
+- The install gate now explicitly marks the entry as successfully loaded before intentionally stopping bowling-app initialization, so the 8-second runtime watchdog stays quiet on a healthy install screen.
+- The real installed-PWA startup watchdog is unchanged and still reports genuine app startup failures.
+- Regression QA leaves the browser install gate open beyond 8 seconds and confirms no load-failure alert appears; Compact Phone and live/offline scoring regressions remain green.

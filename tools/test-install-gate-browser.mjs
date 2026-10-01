@@ -31,6 +31,8 @@ try{
   const dbs=await p.evaluate(async()=>typeof indexedDB.databases==='function'?(await indexedDB.databases()).map(x=>x.name):[]);
   assert.equal(dbs.includes('popz-bowling-public'),false,'browser landing must not open bowling IndexedDB');
   assert.equal(normal.requests.some(x=>x==='/api/telemetry'),false,'browser landing must not start adoption telemetry');
+  await p.waitForTimeout(8300);
+  assert.equal(await p.locator('#popzLoadFailure').count(),0,'healthy install gate must satisfy the startup watchdog');
   await normal.ctx.close();
 
   const ios=await makeContext({userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1'}),ip=await ios.ctx.newPage();
