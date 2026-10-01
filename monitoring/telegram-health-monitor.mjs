@@ -56,12 +56,13 @@ async function runChecks(){
  try{
   const r=await request(BASE+'/');
   if(!r.ok)add(issues,'Homepage',`HTTP ${r.status}`);
-  else if(version&&(!r.body.includes(`runtime-monitor.js?v=${n}`)||!r.body.includes(`app.js?v=${n}`)))add(issues,'Homepage','critical asset references do not match '+version);
+  else if(version&&(!r.body.includes(`runtime-monitor.js?v=${n}`)||!r.body.includes(`entry.js?v=${n}`)))add(issues,'Homepage','critical asset references do not match '+version);
  }catch(e){add(issues,'Homepage',e.message)}
 
  if(version){
   for(const [label,url,needle]of[
    ['Runtime monitor',`${BASE}/runtime-monitor.js?v=${n}`,'boot_started'],
+   ['Entry bootstrap',`${BASE}/entry.js?v=${n}`,`app.js?v=${n}`],
    ['Main app',`${BASE}/app.js?v=${n}`,`APP_VERSION='${version}'`],
    ['Service worker',BASE+'/service-worker.js',version]
   ]){
