@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 import fs from'node:fs';
 import path from'node:path';
+import{issueKey,alertCooldownFor,shouldSendAlert}from'./alert-policy.mjs';
 
 const BASE=(process.env.BOWLING_URL||'https://popzbowling.com').replace(/\/$/,'');
 const BOT=process.env.TELEGRAM_BOT_TOKEN||'';
 const CHAT=process.env.TELEGRAM_CHAT_ID||'';
 const STATE=process.env.BOWLING_MONITOR_STATE||path.join(process.env.HOME||'.','.local/state/popz-bowling-health/state.json');
 const COOLDOWN=Math.max(5,Number(process.env.BOWLING_ALERT_COOLDOWN_MINUTES||15))*60000;
+const RUNTIME_COOLDOWN=Math.max(60,Number(process.env.BOWLING_RUNTIME_ALERT_COOLDOWN_MINUTES||60))*60000;
 const TIMEOUT=Math.max(5,Number(process.env.BOWLING_HTTP_TIMEOUT_SECONDS||15))*1000;
 const UA='Popz-Bowling-Health-Monitor/1.0';
 
@@ -82,7 +84,6 @@ async function runChecks(){
  return{issues,version:version||'unknown'};
 }
 
-function issueKey(issues){return issues.map(x=>x.name+'='+x.message).sort().join('|')}
 function alertText(version,issues){
  return ['🚨 POPZ BOWLING ALERT',`Version: ${version}`,'',...issues.map(x=>`❌ ${x.name}: ${x.message}`),'',`Time: ${nowCt()}`].join('\n');
 }
@@ -95,17 +96,17 @@ if(process.argv.includes('--test-notification')){
  console.log('Telegram test notification sent');
  process.exit(0);
 }
-const state=loadState(),{issues,version}=await runChecks(),key=issueKey(issues),lastKey=issueKey(state.lastIssues||[]),now=Date.now();
+const state=loadState(),{issues,version}=await runChecks(),now=Date.now();
 
 if(issues.length){
- const shouldAlert=key!==lastKey||now-Number(state.lastAlertAt||0)>=COOLDOWN;
+ const shouldAlert=shouldSendAlert({issues,lastIssues:state.lastIssues||[],lastAlertAt:state.lastAlertAt||0,now,normalCooldown:COOLDOWN,runtimeCooldown:RUNTIME_COOLDOWN});
  if(shouldAlert){
   try{
    await sendTelegram(alertText(version,issues));
    state.lastIssues=issues;state.lastAlertAt=now;state.lastVersion=version;saveState(state);
    console.log(`ALERT sent: ${issues.length} issue(s)`);
   }catch(e){console.error('ALERT send failed:',e.message);process.exitCode=1}
- }else console.log(`Unhealthy: ${issues.length} issue(s); cooldown active`);
+ }else console.log(`Unhealthy: ${issues.length} issue(s); cooldown active (${Math.round(alertCooldownFor(issues,COOLDOWN,RUNTIME_COOLDOWN)/60000)}m)`);
 }else if((state.lastIssues||[]).length){
  try{
   await sendTelegram(recoveryText(version,state.lastIssues));

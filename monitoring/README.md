@@ -6,7 +6,8 @@ Alerts use the same Telegram bot/chat as the call-forwarding health monitor. Tel
 
 Alert behavior:
 - alert immediately when a new issue appears;
-- repeat the same unresolved issue after a 15-minute cooldown;
+- repeat the same unresolved **availability/dependency** issue after a 15-minute cooldown;
+- repeat a runtime-diagnostic-only incident no sooner than 60 minutes, so one client error inside the 60-minute health window does not spam duplicate Telegram alerts;
 - send a recovery message when all checks become healthy;
 - stay silent during normal healthy checks.
 
