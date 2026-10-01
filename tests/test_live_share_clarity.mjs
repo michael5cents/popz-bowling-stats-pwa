@@ -3,13 +3,17 @@ import{readFileSync}from'node:fs';
 
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const ui=read('live-share-ui.mjs'),client=read('live-share-client.mjs'),server=read('live-share-server.mjs');
-const html=read('index.html'),style=read('style.css'),sw=read('service-worker.js');
+const html=read('index.html'),style=read('style.css'),sw=read('service-worker.js'),app=read('app.js');
 const viewerHtml=read('live/index.html'),viewer=read('live/viewer.mjs');
 
 assert.match(ui,/Share Live Scores/);
 assert.match(ui,/liveShareToggleBtn/);
 assert.match(ui,/liveShareDetails.*hidden/);
 assert.match(ui,/closeLiveShareBtn/);
+assert.match(ui,/panel\.classList\.toggle\('hidden',!s&&!r\)/,'share control stays hidden before a series unless an existing share still needs management');
+assert.match(ui,/function offerAtSeriesStart\(\)/);
+assert.match(ui,/expanded=true;render\(\);requestAnimationFrame/);
+assert.match(app,/liveSharing\?\.offerAtSeriesStart\(\)/,'Start Series must open live sharing before scoring');
 assert.match(ui,/Live session only/);
 assert.match(ui,/Stats screen, History, past series, backups, or other bowlers/);
 assert.doesNotMatch(ui,/style\.href=['"]\.\/live-share\.css/);

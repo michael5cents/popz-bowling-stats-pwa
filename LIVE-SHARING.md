@@ -4,7 +4,7 @@ This ports the tested private app's single-bowler spectator experience into **Po
 
 ## Using it
 
-1. Open **Bowl**, start a series, and find **Share Live Scores** above the scoring area. This feature is only for the selected bowler's current live series; it is not a Stats, History, past-score, or backup sharing feature.
+1. Open **Bowl**, complete the setup, and press **Start Series**. **Share Live Scores** opens automatically before the first score is entered. This feature is only for the selected bowler's current live series; it is not a Stats, History, past-score, or backup sharing feature.
 2. In team mode, select the bowler first. **Start Sharing** creates one read-only link for that bowler. Turn rotation does not change whose scores are shared.
 3. Choose **Share Link** to send it through your phone's share sheet, or copy the displayed link. Viewers do not need an account, installation, or Pro.
 4. Score normally. Keep the app open and online for updates. Scoring and Finish Series save locally first; network failures cannot block those saves. Pending final results retry when the app returns online or reopens.

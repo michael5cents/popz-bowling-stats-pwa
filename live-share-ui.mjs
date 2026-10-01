@@ -1,7 +1,7 @@
-import {createLiveShareClient} from './live-share-client.mjs?v=37.002';
-import {PRO_FEATURES} from './entitlements.mjs?v=37.002';
+import {createLiveShareClient} from './live-share-client.mjs?v=37.003';
+import {PRO_FEATURES} from './entitlements.mjs?v=37.003';
 
-export function mountLiveShare({getState,getSession,nameForSession,hasFeature,getIdToken,toast}) {
+export function mountLiveShare({getState,getSession,nameForSession,hasFeature,getIdToken,toast,onContinue}) {
   const panel=document.createElement('section');
   panel.className='live-share-panel';panel.id='liveSharePanel';
   panel.innerHTML=`<button id="liveShareToggleBtn" class="live-share-toggle" type="button" aria-expanded="false">
@@ -9,13 +9,13 @@ export function mountLiveShare({getState,getSession,nameForSession,hasFeature,ge
       <span id="liveShareToggleState" class="live-share-toggle-state">Open</span>
     </button>
     <div id="liveShareDetails" class="live-share-details hidden">
-      <p class="fineprint"><strong>Live session only.</strong> This link follows the selected bowler's current series as it happens. It does not share the Stats screen, History, past series, backups, or other bowlers. Viewers need no login or Pro subscription.</p>
+      <p class="fineprint"><strong>Live session only.</strong> This link follows the selected bowler's current series as it happens. It does not share the Stats screen, History, past series, backups, or other bowlers. Tap <strong>Start Sharing</strong>, then <strong>Share Link</strong> to choose Telegram, Google Messages, email, another compatible app, and the person you want to send it to.</p>
       <p id="liveShareStatus" class="live-share-status" role="status" aria-live="polite"></p>
       <div class="live-share-actions"><button id="startLiveShareBtn" class="primary" type="button">Start Sharing</button><button id="shareLiveLinkBtn" class="secondary hidden" type="button">Share Link</button><button id="retryLiveShareBtn" class="secondary hidden" type="button">Retry</button><button id="stopLiveShareBtn" class="danger hidden" type="button">Stop Sharing</button><button id="closeLiveShareBtn" class="text-button" type="button">Not Now</button></div>
       <label id="liveShareLinkLabel" class="hidden">Read-only spectator link<input id="liveShareLink" type="text" readonly autocomplete="off"></label>
       <p class="fineprint">Keep the scoring app open to send updates. Internet is needed to share, not to bowl. Links expire within 12 hours; final results remain available for up to 2 hours. Stop Sharing removes server access, but cannot erase screenshots or scores already seen.</p>
     </div>`;
-  document.getElementById('bowlView').prepend(panel);
+  document.getElementById('seriesSetup').after(panel);
   const el=id=>panel.querySelector('#'+id);
   const allowed=()=>hasFeature(PRO_FEATURES.LIVE_SCORE_SHARING);
   let client,busy=false,timer,expanded=false;
@@ -23,6 +23,7 @@ export function mountLiveShare({getState,getSession,nameForSession,hasFeature,ge
   function render() {
     const r=client?.current(),s=getSession(),ready=r?.created&&!r.stopping&&!r.terminal;
     panel.classList.toggle('sharing',!!r&&!r.terminal);
+    panel.classList.toggle('hidden',!s&&!r);
     el('liveShareDetails').classList.toggle('hidden',!expanded);
     el('liveShareToggleBtn').setAttribute('aria-expanded',String(expanded));
     const toggleState=r?(r.terminal?'Expired':r.stopping?'Stopping':!r.created?'Starting':r.snapshot.finished?'Final':'LIVE'):(expanded?'Close':'Open');
@@ -56,8 +57,10 @@ export function mountLiveShare({getState,getSession,nameForSession,hasFeature,ge
     try{client.reconcile(getState(),nameForSession);render();clearTimeout(timer);timer=setTimeout(flush,150);}
     catch{toast('Live sharing could not update. Local scoring is unaffected.');}
   }
+  function continueToScoring(){if(getSession())onContinue?.();}
+  function offerAtSeriesStart(){if(!getSession())return;expanded=true;render();requestAnimationFrame(()=>panel.scrollIntoView({behavior:'smooth',block:'start'}));}
   el('liveShareToggleBtn').onclick=()=>{expanded=!expanded;render();};
-  el('closeLiveShareBtn').onclick=()=>{expanded=false;render();};
+  el('closeLiveShareBtn').onclick=()=>{expanded=false;render();continueToScoring();};
   el('startLiveShareBtn').onclick=async()=>{
     if(busy)return;busy=true;expanded=true;
     try{client.start(getSession(),nameForSession(getSession()));render();await flush();saved();}
@@ -71,7 +74,7 @@ export function mountLiveShare({getState,getSession,nameForSession,hasFeature,ge
   el('shareLiveLinkBtn').onclick=async()=>{
     const r=client.current();if(!r?.created||r.stopping||r.terminal)return;
     const link=url(r);
-    try{if(navigator.share){await navigator.share({title:`${r.snapshot.bowlerName}'s live bowling scores`,url:link});return;}}
+    try{if(navigator.share){await navigator.share({title:`${r.snapshot.bowlerName}'s live bowling scores`,url:link});expanded=false;render();continueToScoring();return;}}
     catch(e){if(e.name==='AbortError')return;}
     try{await navigator.clipboard.writeText(link);toast('Spectator link copied');}
     catch{el('liveShareLink').focus();el('liveShareLink').select();toast('Select and copy the spectator link');}
@@ -79,5 +82,5 @@ export function mountLiveShare({getState,getSession,nameForSession,hasFeature,ge
   window.addEventListener('online',saved);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)saved();});
   setInterval(()=>{if(!document.hidden)saved();},15000);
-  saved();return {saved,render};
+  saved();return {saved,render,offerAtSeriesStart};
 }
