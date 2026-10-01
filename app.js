@@ -6,10 +6,10 @@ import{configureTelemetry,startTelemetry,trackTelemetry,flushTelemetry,telemetry
 import{initCloudSync,startCloudSyncWatch,signInGoogle,signOutGoogle,syncCloudNow,cloudUser}from'./cloud-sync.mjs';
 import{PRO_FEATURES,effectiveAccess}from'./entitlements.mjs';
 import{normalizeRoster,activeSessionIds,activeGroupSessions,nextIncompleteGroupIndex}from'./multiplayer.mjs';
-import{LAYOUT_MODES,readLayoutMode,writeLayoutMode,resolveLayoutMode,layoutStatus}from'./layout-mode.mjs?v=39.002';
-import {mountLiveShare} from './live-share-ui.mjs?v=39.002';
+import{LAYOUT_MODES,readLayoutMode,writeLayoutMode,resolveLayoutMode,layoutStatus}from'./layout-mode.mjs?v=39.003';
+import {mountLiveShare} from './live-share-ui.mjs?v=39.003';
 let liveSharing=null;
-const APP_VERSION='public-v39.002',DB='popz-bowling-public',STORE='state',KEY='master',$=id=>document.getElementById(id);let state,toastTimer,pendingLeave=null,leaveSelection=new Set(),editingFrameIndex=null,deferredInstallPrompt=null,cloudStatus={state:'loading',message:'Checking Google Sync…'},updateSignalVersion='',proAccess=effectiveAccess({}),seriesSetupMode='single',setupRoster=[],phoneSeriesOptionsOpen=false,phoneScoringDetailsOpen=false,layoutResizeTimer=null;
+const APP_VERSION='public-v39.003',DB='popz-bowling-public',STORE='state',KEY='master',$=id=>document.getElementById(id);let state,toastTimer,pendingLeave=null,leaveSelection=new Set(),editingFrameIndex=null,deferredInstallPrompt=null,cloudStatus={state:'loading',message:'Checking Google Sync…'},updateSignalVersion='',proAccess=effectiveAccess({}),seriesSetupMode='single',setupRoster=[],phoneSeriesOptionsOpen=false,phoneScoringDetailsOpen=false,layoutResizeTimer=null;
 const uuid=()=>crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(16).slice(2)}`,nowIso=()=>new Date().toISOString();
 const todayLocal=()=>{const d=new Date(),o=d.getTimezoneOffset();return new Date(d.getTime()-o*60000).toISOString().slice(0,10)};
 const defaultState=()=>({version:2,deviceId:uuid(),updatedAt:nowIso(),settingsUpdatedAt:nowIso(),settings:{bowlerName:'',bowlerProfiles:[],statsBowler:'owner',historyBowler:'all',advancedShotTrackingEnabled:false,scoringMode:'simplified'},activeSessionId:null,activeGroup:null,sessions:[],deletedSessions:[],lastBackupAt:null,storagePersistent:null});
@@ -52,7 +52,7 @@ function closeApp(){try{window.close()}catch{}setTimeout(()=>{$('appShell').clas
 function reopenApp(){$('exitScreen').classList.add('hidden');$('appShell').classList.remove('hidden');document.querySelector('.bottom-nav').classList.remove('hidden');showView('bowl')}
 const esc=s=>String(s||'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const fmtDate=s=>{if(!s)return'';const[y,m,d]=s.split('-');return`${m}/${d}/${y}`};
-function activeSession(){return state.sessions.find(s=>s.id===state.activeSessionId)||null}
+function activeSession(){return state?.sessions?.find(s=>s.id===state.activeSessionId)||null}
 function activeGame(){const s=activeSession();if(!s)return null;return[...s.games].reverse().find(g=>!gameComplete(g))||s.games[s.games.length-1]||null}
 function touchSession(s){s.updatedAt=nowIso();state.updatedAt=s.updatedAt}
 function sessionHandicap(s){return handicapPins(s.enteringAverage,s.handicapPct??90,s.handicapBase??220)}

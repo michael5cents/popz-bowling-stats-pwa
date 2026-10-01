@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Current app version: **public-v39.002**
+Current app version: **public-v39.003**
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 
@@ -148,3 +148,10 @@ public-v26 is the first visible **Pro Preview** release. The header and Settings
 - If an active series already exists, landing on Bowl immediately shows that active scoring session; otherwise the user sees Start a Series.
 - This release also includes the v39.001 install-gate startup-watchdog correction so a healthy install page no longer shows the false red load-failure warning after 8 seconds.
 - Regression QA verifies phone/tablet Bowl landing, Reopen -> Bowl, install-gate watchdog behavior, Compact Phone, live sharing, offline scoring, team isolation, and service-worker behavior.
+
+## public-v39.003 — runtime-alert hardening
+- The install-only browser entry now uses a tiny `entry.js` bootstrap. Normal browser visits no longer request `app.js` or any bowling `.mjs` modules, so a transient application-module fetch failure cannot break the install gate or produce a false-looking app startup failure there.
+- Installed/standalone launches still load the full bowling app. The service worker caches `entry.js` plus the full application graph so installed offline use remains intact.
+- `activeSession()` now safely tolerates the brief pre-state startup window, preventing the observed Android startup TypeError when a callback fires before IndexedDB state initialization finishes.
+- Runtime monitoring remains strict: the reviewed iOS script-load incident and Android startup TypeError were real client events, not a site-wide outage. Both are documented before their incident rows are cleaned from the current health window after this fix is deployed.
+- Regression QA requires the browser install gate to open with no bowling IndexedDB, no adoption telemetry, no `app.js` request, no `.mjs` request, and no 8-second watchdog warning; installed phone/tablet and live/offline scoring regressions remain covered separately.
