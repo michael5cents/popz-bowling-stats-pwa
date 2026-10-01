@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Current app version: **public-v37.1**
+Current app version: **public-v37.002**
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 
@@ -98,3 +98,9 @@ public-v26 is the first visible **Pro Preview** release. The header and Settings
 
 ## public-v37.1 — persistent bottom navigation
 - Hardened the five-button bottom navigation for mobile/PWA Settings screens: fixed positioning is forced into its own compositor layer above Settings content, safe-area space is reserved at the bottom of the document, and every tab selection resets the new view to the top. This prevents users from having to scroll through the long Settings page to recover the Stats/Bowl/History/Help/Settings controls.
+
+## public-v37.002 — Settings navigation patch
+- Minor-fix versioning now uses the `public-v37.xxx` patch format rather than consuming a new major app version.
+- The bottom five-button navigation is now part of the fixed app-shell layout. Header and bottom navigation remain outside the scrollable content area; only `mainContent` scrolls. This avoids mobile Safari/PWA fixed-footer behavior on the long Settings screen.
+- Switching views resets the internal content scroller to the top. Print mode explicitly restores normal page flow so the Help guide still prints correctly.
+- Regression coverage verifies the nav is inside `appShell`, Settings scrolls inside `mainContent`, the browser window position does not change, and the nav remains visible at both the top and bottom of Settings on a 390x844 mobile viewport.

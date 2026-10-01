@@ -1,9 +1,9 @@
-const SW_VERSION='public-v37.1';
-const CACHE='popz-bowling-public-v37.1';
-const ASSETS=['./','./index.html','./style.css?v=37.1','./app.js?v=37.1','./scoring.mjs?v=37.1','./history.mjs?v=37.1','./transfer.mjs?v=37.1','./update.mjs?v=37.1','./telemetry.mjs?v=37.1','./telemetry-client.mjs?v=37.1','./telemetry-milestones.mjs?v=37.1','./cloud-sync-core.mjs?v=37.1','./cloud-sync.mjs?v=37.1','./entitlements.mjs?v=37.1','./multiplayer.mjs?v=37.1','./runtime-monitor.js?v=37.1','./manifest.webmanifest','./icon-192.png?v=37.1','./icon-512.png?v=37.1','./apple-touch-icon.png?v=37.1'];
+const SW_VERSION='public-v37.002';
+const CACHE='popz-bowling-public-v37.002';
+const ASSETS=['./','./index.html','./style.css?v=37.002','./app.js?v=37.002','./scoring.mjs?v=37.002','./history.mjs?v=37.002','./transfer.mjs?v=37.002','./update.mjs?v=37.002','./telemetry.mjs?v=37.002','./telemetry-client.mjs?v=37.002','./telemetry-milestones.mjs?v=37.002','./cloud-sync-core.mjs?v=37.002','./cloud-sync.mjs?v=37.002','./entitlements.mjs?v=37.002','./multiplayer.mjs?v=37.002','./runtime-monitor.js?v=37.002','./manifest.webmanifest','./icon-192.png?v=37.002','./icon-512.png?v=37.002','./apple-touch-icon.png?v=37.002'];
 
 self.addEventListener('install',e=>e.waitUntil(
-  caches.open(CACHE).then(c=>c.addAll([...ASSETS,'./live-share.mjs?v=37.1','./live-share-client.mjs?v=37.1','./live-share-ui.mjs?v=37.1'])).then(()=>self.skipWaiting())
+  caches.open(CACHE).then(c=>c.addAll([...ASSETS,'./live-share.mjs?v=37.002','./live-share-client.mjs?v=37.002','./live-share-ui.mjs?v=37.002'])).then(()=>self.skipWaiting())
 ));
 
 self.addEventListener('activate',e=>e.waitUntil((async()=>{
@@ -23,7 +23,7 @@ self.addEventListener('fetch',e=>{
   e.respondWith(caches.match(e.request).then(async hit=>{
     if(hit)return hit;
     if(u.origin===self.location.origin&&!u.search&&u.pathname.endsWith('.mjs')){
-      const versioned=await caches.match(`${u.pathname}?v=37.1`);
+      const versioned=await caches.match(`${u.pathname}?v=37.002`);
       if(versioned)return versioned;
     }
     return fetch(e.request).then(r=>{
