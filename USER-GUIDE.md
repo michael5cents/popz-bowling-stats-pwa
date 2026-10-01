@@ -11,6 +11,13 @@ Production app: https://popzbowling.com
 ## Install
 Open `popzbowling.com`. On Android/Chrome, tap **Install App**. On iPhone/iPad, open the site in Safari and use **Share → Add to Home Screen → Add**. The app can also be used directly in the browser.
 
+## Phone layout
+**Automatic** is the default. If Popz Bowling is running as an installed PWA on a phone-sized screen (500 CSS pixels or less on the short side), the Bowl screen uses the simpler **Compact Phone** layout. Installed iPads and Samsung/Android tablets keep the existing **Full Layout**, and a phone-sized browser that is not installed also stays Full.
+
+Open **Settings → Layout** to choose **Automatic**, **Compact Phone**, or **Full Layout**. This preference stays only on that device; it is not Google-synced and is not part of bowling backups. You can force Compact Phone on a tablet or foldable for testing.
+
+Compact Phone keeps the main Start Series fields visible and puts secondary setup choices under **More Series Options**. During scoring it shows Game / Frame / Score / Series at the top, larger scoring buttons, Ball Used and Lane Number close at hand, a compact scorecard, **More Scoring Details** for secondary/Advanced Shot Tracking controls, and a large **Finish Series** button. Share Live Scores keeps its normal behavior: it is absent during setup, then appears collapsed after Start Series and remains available while scoring.
+
 ## Set up and start bowling
 1. Open **Settings** and enter your bowler name.
 2. Tap **Bowl**.

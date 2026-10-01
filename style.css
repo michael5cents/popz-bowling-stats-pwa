@@ -85,3 +85,85 @@ main{width:min(1100px,100%);margin:0 auto;padding:18px;flex:1 1 auto;min-height:
 .live-share-toggle:hover{background:rgba(255,255,255,.04)}.live-share-toggle strong{font-size:1rem}.live-share-toggle-state{font-size:12px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}.live-share-toggle-state.live{color:#86efac}
 .live-share-panel.sharing{border-color:#22c55e}.live-share-details{padding:0 14px 14px;border-top:1px solid rgba(255,255,255,.07)}.live-share-status{margin:10px 0 0;color:#dbeafe;font-weight:700}
 .live-share-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.live-share-panel label{display:grid;gap:6px;font-size:.85rem}.live-share-panel input{width:100%;min-width:0;font-size:.8rem}
+
+
+/* public-v38 Compact Phone layout.
+   Everything below is opt-in through the phone-layout class so the existing
+   tablet/desktop presentation remains the baseline. */
+.phone-only,.phone-more-toggle{display:none!important}
+.phone-more-options,.phone-more-fields{display:contents}
+
+.phone-layout #seriesSetup{padding:16px;border-radius:18px}
+.phone-layout #seriesSetup h2{margin-bottom:12px}
+.phone-layout #seriesSetup .session-mode-row{grid-template-columns:1fr;margin:8px 0 12px;padding:10px}
+.phone-layout #seriesSetup .session-mode-row>div{display:none}
+.phone-layout .series-form-grid{grid-template-columns:1fr;gap:11px}
+.phone-layout .phone-more-options{display:block}
+.phone-layout .phone-more-toggle{display:flex!important;width:100%;align-items:center;justify-content:space-between;min-height:48px;margin-top:2px}
+.phone-layout .phone-more-fields{display:none}
+.phone-layout .phone-more-options.open .phone-more-fields{display:grid;grid-template-columns:1fr;gap:11px;margin-top:11px}
+.phone-layout #startSeriesBtn{min-height:54px;font-size:18px;margin-top:14px}
+.phone-layout .multi-roster-panel{padding:10px}
+.phone-layout .roster-heading{align-items:stretch;flex-direction:column}
+.phone-layout .roster-heading button{width:100%}
+.phone-layout .roster-row{grid-template-columns:30px minmax(0,1fr)}
+.phone-layout .roster-row label{grid-column:2}
+.phone-layout .roster-actions{grid-column:2;justify-content:flex-end}
+
+.phone-layout #phoneScoringHeader:not(.hidden){display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0 0 8px;padding:9px;background:#dbeafe;color:#0f172a;border:1px solid #bfdbfe;border-radius:14px}
+.phone-layout .phone-scoring-header>div{text-align:center;min-width:0}
+.phone-layout .phone-scoring-header span{display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#475569}
+.phone-layout .phone-scoring-header strong{display:block;margin-top:2px;font-size:20px;line-height:1.05}
+.phone-layout .live-share-panel{margin-bottom:8px;border-radius:14px}
+.phone-layout .live-share-toggle{min-height:44px}
+
+.phone-layout #scoringArea:not(.hidden){display:flex!important;flex-direction:column}
+.phone-layout #groupTurnBar{order:1;margin-bottom:8px;padding:9px}
+.phone-layout .group-turn-bar>div:first-child strong{font-size:13px}
+.phone-layout .group-bowler-tabs{gap:6px;padding-top:8px}
+.phone-layout .group-bowler-tab{min-width:104px;padding:9px 10px}
+.phone-layout .series-bar{display:none}
+
+.phone-layout #scoreboard{order:2;grid-template-columns:repeat(10,minmax(54px,1fr));border-radius:12px;scroll-behavior:smooth;scroll-snap-type:x proximity}
+.phone-layout #scoreboard .frame{min-width:54px;scroll-snap-align:center}
+.phone-layout #scoreboard .frame:last-child{min-width:72px}
+.phone-layout #scoreboard .frame-no{padding:5px;font-size:10px}
+.phone-layout #scoreboard .rolls{min-height:30px}
+.phone-layout #scoreboard .roll{min-width:18px;font-size:13px}
+.phone-layout #scoreboard .frame-score{min-height:34px;font-size:18px}
+.phone-layout #scoreboard .frame-leave{font-size:8px}
+.phone-layout #frameEditor{order:3}
+
+.phone-layout .keypad-panel{order:4;padding:12px;border-radius:16px;margin-top:10px}
+.phone-layout .roll-prompt{margin-bottom:10px;font-size:14px}
+.phone-layout .pin-pad{grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.phone-layout .pin-pad button{min-height:58px;border-radius:13px;font-size:19px;padding:8px 4px}
+.phone-layout .pin-pad button.quick-split{grid-column:1/-1;min-height:44px;font-size:14px}
+.phone-layout .keypad-actions{grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.phone-layout .keypad-actions #deleteGameBtn{grid-column:1/-1}
+
+.phone-layout .game-details{order:5;grid-template-columns:minmax(0,1.45fr) minmax(94px,.65fr);gap:8px;padding:10px;margin:10px 0 8px;border-radius:14px}
+.phone-layout .game-details label{font-size:12px}
+.phone-layout .game-details input{padding:10px}
+.phone-layout .phone-secondary-game-detail{display:none}
+.phone-layout #scoringArea.phone-details-open .phone-secondary-game-detail{display:grid;grid-column:1/-1}
+.phone-layout .phone-scoring-details-toggle{order:6;display:flex!important;width:100%;align-items:center;justify-content:space-between;min-height:46px;margin-bottom:8px}
+.phone-layout #shotTrackingLocked{order:7;display:none}
+.phone-layout #firstBallSetup{order:7;display:none}
+.phone-layout #scoringArea.phone-details-open #shotTrackingLocked:not(.hidden){display:flex}
+.phone-layout #scoringArea.phone-details-open #firstBallSetup:not(.hidden){display:block}
+.phone-layout #firstBallSetup{padding:11px;border-radius:14px}
+.phone-layout #firstBallSetup .setup-heading{align-items:stretch;flex-direction:column}
+.phone-layout #firstBallSetup .setup-heading button{width:100%}
+.phone-layout #firstBallSetup .setup-grid{grid-template-columns:1fr 1fr;gap:8px}
+
+.phone-layout .game-summary{order:8;display:none}
+.phone-layout #scoringArea.phone-details-open .game-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.phone-layout .game-summary>div{padding:10px}
+.phone-layout .game-summary strong{font-size:22px}
+.phone-layout .phone-finish-series{order:9;display:block!important;width:100%;min-height:50px;margin-top:10px;font-size:16px}
+.phone-layout #finishSeriesBtn{display:none!important}
+
+.phone-layout .leave-tracker{padding:10px}
+.phone-layout .pin{width:44px;height:44px}
+.phone-layout .leave-actions{gap:8px}

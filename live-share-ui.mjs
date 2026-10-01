@@ -1,5 +1,5 @@
-import {createLiveShareClient} from './live-share-client.mjs?v=37.004';
-import {PRO_FEATURES} from './entitlements.mjs?v=37.004';
+import {createLiveShareClient} from './live-share-client.mjs?v=38';
+import {PRO_FEATURES} from './entitlements.mjs?v=38';
 
 export function mountLiveShare({getState,getSession,nameForSession,hasFeature,getIdToken,toast,onContinue}) {
   const panel=document.createElement('section');
@@ -15,7 +15,7 @@ export function mountLiveShare({getState,getSession,nameForSession,hasFeature,ge
       <label id="liveShareLinkLabel" class="hidden">Read-only spectator link<input id="liveShareLink" type="text" readonly autocomplete="off"></label>
       <p class="fineprint">Keep the scoring app open to send updates. Internet is needed to share, not to bowl. Links expire within 12 hours; final results remain available for up to 2 hours. Stop Sharing removes server access, but cannot erase screenshots or scores already seen.</p>
     </div>`;
-  document.getElementById('seriesSetup').after(panel);
+  (document.getElementById('phoneScoringHeader')||document.getElementById('seriesSetup')).after(panel);
   const el=id=>panel.querySelector('#'+id);
   const allowed=()=>hasFeature(PRO_FEATURES.LIVE_SCORE_SHARING);
   let client,busy=false,timer,expanded=false;

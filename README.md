@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Current app version: **public-v37.004**
+Current app version: **public-v38**
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 
@@ -116,3 +116,12 @@ public-v26 is the first visible **Pro Preview** release. The header and Settings
 - After **Start Series**, a small **collapsed** Share Live Scores bar appears and remains visible throughout scoring. It never auto-opens.
 - If the bowler ignores it, it simply stays collapsed. Tapping **Open** reveals the explanation and sharing controls; closing it returns to the compact bar.
 - The same behavior applies to Single Bowler and Team / Multi-Bowler sessions. An active/final share remains manageable after the series so its spectator link can still be shared or revoked.
+
+## public-v38 — Compact Phone layout
+- Adds a dedicated **Compact Phone** Bowl experience without changing the established tablet/desktop layout.
+- **Automatic** is the default: Compact Phone activates only when Popz Bowling is running as an installed PWA and the screen's short side is 500 CSS pixels or less. An installed iPad/Samsung tablet stays on the current Full Layout; a phone-sized regular browser also stays Full.
+- **Settings → Layout** is device-local and offers **Automatic**, **Compact Phone**, and **Full Layout**. The preference is stored only on that device and is excluded from Google Sync and bowling backups. Compact Phone can be forced on a larger device for testing, including foldables.
+- Compact setup keeps Date, League, Bowling Alley, and Number of Games prominent, with Oil Pattern, Entering Average, handicap settings, and Series Name under **More Series Options**.
+- Compact scoring adds a Game/Frame/Score/Series header, larger five-column scoring buttons, always-accessible Ball/Lane fields, horizontally scrollable score frames and team bowler controls, **More Scoring Details** for secondary/Advanced Shot Tracking controls, and a clear bottom **Finish Series** action.
+- Existing Share Live Scores behavior is preserved: absent during initial setup, then shown as a collapsed bar after Start Series and throughout scoring.
+- Tablet protection is regression-tested against the previous production layout at 820×1180; key setup/scoring geometry and computed styles remain identical.
