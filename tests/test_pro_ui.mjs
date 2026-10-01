@@ -16,7 +16,7 @@ assert.match(app,/PRO_FEATURES\.MULTI_PLAYER_SCORING/);
 assert.match(html,/Team \/ Multi-Bowler — PRO/);
 assert.match(app,/Team \/ Multi-Bowler scoring requires Popz Bowling Pro/);
 assert.match(app,/onEntitlement:setProAccess/);
-const release=app.match(/APP_VERSION='public-v(\d+)'/)[1];
+const release=app.match(/APP_VERSION='public-v([^']+)'/)[1];
 assert.ok(sw.includes(`entitlements.mjs?v=${release}`));
 assert.ok(sw.includes(`scoring.mjs?v=${release}`));
 console.log('Pro Preview UI and gate wiring tests passed');

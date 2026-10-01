@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Current app version: **public-v37**
+Current app version: **public-v37.1**
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 
@@ -95,3 +95,6 @@ public-v26 is the first visible **Pro Preview** release. The header and Settings
 - The Stats hero no longer presents **Export Backup** as the primary data-protection action. Signed-in users see their Google Sync state there; a healthy account shows **✓ Google Sync — Up to date**, syncing/error states are explicit, and a sync error can be retried from the hero. Signed-out users see **Protect My Data**, which takes them directly to the Google Sync section in Settings.
 - Manual JSON export remains available in Settings and History as an extra recovery/transfer tool. Settings now describes it as an **Extra manual backup / recovery copy** so it is not confused with Google Sync.
 - **Share Live Scores** is collapsed to a compact Bowl-screen control by default. Tapping it opens the explanation and Start Sharing controls; **Not Now** collapses it without sharing. After sharing starts, the compact control can be hidden again and visibly shows **LIVE** while the spectator link is active.
+
+## public-v37.1 — persistent bottom navigation
+- Hardened the five-button bottom navigation for mobile/PWA Settings screens: fixed positioning is forced into its own compositor layer above Settings content, safe-area space is reserved at the bottom of the document, and every tab selection resets the new view to the top. This prevents users from having to scroll through the long Settings page to recover the Stats/Bowl/History/Help/Settings controls.

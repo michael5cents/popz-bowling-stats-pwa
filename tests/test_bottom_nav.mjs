@@ -1,0 +1,10 @@
+import assert from'node:assert/strict';
+import{readFileSync}from'node:fs';
+const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const css=read('style.css'),app=read('app.js');
+assert.match(css,/\.bottom-nav\{position:fixed!important;z-index:1000/);
+assert.match(css,/grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/);
+assert.match(css,/transform:translateZ\(0\)/);
+assert.match(css,/padding-bottom:calc\(80px \+ env\(safe-area-inset-bottom\)\)/);
+assert.match(app,/globalThis\.scrollTo\?\.\(\{top:0,left:0,behavior:'auto'\}\)/);
+console.log('Persistent bottom-navigation layout tests passed');

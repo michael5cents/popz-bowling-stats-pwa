@@ -35,7 +35,8 @@ try {
   await scorer.route('**/*',route=>route.request().url().startsWith(base)?route.continue():route.abort());
   await page.goto(base+'/?qa=1');
   assert.equal((await page.locator('#dashboardProtectionBtn').textContent()).trim(),'Protect My Data');assert.match(await page.locator('#lastSyncText').textContent(),/stored on this device only/);await page.locator('#dashboardProtectionBtn').click();await page.locator('#settingsView.active').waitFor();await page.locator('#googleSyncSetting').waitFor();
-  await page.locator('#bowlerName').fill('QA Bowler');await page.locator('#bowlerName').press('Tab');
+  const navVisible=async()=>{const b=await page.locator('.bottom-nav').boundingBox();return b&&b.y>=0&&b.y+b.height<=845};assert.ok(await navVisible(),'bottom navigation must remain visible at Settings top');await page.evaluate(()=>scrollTo(0,document.documentElement.scrollHeight));assert.ok(await navVisible(),'bottom navigation must remain visible at Settings bottom');
+  await page.locator('#bowlerName').scrollIntoViewIfNeeded();await page.locator('#bowlerName').fill('QA Bowler');await page.locator('#bowlerName').press('Tab');
   await page.locator('[data-nav="bowl"]').click();await page.locator('#seriesGameCount').fill('1');
   await page.locator('#startSeriesBtn').click();assert.match(await page.locator('#liveShareToggleBtn').innerText(),/Share Live Scores/);assert.ok(await page.locator('#liveShareDetails').evaluate(e=>e.classList.contains('hidden')));await page.locator('#liveShareToggleBtn').click();assert.match(await page.locator('#liveShareDetails').innerText(),/Live session only/);await page.locator('#closeLiveShareBtn').click();assert.ok(await page.locator('#liveShareDetails').evaluate(e=>e.classList.contains('hidden')));await page.locator('#liveShareToggleBtn').click();await page.locator('#startLiveShareBtn').click();
   await page.waitForFunction(()=>document.getElementById('liveShareLink').value.includes('/live/#'));

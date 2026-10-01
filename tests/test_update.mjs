@@ -6,6 +6,8 @@ assert.equal(versionNeedsUpdate('public-v14','public-v15'),true);
 assert.equal(versionNeedsUpdate('public-v15',''),false);
 assert.equal(versionNeedsUpdate('public-v15','public-v16'),true);
 assert.equal(versionNeedsUpdate('public-v16','public-v16'),false);
+assert.equal(versionNeedsUpdate('public-v37','public-v37.1'),true);
+assert.equal(versionNeedsUpdate('public-v37.1','public-v37.1'),false);
 
 assert.deepEqual(
   resolveUpdateNotice('public-v24','public-v25',''),
