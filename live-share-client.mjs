@@ -1,4 +1,4 @@
-import {buildLiveSnapshot} from './live-share.mjs';
+import {buildLiveSnapshot} from './live-share.mjs?v=36';
 
 export const LIVE_STORAGE_KEY = 'popz-bowling-public-live-v1';
 const LIFE = 12*60*60*1000;
@@ -29,7 +29,7 @@ export function createLiveShareClient({storage,request,allowed,changed=()=>{},no
     }
   }
   function start(session,name) {
-    if (!allowed()) throw Error('Share My Scores requires Popz Bowling Pro');
+    if (!allowed()) throw Error('Share Live Scores requires Popz Bowling Pro');
     if (!session || session.finishedAt) throw Error('Start a bowling series first');
     if (record) throw Error('Stop or clear the existing link before sharing another bowler');
     mutate(()=>{record={sessionId:session.id,viewerToken:makeToken(),publisherSecret:makeToken(),

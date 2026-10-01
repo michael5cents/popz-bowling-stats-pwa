@@ -36,7 +36,7 @@ try {
   await page.goto(base+'/?qa=1');
   await page.locator('[data-nav="settings"]').click();await page.locator('#bowlerName').fill('QA Bowler');await page.locator('#bowlerName').press('Tab');
   await page.locator('[data-nav="bowl"]').click();await page.locator('#seriesGameCount').fill('1');
-  await page.locator('#startSeriesBtn').click();await page.locator('#startLiveShareBtn').click();
+  await page.locator('#startSeriesBtn').click();assert.match(await page.locator('#liveSharePanel').innerText(),/Share Live Scores/);assert.match(await page.locator('#liveSharePanel').innerText(),/Live session only/);await page.locator('#startLiveShareBtn').click();
   await page.waitForFunction(()=>document.getElementById('liveShareLink').value.includes('/live/#'));
   const link=await page.locator('#liveShareLink').inputValue();
   const spectator=await browser.newContext({viewport:{width:390,height:844}});const view=await spectator.newPage();view.on('pageerror',e=>errors.push(e.message));
@@ -51,7 +51,7 @@ try {
   assert.ok(saved.sessions[0].finishedAt);assert.equal(saved.activeSessionId,null);
   await scorer.setOffline(false);await page.evaluate(()=>window.dispatchEvent(new Event('online')));
   await view.waitForFunction(()=>document.getElementById('status').textContent==='FINAL');
-  assert.match(await view.locator('#finalGrid').textContent(),/300/);
+  assert.match(await view.locator('#finalGrid').textContent(),/300/);assert.match(await view.locator('#finalGrid').textContent(),/Strike %/);assert.match(await view.locator('#finalSummary').innerText(),/not the bowler's Stats screen or History/);
   await view.screenshot({path:'/private/tmp/popz-live-spectator-qa.png',fullPage:true});
   // Stop must work after Finish Series, with no active scoring session.
   await page.locator('[data-nav="bowl"]').click();await page.locator('#stopLiveShareBtn').click();

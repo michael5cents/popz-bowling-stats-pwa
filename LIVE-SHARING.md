@@ -1,10 +1,10 @@
-# Share My Scores — public-v34
+# Share Live Scores — public-v34+
 
 This ports the tested private app's single-bowler spectator experience into **Popz Bowling Pro**, while retaining public-v33's telemetry improvements. The private app and its relay are not changed or used.
 
 ## Using it
 
-1. Open **Bowl**, start a series, and find **Share My Scores** above the scoring area.
+1. Open **Bowl**, start a series, and find **Share Live Scores** above the scoring area. This feature is only for the selected bowler's current live series; it is not a Stats, History, past-score, or backup sharing feature.
 2. In team mode, select the bowler first. **Start Sharing** creates one read-only link for that bowler. Turn rotation does not change whose scores are shared.
 3. Choose **Share Link** to send it through your phone's share sheet, or copy the displayed link. Viewers do not need an account, installation, or Pro.
 4. Score normally. Keep the app open and online for updates. Scoring and Finish Series save locally first; network failures cannot block those saves. Pending final results retry when the app returns online or reopens.
@@ -16,7 +16,7 @@ One bowler's link is managed per scoring device at a time. Stop/clear it before 
 
 - `PRO_FEATURES.LIVE_SCORE_SHARING` gates creation. Existing Pro Preview unlocks it for testers.
 - Server creation requires both `PRO_PREVIEW_ENABLED` and `LIVE_SHARE_PREVIEW="true"`, or a verified Firebase identity with an active server-owned `/users/{uid}/entitlements/pro` document. Before ending preview, configure `LIVE_FIREBASE_WEB_API_KEY` with the existing Firebase **public web API key**, and set `LIVE_SHARE_PREVIEW="false"` in both Wrangler environments. No client-provided plan is trusted. Existing links retain their bounded lifetime; Stop works regardless of plan.
-- Sharing is off by default and starts only on explicit action. Anyone holding the URL can view the selected bowler's name, date, league, series label, game marks/scores, current ball and final statistics.
+- Sharing is off by default and starts only on explicit action. The URL follows only the selected bowler's current live series. It does **not** expose the Stats screen, History, past series, backups, or other bowlers. A viewer can see the selected bowler's name, date, league, series label, live game marks/scores, current ball, and the final result for that same live session.
 - No other bowlers, full history, center, lane, oil pattern, stand/target boards, email, Firebase UID, telemetry ID or publisher secret enters a snapshot. The server independently allowlists payloads.
 - Viewer and publisher credentials are separate random values. The server stores only a SHA-256 publisher-secret hash. Raw publisher secrets stay in a separate localStorage key, outside bowling state, backup exports and Google Sync.
 - Active links expire at most 12 hours after creation. Final links expire within 2 hours of finishing (or the original deadline if sooner). Finished scores cannot be overwritten. Viewers continue checking for Stop/expiry, clearing their display on confirmed revocation. Already-seen information or screenshots cannot be recalled.

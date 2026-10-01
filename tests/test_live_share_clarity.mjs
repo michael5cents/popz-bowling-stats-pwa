@@ -1,0 +1,25 @@
+import assert from'node:assert/strict';
+import{readFileSync}from'node:fs';
+
+const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const ui=read('live-share-ui.mjs'),client=read('live-share-client.mjs'),server=read('live-share-server.mjs');
+const html=read('index.html'),style=read('style.css'),sw=read('service-worker.js');
+const viewerHtml=read('live/index.html'),viewer=read('live/viewer.mjs');
+
+assert.match(ui,/Share Live Scores/);
+assert.match(ui,/Live session only/);
+assert.match(ui,/Stats screen, History, past series, backups, or other bowlers/);
+assert.doesNotMatch(ui,/style\.href=['"]\.\/live-share\.css/);
+assert.match(style,/\.live-share-panel/);
+assert.match(html,/Share Live Scores — PRO/);
+assert.match(html,/does <strong>not<\/strong> share your Stats screen, History, past series, backups, or other bowlers/);
+assert.match(viewerHtml,/SHARED LIVE SCORES/);
+assert.match(viewerHtml,/not the bowler's Stats screen or History/);
+assert.match(viewer,/finalStats/,'the same live series may still show its own final summary');
+assert.match(viewer,/Strike %/,'live-series final summary remains intact');
+assert.doesNotMatch(client,/Share My Scores/);
+assert.doesNotMatch(server,/Share My Scores/);
+assert.doesNotMatch(sw,/live-share\.css/);
+assert.match(sw,/e\.request\.mode==='navigate'/);
+assert.match(sw,/Response\.error\(\)/);
+console.log('Share Live Scores boundary, final live-session summary, and stylesheet reliability tests passed');

@@ -1,10 +1,10 @@
 # Popz Bowling Stats — User Guide
 
-## Share My Scores — Pro
+## Share Live Scores — Pro
 
-On **Bowl**, start a series and use **Share My Scores → Start Sharing → Share Link**. In team mode, select the bowler first; the link stays with that bowler when turns rotate. Anyone with the link can watch without an account. Only the selected series' scores, name, league, current ball and final statistics are shared—not your history or other bowlers.
+On **Bowl**, start a series and use **Share Live Scores → Start Sharing → Share Link**. This is **live-session sharing only**: the spectator link follows the selected bowler's current series as it happens. In team mode, select the bowler first; turn rotation does not switch whose live scores are shared. Anyone with the link can watch without an account.
 
-Keep the scoring app open and online for updates. Offline scoring saves normally; sharing retries on reconnect. **Finish Series** sends the final scores; **Stop Sharing** remains on Bowl afterward. If Stop is pending, reconnect and leave the app open until it confirms. Links expire within 12 hours, and final results within 2 hours. Pro Preview currently unlocks this feature. **Share / Transfer Backup** remains a separate Free feature.
+**Share Live Scores does not share the Stats screen, History, past series, backups, or other bowlers.** It can show the selected bowler's name, league, current game/series scores, current ball, and the final result from that same live session. Keep the scoring app open and online for updates. Offline scoring saves normally; sharing retries on reconnect. **Finish Series** sends that live session's final result; **Stop Sharing** remains on Bowl afterward. If Stop is pending, reconnect and leave the app open until it confirms. Links expire within 12 hours, and a finished live session within 2 hours. Pro Preview currently unlocks this feature. **Share / Transfer Backup** remains a separate Free feature.
 
 Production app: https://popzbowling.com
 

@@ -103,7 +103,7 @@ export async function handleLiveRequest({request,env,params},options={}) {
     const body=await readBody(request),snapshot=sanitizeLiveSnapshot(body.snapshot),revision=body.revision;
     if(!Number.isSafeInteger(revision)||revision<1)throw fail(400,'Invalid revision');
     if(method==='POST'&&!row) {
-      if(!await authorize(request,env))throw fail(403,'Share My Scores requires Popz Bowling Pro');
+      if(!await authorize(request,env))throw fail(403,'Share Live Scores requires Popz Bowling Pro');
       await limitNewRecord(db,request,now);
       await db.prepare(`INSERT INTO live_shares (token,secret_hash,status,snapshot,revision,created_at,updated_at,expires_at)
         VALUES (?,?,'active',NULL,0,?,?,?) ON CONFLICT(token) DO NOTHING`).bind(token,secretHash,now,now,now+ACTIVE_TTL).run();

@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Current app version: **public-v35**
+Current app version: **public-v36**
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 
@@ -50,7 +50,7 @@ Open **https://popzbowling.com** in a modern browser.
 - Update awareness is dual-signal in public-v24. The app checks uncached production `latest-version.json` at startup, again after 2 and 10 seconds, when returning to the foreground, when connectivity returns, and every 10 minutes while open. It also forces a service-worker update check; newly activated workers broadcast `POPZ_UPDATE_READY` to open clients. Either signal can raise the persistent **Update available — close and reopen** banner, and a service-worker signal stays authoritative even if an edge briefly serves a stale version file.
 
 ## Hosting and deployment
-- **public-v34 adds Share My Scores (Pro / Pro Preview)** while retaining public-v33 telemetry. Start sharing from Bowl, send the read-only link, and stop anytime, including after finishing. Team sharing stays with the chosen bowler. Live snapshots use their own D1 database, never telemetry; the private app is untouched. See [LIVE-SHARING.md](LIVE-SHARING.md) for usage, privacy, expiry and deployment details.
+- **public-v34 adds Share Live Scores (Pro / Pro Preview)** while retaining public-v33 telemetry. It is strictly for one selected bowler's current live series—not the Stats screen, History, past series, or backups. Start sharing from Bowl, send the read-only link, and stop anytime, including after finishing. Team sharing stays with the chosen bowler. Live snapshots use their own D1 database, never telemetry; the private app is untouched. See [LIVE-SHARING.md](LIVE-SHARING.md) for usage, privacy, expiry and deployment details.
 - **public-v35 adds runtime-health monitoring without depending on the main app module.** `runtime-monitor.js` loads before `app.js`, records privacy-safe `boot_started` / `app_ready` milestones plus sanitized script/stylesheet load errors, uncaught errors, and unhandled promise rejections. Reports use a separate D1 database (`popz-bowling-runtime`) and endpoint (`/api/runtime`), are suppressed for WebDriver/HeadlessChrome/`?qa=1`, and follow the same Anonymous usage & diagnostics On/Off setting. If the main app does not become ready within 8 seconds, the user sees a recovery message while their saved bowling data remains untouched. `/api/health` checks telemetry/live-share/runtime database bindings and reports only coarse recent-error/startup-failure flags for external availability monitoring.
 - Production: Cloudflare Pages project `popzbowling`.
 - Primary custom domain: `popzbowling.com`.
@@ -84,3 +84,9 @@ Then open `http://localhost:8080`.
 
 ## Commercialization note
 public-v26 is the first visible **Pro Preview** release. The header and Settings show the effective plan (`Free`, `Pro Preview`, or `Pro`), and premium features use the same entitlement system. Google Sync and Advanced Shot Tracking are gated there, and public-v31 adds Team / Multi-Bowler scoring to that Pro family. Pro Preview remains enabled, so current testers lose nothing. Pricing and checkout are still undecided. See `PRO-PLAN.md`.
+
+## public-v36 — Share Live Scores clarity + runtime diagnostics operator fix
+- User-facing **Share My Scores** wording is renamed to **Share Live Scores**. The Bowl panel, Help, spectator page, User Guide, and Pro documentation state that it follows only the selected bowler's current live series; it cannot browse/share the Stats screen, History, past series, backups, or other bowlers. The final summary remains available because it is calculated only from that same live session.
+- The 2026-10-01 runtime incident was recovered directly from `popz-bowling-runtime`: at 02:05:16 CDT an iOS browser reported `resource_error / stylesheet_load` for `live-share.css`. The live-share panel CSS is now part of the main versioned stylesheet instead of being dynamically injected, eliminating that separate critical stylesheet load path.
+- The service worker now falls back to `index.html` only for navigation requests. Failed CSS/script/module fetches return an error rather than accidentally receiving the app shell as the wrong content type.
+- `scripts/runtime-errors.sh [hours] [limit]` provides a repeatable operator command that reads the exact sanitized runtime-error rows directly from the configured `RUNTIME_DB` D1 database using its bound database ID.

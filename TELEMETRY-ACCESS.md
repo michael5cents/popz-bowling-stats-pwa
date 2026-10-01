@@ -46,6 +46,17 @@ It uses the same scripts. If its Keychain entry is absent, run the initializer o
 - The local queue is removed only after `/api/telemetry` returns a complete acknowledgement for the submitted batch. A local acknowledgement ledger prevents already-accepted milestones from being requeued on every launch; D1 `INSERT OR IGNORE` remains the final duplicate guard.
 - Reconciliation runs at app start, connectivity/foreground return, and periodically while the app is open. Synced/imported series from another device are not replayed as local telemetry.
 - Telemetry-off and QA-suppressed series are ineligible for later milestone backfill. Pre-v33 history is intentionally not reconstructed into the cleaned telemetry baseline.
+## Exact sanitized runtime-error rows
+For incident investigation, query the dedicated runtime D1 directly with the repository helper:
+
+```bash
+./scripts/runtime-errors.sh 24 20
+```
+
+Arguments are `[hours] [limit]`. The helper reads the bound `RUNTIME_DB` database ID from `wrangler.toml` and queries that exact D1, avoiding database-name/account ambiguity. Output contains only sanitized runtime fields: timestamp, event type, app version, coarse platform/install mode, sanitized error kind/message, source filename, line and column. It does not return bowling scores, bowler names, leagues, history, Firebase UID, raw runtime IDs, or telemetry device IDs.
+
+For the 2026-10-01 alert, this command recovered the exact row: `2026-10-01T07:05:16.292Z` (02:05:16 CDT), `public-v35`, iOS browser, `resource_error`, `stylesheet_load`, source `live-share.css`.
+
 ## public-v35 runtime health and crash diagnostics
 - `runtime-monitor.js` loads before the main `app.js` module. It records `boot_started` immediately and `app_ready` only after the local database loads, UI renders/binds, live-share controls mount, and normal startup is usable.
 - Privacy-safe error events are `resource_error`, `window_error`, and `unhandled_rejection`. Allowed fields are anonymous runtime/boot IDs, app version, timestamp, browser/installed mode, coarse platform, sanitized error kind/message, source filename, line and column. Scores, bowler names, leagues, centers, balls, oil patterns, leaves, frames, backups, Google/Firebase identity, live-share tokens, and raw URLs are not accepted.

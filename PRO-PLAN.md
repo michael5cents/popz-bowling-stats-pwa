@@ -17,7 +17,7 @@ Free remains a useful bowling app, not a crippled demo:
 
 ## Pro feature family
 Current/future Pro features:
-- **Share My Scores** — implemented in public-v34. Opt-in live, read-only links for one selected bowler, all game boards, current ball and final stats. Separate from Share / Transfer Backup (which remains Free). See `LIVE-SHARING.md`.
+- **Share Live Scores** — implemented in public-v34. Opt-in, read-only live-session links for one selected bowler's current series. It is not a Stats/History/past-score sharing feature and is separate from Share / Transfer Backup (which remains Free). See `LIVE-SHARING.md`.
 - Google multi-device sync — implemented
 - Advanced Shot Tracking: ball + stand board + target board — implemented in public-v26
 - Automatic cloud backup/restore — future
