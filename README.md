@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Current app version: **public-v38**
+Current app version: **public-v39**
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 
@@ -125,3 +125,12 @@ public-v26 is the first visible **Pro Preview** release. The header and Settings
 - Compact scoring adds a Game/Frame/Score/Series header, larger five-column scoring buttons, always-accessible Ball/Lane fields, horizontally scrollable score frames and team bowler controls, **More Scoring Details** for secondary/Advanced Shot Tracking controls, and a clear bottom **Finish Series** action.
 - Existing Share Live Scores behavior is preserved: absent during initial setup, then shown as a collapsed bar after Start Series and throughout scoring.
 - Tablet protection is regression-tested against the previous production layout at 820×1180; key setup/scoring geometry and computed styles remain identical.
+
+## public-v39 — install-only website entry
+- The normal production visit to **https://popzbowling.com** is now an installation gate rather than the bowling application. Browser visitors see the branded **Install Popz Bowling** screen; Stats/Bowl/History/Settings do not initialize or display.
+- The full bowling app initializes only when the production site is running in installed/standalone PWA mode. This also keeps browser-only visits from opening the bowling IndexedDB, starting Google Sync, or starting normal adoption telemetry.
+- Android/Chromium uses the browser's native beforeinstallprompt flow when available. iPhone/iPad keeps the visitor on the install screen and shows Safari **Share -> Add to Home Screen -> Add** instructions after the button is tapped.
+- After installation, the browser page stays on the gate and tells the user to launch Popz Bowling from the Home Screen or app launcher; it does not reveal the app in the browser.
+- `/live/` spectator pages and API endpoints are not gated.
+- The v39 service worker uses network-first navigation with the cached `index.html` fallback so installed PWAs continue to work offline while online launches pick up current entry/update behavior promptly.
+- Regression coverage verifies production-host browser gating, no bowling IndexedDB/adoption telemetry boot on the gate, iOS instructions, Android native-prompt handling, installed-PWA access, and spectator-page bypass.

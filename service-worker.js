@@ -1,9 +1,9 @@
-const SW_VERSION='public-v38';
-const CACHE='popz-bowling-public-v38';
-const ASSETS=['./','./index.html','./style.css?v=38','./app.js?v=38','./scoring.mjs?v=38','./history.mjs?v=38','./transfer.mjs?v=38','./update.mjs?v=38','./telemetry.mjs?v=38','./telemetry-client.mjs?v=38','./telemetry-milestones.mjs?v=38','./cloud-sync-core.mjs?v=38','./cloud-sync.mjs?v=38','./entitlements.mjs?v=38','./multiplayer.mjs?v=38','./layout-mode.mjs?v=38','./runtime-monitor.js?v=38','./manifest.webmanifest','./icon-192.png?v=38','./icon-512.png?v=38','./apple-touch-icon.png?v=38'];
+const SW_VERSION='public-v39';
+const CACHE='popz-bowling-public-v39';
+const ASSETS=['./','./index.html','./style.css?v=39','./app.js?v=39','./scoring.mjs?v=39','./history.mjs?v=39','./transfer.mjs?v=39','./update.mjs?v=39','./telemetry.mjs?v=39','./telemetry-client.mjs?v=39','./telemetry-milestones.mjs?v=39','./cloud-sync-core.mjs?v=39','./cloud-sync.mjs?v=39','./entitlements.mjs?v=39','./multiplayer.mjs?v=39','./layout-mode.mjs?v=39','./runtime-monitor.js?v=39','./manifest.webmanifest','./icon-192.png?v=39','./icon-512.png?v=39','./apple-touch-icon.png?v=39'];
 
 self.addEventListener('install',e=>e.waitUntil(
-  caches.open(CACHE).then(c=>c.addAll([...ASSETS,'./live-share.mjs?v=38','./live-share-client.mjs?v=38','./live-share-ui.mjs?v=38'])).then(()=>self.skipWaiting())
+  caches.open(CACHE).then(c=>c.addAll([...ASSETS,'./live-share.mjs?v=39','./live-share-client.mjs?v=39','./live-share-ui.mjs?v=39'])).then(()=>self.skipWaiting())
 ));
 
 self.addEventListener('activate',e=>e.waitUntil((async()=>{
@@ -20,10 +20,14 @@ self.addEventListener('fetch',e=>{
   if(u.origin===self.location.origin&&(u.pathname.startsWith('/api/live/')||u.pathname.startsWith('/live/'))){e.respondWith(fetch(e.request));return}
   if(u.pathname.endsWith('/latest-version.json')){e.respondWith(fetch(e.request));return}
   if(e.request.method!=='GET')return;
+  if(e.request.mode==='navigate'){
+    e.respondWith(fetch(e.request).then(r=>{const copy=r.clone();caches.open(CACHE).then(c=>c.put('./index.html',copy));return r}).catch(async()=>(await caches.match('./index.html'))||Response.error()));
+    return;
+  }
   e.respondWith(caches.match(e.request).then(async hit=>{
     if(hit)return hit;
     if(u.origin===self.location.origin&&!u.search&&u.pathname.endsWith('.mjs')){
-      const versioned=await caches.match(`${u.pathname}?v=38`);
+      const versioned=await caches.match(`${u.pathname}?v=39`);
       if(versioned)return versioned;
     }
     return fetch(e.request).then(r=>{

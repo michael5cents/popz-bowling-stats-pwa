@@ -167,3 +167,15 @@ main{width:min(1100px,100%);margin:0 auto;padding:18px;flex:1 1 auto;min-height:
 .phone-layout .leave-tracker{padding:10px}
 .phone-layout .pin{width:44px;height:44px}
 .phone-layout .leave-actions{gap:8px}
+
+/* public-v39 production install gate */
+.install-gate{display:none;min-height:100vh;min-height:100dvh;place-items:center;padding:24px;background:radial-gradient(circle at top,#17213a 0,#0b1020 52%)}
+.install-check #appShell,.install-required #appShell{display:none!important}
+.install-required{overflow:auto}
+.install-required .install-gate{display:grid}
+.install-card{width:min(440px,100%);text-align:center;background:linear-gradient(145deg,rgba(28,39,66,.98),rgba(20,28,49,.98));border:1px solid rgba(255,255,255,.09);border-radius:24px;padding:30px;box-shadow:0 24px 70px rgba(0,0,0,.42)}
+.install-card h1{font-size:clamp(28px,8vw,40px);margin:8px 0 12px}
+.install-card>p{color:var(--muted);line-height:1.55;margin:0 auto 22px;max-width:350px}
+.install-gate-button{width:100%;min-height:56px;font-size:18px}
+.install-gate-help{margin-top:18px!important;margin-bottom:0!important;padding:14px;border-radius:14px;background:#0c1426;border:1px solid var(--line);color:#dbeafe!important;white-space:pre-line}
+@media(max-width:480px){.install-gate{padding:16px}.install-card{padding:24px 20px;border-radius:20px}}

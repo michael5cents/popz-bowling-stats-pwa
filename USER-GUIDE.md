@@ -9,7 +9,7 @@ On **Bowl**, complete the setup and press **Start Series**. The initial setup sc
 Production app: https://popzbowling.com
 
 ## Install
-Open `popzbowling.com`. On Android/Chrome, tap **Install App**. On iPhone/iPad, open the site in Safari and use **Share → Add to Home Screen → Add**. The app can also be used directly in the browser.
+Open `popzbowling.com`. The normal website is now an **install screen only**; the bowling app itself opens only from the installed PWA. On Android/Chrome, tap **Install Popz Bowling** and accept the browser's install prompt. On iPhone/iPad, tap **Install Popz Bowling** for the instructions, then in Safari use **Share → Add to Home Screen → Add**. After installation, launch Popz Bowling from the Home Screen or app launcher.
 
 ## Phone layout
 **Automatic** is the default. If Popz Bowling is running as an installed PWA on a phone-sized screen (500 CSS pixels or less on the short side), the Bowl screen uses the simpler **Compact Phone** layout. Installed iPads and Samsung/Android tablets keep the existing **Full Layout**, and a phone-sized browser that is not installed also stays Full.
