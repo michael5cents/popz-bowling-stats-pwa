@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Current app version: **public-v37.003**
+Current app version: **public-v37.004**
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 
@@ -110,3 +110,9 @@ public-v26 is the first visible **Pro Preview** release. The header and Settings
 - The bowler can choose **Start Sharing → Share Link** to open the device share sheet and select Telegram, Google Messages, email, another compatible messaging app, and the recipient. **Not Now** collapses the panel and moves focus to scoring without sharing.
 - In Team / Multi-Bowler mode, the same pre-score prompt opens after the linked team series is created; the selected bowler remains the live-share target even as turns rotate.
 - An already-active/final live share remains manageable after Finish Series so the owner can still stop/revoke its spectator link.
+
+## public-v37.004 — persistent collapsed Share Live Scores bar
+- Share Live Scores is **not shown during the initial Start a Series setup**.
+- After **Start Series**, a small **collapsed** Share Live Scores bar appears and remains visible throughout scoring. It never auto-opens.
+- If the bowler ignores it, it simply stays collapsed. Tapping **Open** reveals the explanation and sharing controls; closing it returns to the compact bar.
+- The same behavior applies to Single Bowler and Team / Multi-Bowler sessions. An active/final share remains manageable after the series so its spectator link can still be shared or revoked.

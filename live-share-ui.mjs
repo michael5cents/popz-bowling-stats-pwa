@@ -1,5 +1,5 @@
-import {createLiveShareClient} from './live-share-client.mjs?v=37.003';
-import {PRO_FEATURES} from './entitlements.mjs?v=37.003';
+import {createLiveShareClient} from './live-share-client.mjs?v=37.004';
+import {PRO_FEATURES} from './entitlements.mjs?v=37.004';
 
 export function mountLiveShare({getState,getSession,nameForSession,hasFeature,getIdToken,toast,onContinue}) {
   const panel=document.createElement('section');
@@ -58,7 +58,6 @@ export function mountLiveShare({getState,getSession,nameForSession,hasFeature,ge
     catch{toast('Live sharing could not update. Local scoring is unaffected.');}
   }
   function continueToScoring(){if(getSession())onContinue?.();}
-  function offerAtSeriesStart(){if(!getSession())return;expanded=true;render();requestAnimationFrame(()=>panel.scrollIntoView({behavior:'smooth',block:'start'}));}
   el('liveShareToggleBtn').onclick=()=>{expanded=!expanded;render();};
   el('closeLiveShareBtn').onclick=()=>{expanded=false;render();continueToScoring();};
   el('startLiveShareBtn').onclick=async()=>{
@@ -82,5 +81,5 @@ export function mountLiveShare({getState,getSession,nameForSession,hasFeature,ge
   window.addEventListener('online',saved);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)saved();});
   setInterval(()=>{if(!document.hidden)saved();},15000);
-  saved();return {saved,render,offerAtSeriesStart};
+  saved();return {saved,render};
 }
