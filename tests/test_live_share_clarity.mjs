@@ -7,6 +7,9 @@ const html=read('index.html'),style=read('style.css'),sw=read('service-worker.js
 const viewerHtml=read('live/index.html'),viewer=read('live/viewer.mjs');
 
 assert.match(ui,/Share Live Scores/);
+assert.match(ui,/liveShareToggleBtn/);
+assert.match(ui,/liveShareDetails.*hidden/);
+assert.match(ui,/closeLiveShareBtn/);
 assert.match(ui,/Live session only/);
 assert.match(ui,/Stats screen, History, past series, backups, or other bowlers/);
 assert.doesNotMatch(ui,/style\.href=['"]\.\/live-share\.css/);

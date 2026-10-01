@@ -34,11 +34,12 @@ try {
   const page=await scorer.newPage();page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());
   await scorer.route('**/*',route=>route.request().url().startsWith(base)?route.continue():route.abort());
   await page.goto(base+'/?qa=1');
-  await page.locator('[data-nav="settings"]').click();await page.locator('#bowlerName').fill('QA Bowler');await page.locator('#bowlerName').press('Tab');
+  assert.equal((await page.locator('#dashboardProtectionBtn').textContent()).trim(),'Protect My Data');assert.match(await page.locator('#lastSyncText').textContent(),/stored on this device only/);await page.locator('#dashboardProtectionBtn').click();await page.locator('#settingsView.active').waitFor();await page.locator('#googleSyncSetting').waitFor();
+  await page.locator('#bowlerName').fill('QA Bowler');await page.locator('#bowlerName').press('Tab');
   await page.locator('[data-nav="bowl"]').click();await page.locator('#seriesGameCount').fill('1');
-  await page.locator('#startSeriesBtn').click();assert.match(await page.locator('#liveSharePanel').innerText(),/Share Live Scores/);assert.match(await page.locator('#liveSharePanel').innerText(),/Live session only/);await page.locator('#startLiveShareBtn').click();
+  await page.locator('#startSeriesBtn').click();assert.match(await page.locator('#liveShareToggleBtn').innerText(),/Share Live Scores/);assert.ok(await page.locator('#liveShareDetails').evaluate(e=>e.classList.contains('hidden')));await page.locator('#liveShareToggleBtn').click();assert.match(await page.locator('#liveShareDetails').innerText(),/Live session only/);await page.locator('#closeLiveShareBtn').click();assert.ok(await page.locator('#liveShareDetails').evaluate(e=>e.classList.contains('hidden')));await page.locator('#liveShareToggleBtn').click();await page.locator('#startLiveShareBtn').click();
   await page.waitForFunction(()=>document.getElementById('liveShareLink').value.includes('/live/#'));
-  const link=await page.locator('#liveShareLink').inputValue();
+  const link=await page.locator('#liveShareLink').inputValue();await page.locator('#closeLiveShareBtn').click();assert.equal((await page.locator('#liveShareToggleState').textContent()).trim(),'LIVE');assert.ok(await page.locator('#liveShareDetails').evaluate(e=>e.classList.contains('hidden')));
   const spectator=await browser.newContext({viewport:{width:390,height:844}});const view=await spectator.newPage();view.on('pageerror',e=>errors.push(e.message));
   await view.goto(link);await view.locator('#live:not(.hidden)').waitFor();assert.equal(await view.locator('#bowler').textContent(),'QA Bowler');
   for(let i=0;i<12;i++)await page.locator('[data-pins="10"]').click();
@@ -54,13 +55,13 @@ try {
   assert.match(await view.locator('#finalGrid').textContent(),/300/);assert.match(await view.locator('#finalGrid').textContent(),/Strike %/);assert.match(await view.locator('#finalSummary').innerText(),/not the bowler's Stats screen or History/);
   await view.screenshot({path:'/private/tmp/popz-live-spectator-qa.png',fullPage:true});
   // Stop must work after Finish Series, with no active scoring session.
-  await page.locator('[data-nav="bowl"]').click();await page.locator('#stopLiveShareBtn').click();
+  await page.locator('[data-nav="bowl"]').click();await page.locator('#liveShareToggleBtn').click();await page.locator('#stopLiveShareBtn').click();
   await view.reload();await view.waitForFunction(()=>document.getElementById('message').textContent.includes('stopped or expired'));
   assert.equal(await view.locator('#gameBoards .frame').count(),0);
   // A team rotation must never switch the bowler behind an already-shared link.
   await page.locator('#seriesMode').selectOption('multi');
   await page.locator('[data-roster-name="1"]').fill('QA Partner');
-  await page.locator('#startSeriesBtn').click();await page.locator('#startLiveShareBtn').click();
+  await page.locator('#startSeriesBtn').click();await page.locator('#liveShareToggleBtn').click();await page.locator('#startLiveShareBtn').click();
   await page.waitForFunction(()=>document.getElementById('liveShareLink').value.includes('/live/#'));
   const teamLink=await page.locator('#liveShareLink').inputValue();await view.goto(teamLink);
   await page.locator('[data-pins="10"]').click();

@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Current app version: **public-v36**
+Current app version: **public-v37**
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 
@@ -90,3 +90,8 @@ public-v26 is the first visible **Pro Preview** release. The header and Settings
 - The 2026-10-01 runtime incident was recovered directly from `popz-bowling-runtime`: at 02:05:16 CDT an iOS browser reported `resource_error / stylesheet_load` for `live-share.css`. The live-share panel CSS is now part of the main versioned stylesheet instead of being dynamically injected, eliminating that separate critical stylesheet load path.
 - The service worker now falls back to `index.html` only for navigation requests. Failed CSS/script/module fetches return an error rather than accidentally receiving the app shell as the wrong content type.
 - `scripts/runtime-errors.sh [hours] [limit]` provides a repeatable operator command that reads the exact sanitized runtime-error rows directly from the configured `RUNTIME_DB` D1 database using its bound database ID.
+
+## public-v37 — clearer protection status + compact live sharing
+- The Stats hero no longer presents **Export Backup** as the primary data-protection action. Signed-in users see their Google Sync state there; a healthy account shows **✓ Google Sync — Up to date**, syncing/error states are explicit, and a sync error can be retried from the hero. Signed-out users see **Protect My Data**, which takes them directly to the Google Sync section in Settings.
+- Manual JSON export remains available in Settings and History as an extra recovery/transfer tool. Settings now describes it as an **Extra manual backup / recovery copy** so it is not confused with Google Sync.
+- **Share Live Scores** is collapsed to a compact Bowl-screen control by default. Tapping it opens the explanation and Start Sharing controls; **Not Now** collapses it without sharing. After sharing starts, the compact control can be hidden again and visibly shows **LIVE** while the spectator link is active.

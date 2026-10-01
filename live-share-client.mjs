@@ -1,4 +1,4 @@
-import {buildLiveSnapshot} from './live-share.mjs?v=36';
+import {buildLiveSnapshot} from './live-share.mjs?v=37';
 
 export const LIVE_STORAGE_KEY = 'popz-bowling-public-live-v1';
 const LIFE = 12*60*60*1000;
