@@ -1,9 +1,9 @@
-const SW_VERSION='public-v39.005';
-const CACHE='popz-bowling-public-v39.005';
-const ASSETS=['./','./index.html','./style.css?v=39.005','./entry.js?v=39.005','./app.js?v=39.005','./scoring.mjs?v=39.005','./history.mjs?v=39.005','./transfer.mjs?v=39.005','./update.mjs?v=39.005','./telemetry.mjs?v=39.005','./telemetry-client.mjs?v=39.005','./telemetry-milestones.mjs?v=39.005','./cloud-sync-core.mjs?v=39.005','./cloud-sync.mjs?v=39.005','./entitlements.mjs?v=39.005','./multiplayer.mjs?v=39.005','./layout-mode.mjs?v=39.005','./runtime-monitor.js?v=39.005','./manifest.webmanifest','./icon-192.png?v=39.005','./icon-512.png?v=39.005','./apple-touch-icon.png?v=39.005'];
+const SW_VERSION='public-v39.006';
+const CACHE='popz-bowling-public-v39.006';
+const ASSETS=['./','./index.html','./style.css?v=39.006','./entry.js?v=39.006','./app.js?v=39.006','./scoring.mjs?v=39.006','./history.mjs?v=39.006','./transfer.mjs?v=39.006','./update.mjs?v=39.006','./telemetry.mjs?v=39.006','./telemetry-client.mjs?v=39.006','./telemetry-milestones.mjs?v=39.006','./cloud-sync-core.mjs?v=39.006','./cloud-sync.mjs?v=39.006','./entitlements.mjs?v=39.006','./multiplayer.mjs?v=39.006','./layout-mode.mjs?v=39.006','./runtime-monitor.js?v=39.006','./manifest.webmanifest','./icon-192.png?v=39.006','./icon-512.png?v=39.006','./apple-touch-icon.png?v=39.006'];
 
 self.addEventListener('install',e=>e.waitUntil(
-  caches.open(CACHE).then(c=>c.addAll([...ASSETS,'./live-share.mjs?v=39.005','./live-share-client.mjs?v=39.005','./live-share-ui.mjs?v=39.005'])).then(()=>self.skipWaiting())
+  caches.open(CACHE).then(c=>c.addAll([...ASSETS,'./live-share.mjs?v=39.006','./live-share-client.mjs?v=39.006','./live-share-ui.mjs?v=39.006'])).then(()=>self.skipWaiting())
 ));
 
 self.addEventListener('activate',e=>e.waitUntil((async()=>{
@@ -27,7 +27,7 @@ self.addEventListener('fetch',e=>{
   e.respondWith(caches.match(e.request).then(async hit=>{
     if(hit)return hit;
     if(u.origin===self.location.origin&&!u.search&&u.pathname.endsWith('.mjs')){
-      const versioned=await caches.match(`${u.pathname}?v=39.005`);
+      const versioned=await caches.match(`${u.pathname}?v=39.006`);
       if(versioned)return versioned;
     }
     return fetch(e.request).then(r=>{

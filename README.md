@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Current app version: **public-v39.005**
+Current app version: **public-v39.006**
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 
@@ -178,3 +178,9 @@ public-v26 is the first visible **Pro Preview** release. The header and Settings
 - The lane placeholder is shortened from **Example: 17 or 17-18** to **17 or 17-18** so the full hint remains visible on real phone widths.
 - Regression coverage now locks the equal-width phone grid and lane placeholder, and browser QA measures the rendered placeholder text against the actual input width at 390×844 (narrower than the locked 412×915 Pixel 7 QA simulator).
 - No telemetry baseline behavior changes; the fresh telemetry baseline remains public-v39.004 and newer.
+
+## public-v39.006 — readable Install App instructions
+- The in-app Install App message no longer uses a tiny pill for long setup instructions. Toasts now wrap inside the phone viewport with a normal rounded-card shape.
+- Install notices use a dedicated wide card up to the available phone width and stay visible for 12 seconds instead of 2.4 seconds.
+- Android install guidance is formatted as four numbered steps for easier reading on a phone.
+- Normal short status toasts keep their existing short 2.4-second timing; the longer duration applies only to install guidance.
