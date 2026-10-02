@@ -1,7 +1,8 @@
 import{normalizeTelemetryEvent,telemetryPlatform}from'./telemetry.mjs';
 import{buildTelemetryMilestones}from'./telemetry-milestones.mjs';
 
-const QUEUE='popz-bowling-telemetry-queue-v1',ACKED='popz-bowling-telemetry-acked-v1',ENABLED='popz-bowling-telemetry-enabled-v1',FIRST='popz-bowling-telemetry-first-v1';
+const QUEUE='popz-bowling-telemetry-queue-v2',ACKED='popz-bowling-telemetry-acked-v2',FIRST='popz-bowling-telemetry-first-v2';
+const LEGACY_KEYS=['popz-bowling-telemetry-queue-v1','popz-bowling-telemetry-acked-v1','popz-bowling-telemetry-first-v1','popz-bowling-telemetry-enabled-v1'];
 const MAX_QUEUE=1000,MAX_ACKED=5000,RETRY_MS=30000;
 let ctx=null,flushing=false,retryTimer=null,memoryQueue=[],memoryAcked=[];
 const array=v=>{try{const x=JSON.parse(v||'[]');return Array.isArray(x)?x:[]}catch{return[]}};
@@ -21,13 +22,14 @@ const acknowledge=ids=>{
  writeAcked(dedup.reverse());
 };
 const clearQueue=()=>{memoryQueue=[];try{localStorage.removeItem(QUEUE)}catch{}};
-export const telemetryEnabled=()=>{try{return localStorage.getItem(ENABLED)!=='off'}catch{return true}};
+export const telemetryEnabled=()=>true;
 export function telemetrySuppressed(){
- try{const q=new URLSearchParams(globalThis.location?.search||'');if(q.get('qa')==='1'||q.get('telemetry')==='off')return true}catch{}
+ try{const q=new URLSearchParams(globalThis.location?.search||'');if(q.get('qa')==='1')return true}catch{}
  try{const n=globalThis.navigator;if(n?.webdriver===true||/HeadlessChrome/i.test(n?.userAgent||''))return true}catch{}
  return false;
 }
-const telemetryActive=()=>telemetryEnabled()&&!telemetrySuppressed();
+const telemetryActive=()=>!telemetrySuppressed();
+function clearLegacyTelemetry(){try{for(const key of LEGACY_KEYS)localStorage.removeItem(key)}catch{}}
 export function configureTelemetry(config){ctx=config}
 function queueTelemetry(event,meta={}){
  if(!ctx||!telemetryActive())return null;
@@ -72,13 +74,13 @@ function ensureRetryTimer(){
  retryTimer=setInterval(()=>{reconcileTelemetry();flushTelemetry()},RETRY_MS);
  retryTimer?.unref?.();
 }
-export function setTelemetryEnabled(on){
- try{localStorage.setItem(ENABLED,on?'on':'off')}catch{}
- if(!on){clearQueue();return}
+export function setTelemetryEnabled(){
+ if(telemetrySuppressed()){clearQueue();return}
  ensureRetryTimer();reconcileTelemetry();flushTelemetry();
 }
 export function startTelemetry(){
- if(!ctx||!telemetryEnabled())return;
+ if(!ctx)return;
+ clearLegacyTelemetry();
  if(telemetrySuppressed()){clearQueue();return}
  ensureRetryTimer();
  try{if(!localStorage.getItem(FIRST)){localStorage.setItem(FIRST,'1');trackTelemetry('first_seen')}}catch{}

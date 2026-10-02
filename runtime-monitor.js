@@ -1,17 +1,17 @@
 (function(){
 'use strict';
-const ENDPOINT='/api/runtime',QUEUE_KEY='popz-bowling-runtime-queue-v1',RID_KEY='popz-bowling-runtime-id-v1',TELEMETRY_KEY='popz-bowling-telemetry-enabled-v1',MAX_QUEUE=60;
+const ENDPOINT='/api/runtime',QUEUE_KEY='popz-bowling-runtime-queue-v2',RID_KEY='popz-bowling-runtime-id-v1',LEGACY_QUEUE_KEY='popz-bowling-runtime-queue-v1',MAX_QUEUE=60;
 let memoryQueue=[],ready=false,flushing=false;
 const qa=()=>{
- try{const q=new URLSearchParams(location.search);if(q.get('qa')==='1'||q.get('telemetry')==='off')return true}catch{}
+ try{const q=new URLSearchParams(location.search);if(q.get('qa')==='1')return true}catch{}
  try{if(navigator.webdriver===true||/HeadlessChrome/i.test(navigator.userAgent||''))return true}catch{}
  return false;
 };
-const enabled=()=>{try{return localStorage.getItem(TELEMETRY_KEY)!=='off'}catch{return true}};
 const randomId=()=>crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
 const getRuntimeId=()=>{
  try{let id=localStorage.getItem(RID_KEY);if(!id){id='run-'+randomId();localStorage.setItem(RID_KEY,id)}return id}catch{return'run-'+randomId()}
 };
+try{localStorage.removeItem(LEGACY_QUEUE_KEY);localStorage.removeItem('popz-bowling-telemetry-enabled-v1')}catch{}
 const runtimeId=getRuntimeId(),bootId='boot-'+randomId(),appVersion=document.querySelector('meta[name="popz-app-version"]')?.content||'unknown';
 const platform=()=>{const x=(navigator.userAgent||'').toLowerCase();if(/android/.test(x))return'android';if(/iphone|ipad|ipod/.test(x))return'ios';if(/windows/.test(x))return'windows';if(/macintosh|mac os/.test(x))return'mac';if(/linux/.test(x))return'linux';return'other'};
 const installed=()=>{try{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch{return false}};
@@ -21,13 +21,13 @@ const readQueue=()=>{try{const x=JSON.parse(localStorage.getItem(QUEUE_KEY)||'[]
 const writeQueue=q=>{memoryQueue=q.slice(-MAX_QUEUE);try{localStorage.setItem(QUEUE_KEY,JSON.stringify(memoryQueue))}catch{}};
 const clearQueue=()=>{memoryQueue=[];try{localStorage.removeItem(QUEUE_KEY)}catch{}};
 function enqueue(event,extra={}){
- if(qa()||!enabled())return;
+ if(qa())return;
  const q=readQueue(),item={id:'rte-'+randomId(),runtimeId,bootId,event,appVersion,occurredAt:new Date().toISOString(),installMode:installed()?'installed':'browser',platform:platform(),
   errorKind:clean(extra.errorKind,48),errorMessage:clean(extra.errorMessage,180),source:sourceName(extra.source),line:Number(extra.line||0),col:Number(extra.col||0)};
  q.push(item);writeQueue(q);flush();
 }
 async function flush(){
- if(flushing||qa()||!enabled()||navigator.onLine===false)return;
+ if(flushing||qa()||navigator.onLine===false)return;
  const q=readQueue();if(!q.length)return;flushing=true;const sent=q.slice(0,20);
  try{
   const r=await fetch(ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({events:sent}),cache:'no-store',keepalive:true});
@@ -60,7 +60,7 @@ function showLoadFailure(){
 }
 window.PopzRuntimeMonitor={
  ready(){if(ready)return;ready=true;document.getElementById('popzLoadFailure')?.remove();enqueue('app_ready')},
- setEnabled(on){if(!on){clearQueue();return}flush()},
+ setEnabled(){flush()},
  flush
 };
 enqueue('boot_started');

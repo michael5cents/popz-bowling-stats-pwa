@@ -2,8 +2,15 @@ export const TELEMETRY_EVENTS=new Set([
 'first_seen','app_open','app_installed','bowl_viewed','series_setup_viewed','series_started','first_roll_recorded','game_completed','series_completed',
 'stats_viewed','history_viewed','help_viewed','settings_viewed','backup_exported','backup_share_used','backup_imported','cloud_sign_in','cloud_sync'
 ]);
+export const TELEMETRY_BASELINE_VERSION='public-v39.004';
+export const TELEMETRY_PREREQUISITES={
+ bowl_viewed:'app_open',series_setup_viewed:'bowl_viewed',series_started:'series_setup_viewed',first_roll_recorded:'series_started',game_completed:'first_roll_recorded',series_completed:'game_completed'
+};
 const text=(v,n=80)=>String(v??'').trim().slice(0,n);
 const safeId=v=>/^[A-Za-z0-9._:-]{8,100}$/.test(String(v||''));
+const versionParts=v=>{const m=String(v||'').match(/^public-v(\d+)(?:\.(\d+))?(?:\.(\d+))?$/);return m?[Number(m[1]||0),Number(m[2]||0),Number(m[3]||0)]:null};
+export function telemetryVersionAtLeast(version,baseline=TELEMETRY_BASELINE_VERSION){const a=versionParts(version),b=versionParts(baseline);if(!a||!b)return false;for(let i=0;i<3;i++){if(a[i]>b[i])return true;if(a[i]<b[i])return false}return true}
+export const telemetryPrerequisite=event=>TELEMETRY_PREREQUISITES[event]||'';
 export function telemetryPlatform(ua=''){
  const x=String(ua).toLowerCase();
  if(/android/.test(x))return'android';if(/iphone|ipad|ipod/.test(x))return'ios';

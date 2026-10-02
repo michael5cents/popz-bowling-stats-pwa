@@ -7,7 +7,7 @@ assert.equal(validDashboardAuth(basic('other','secret123'),'secret123'),false);
 assert.equal(validDashboardAuth('', 'secret123'),false);
 const page=renderTelemetryDashboard({
  totalDevices:12,active7:8,active30:11,completedDevices30:6,seriesCompleted30:14,
- newDevices7:3,newDevices30:9,returningDevices30:5,
+ newDevices7:3,newDevices30:9,returningDevices30:5,invalidFunnelEvents:0,
  events:[{event:'series_completed',events:14,devices:6}],
  platforms:[{platform:'android',devices:9}],modes:[{install_mode:'installed',devices:7}],
  funnel:[{event:'app_open',devices:8},{event:'bowl_viewed',devices:5},{event:'first_roll_recorded',devices:2},{event:'game_completed',devices:1}],
@@ -29,10 +29,11 @@ assert.match(page,/http-equiv="refresh" content="60"/);
 assert.match(page,/Auto-refreshes every 60 seconds/);
 assert.equal(formatDashboardGeneratedAt('2026-09-21T01:00:00Z'),'Sep 20, 2026, 8:00 PM');
 assert.match(page,/Generated Sep 20, 2026, 4:00 PM CT/);
-const inferred=renderTelemetryDashboard({totalDevices:1,active7:1,active30:1,completedDevices30:1,seriesCompleted30:1,newDevices7:1,newDevices30:1,returningDevices30:0,events:[{event:'series_completed',events:1,devices:1}],platforms:[],modes:[],funnel:[{event:'series_completed',devices:1}],daily:[{day:'2026-09-30',devices:1,opens:0,bowl_views:2,started:0,first_rolls:0,games_completed:0,completed:1}],runtime:{available:true,boots24:0,ready24:0,startupFailures24:0,errors24:0,latestErrors:[]}},'2026-10-01T20:00:00Z');
-assert.match(inferred,/Series started<\/td><td>1<\/td>/,'completed profile must imply at least one started profile in funnel display');
-assert.match(inferred,/2026-09-30<\/td><td>1<\/td><td>0<\/td><td>2<\/td><td>1<\/td><td>0<\/td><td>0<\/td><td>1<\/td>/,'completed daily series must imply at least one started series in daily display');
-assert.match(inferred,/every recorded series completion counts as at least one series start/);
+const raw=renderTelemetryDashboard({totalDevices:1,active7:1,active30:1,completedDevices30:1,seriesCompleted30:1,newDevices7:1,newDevices30:1,returningDevices30:0,invalidFunnelEvents:1,events:[{event:'series_completed',events:1,devices:1}],platforms:[],modes:[],funnel:[{event:'series_completed',devices:1}],daily:[{day:'2026-09-30',devices:1,opens:0,bowl_views:2,started:0,first_rolls:0,games_completed:0,completed:1}],runtime:{available:true,boots24:0,ready24:0,startupFailures24:0,errors24:0,latestErrors:[]}},'2026-10-01T20:00:00Z');
+assert.match(raw,/Series started<\/td><td>0<\/td>/,'dashboard must show raw start telemetry and never infer a start');
+assert.match(raw,/2026-09-30<\/td><td>1<\/td><td>0<\/td><td>2<\/td><td>0<\/td><td>0<\/td><td>0<\/td><td>1<\/td>/,'daily table must not invent a series start');
+assert.match(raw,/Invalid funnel events<\/span><strong>1<\/strong>/);
+assert.match(raw,/actual accepted events only/);
 assert.doesNotMatch(page,/device_id/);
 assert.doesNotMatch(page,/dev-/);
 console.log('telemetry dashboard auth and activation-funnel tests passed');

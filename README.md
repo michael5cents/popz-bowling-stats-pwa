@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Current app version: **public-v39.003**
+Current app version: **public-v39.004**
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 
@@ -15,7 +15,7 @@ This repository is the public/friends version only. It is completely separate fr
 - public-v23 adds optional Google sign-in + Firestore sync. Signed-in users store completed series and the small set of cross-device settings under their Firebase UID so the same history appears after signing into another device with the same Google account. An in-progress series stays local until Finish Series.
 - Firestore rules restrict `/users/{uid}` and every nested sync document to that authenticated UID; all other reads/writes are denied.
 - public-v23 continues privacy-minimal anonymous product-usage events in the separate Cloudflare D1 telemetry database. Events identify only the random device ID, event type, app version, timestamp, installed/browser mode, and coarse platform. Scores, names, league names, centers, balls, oil patterns, averages, leaves, frames, and backup contents are never accepted by the telemetry endpoint.
-- Anonymous usage & diagnostics are On by default and can be turned Off in Settings; adoption telemetry and runtime-diagnostic queues are stored separately from bowling backups.
+- During the public beta, anonymous usage telemetry and privacy-safe runtime diagnostics are required and cannot be disabled by normal users. They remain separate from bowling backups and never accept scores, bowler names, leagues, centers, balls, oil patterns, leaves, frames, backups, or Google identity.
 - The installed PWA works offline after its files have been cached.
 - Users protect their history with **Export Backup** and restore it with **Import JSON**.
 
@@ -39,9 +39,9 @@ Open **https://popzbowling.com** in a modern browser.
 - Signed-in users sync when the app opens/returns online or foreground, after important completed-history/settings changes, and on a 60-second background check while open. Manual **Sync now** is also available.
 - Export / Import / Share Backup remains available as recovery and manual-transfer fallback.
 - Anonymous telemetry tracks first seen/app opens plus the activation funnel: Bowl viewed, series setup shown, series started, first roll recorded, game completed, and series completed. It also tracks Stats/History/Help/Settings views, backup export/share/import usage, Google sign-in use, and manual cloud-sync use. It does not receive the Google identity, bowling content, or cloud documents. Events queue locally while offline and flush when connectivity returns.
-- **public-v32 hardens telemetry against QA contamination.** WebDriver and HeadlessChrome sessions are suppressed automatically, `?qa=1` (or `?telemetry=off`) explicitly suppresses telemetry for production QA, and entering QA mode clears any queued test telemetry before it can flush later. The dashboard now says **profiles seen** instead of implying those profiles actually bowled; an app open alone qualifies as "seen." Historical rows are cleaned only when a profile is positively identified as QA.
-- **public-v33 makes bowling-milestone telemetry recoverable after dead spots or app restarts.** New v33+ series store only a privacy-minimal telemetry eligibility/origin marker plus milestone timestamps alongside the local series. Series start, first roll, game completion, and series completion use deterministic event IDs and are reconciled from saved state at startup, foreground/connectivity return, and while the app remains open. Queued events are removed only after a complete server acknowledgement, and acknowledged milestone IDs are retained locally to prevent duplicate counts. Team / Multi-Bowler sessions still count once per team milestone, synced/imported series never replay telemetry on another device, and telemetry-off/QA series are not later backfilled. Pre-v33 bowling history is intentionally not reconstructed into the telemetry baseline.
-- public-v27 adds `settings_viewed` on entry to Settings (not on background redraws). It uses the existing opt-out and offline queue and sends no settings values. Dashboard Event totals lists it after the first received event; past visits cannot be backfilled.
+- **QA protection:** WebDriver and HeadlessChrome sessions are suppressed automatically. `?qa=1` is the explicit internal production-QA path and clears/suppresses QA telemetry; `?telemetry=off` is no longer a user-accessible opt-out during beta. The dashboard says **profiles seen** because an app open alone qualifies as seen and does not mean a series was bowled.
+- **Durable bowling milestones:** Series start, first roll, game completion, and series completion use deterministic event IDs and are reconciled from saved local state after dead spots or app restarts. Queued events are removed only after a complete server acknowledgement. public-v39.004 starts telemetry marker version 2, so pre-reset version-1 markers and old queued events cannot replay into the fresh baseline. Team / Multi-Bowler sessions still count once per team milestone, and synced/imported series do not replay telemetry on another device.
+- `settings_viewed` is recorded on entry to Settings (not on background redraws) and sends no settings values. Like all beta usage events in public-v39.004, it follows the required beta telemetry policy and the durable offline queue.
 - Feedback opens an email addressed to `feedback@popzbowling.com` with subject **Popz Bowling Stats** and includes the app version/device information.
 - Built-in **Help** tab provides a complete user guide with Print / Save Guide support.
 - Storage protection: requests persistent browser storage and automatically downloads a JSON safety backup after every finished series.
@@ -51,7 +51,7 @@ Open **https://popzbowling.com** in a modern browser.
 
 ## Hosting and deployment
 - **public-v34 adds Share Live Scores (Pro / Pro Preview)** while retaining public-v33 telemetry. It is strictly for one selected bowler's current live series—not the Stats screen, History, past series, or backups. Start sharing from Bowl, send the read-only link, and stop anytime, including after finishing. Team sharing stays with the chosen bowler. Live snapshots use their own D1 database, never telemetry; the private app is untouched. See [LIVE-SHARING.md](LIVE-SHARING.md) for usage, privacy, expiry and deployment details.
-- **public-v35 adds runtime-health monitoring without depending on the main app module.** `runtime-monitor.js` loads before `app.js`, records privacy-safe `boot_started` / `app_ready` milestones plus sanitized script/stylesheet load errors, uncaught errors, and unhandled promise rejections. Reports use a separate D1 database (`popz-bowling-runtime`) and endpoint (`/api/runtime`), are suppressed for WebDriver/HeadlessChrome/`?qa=1`, and follow the same Anonymous usage & diagnostics On/Off setting. If the main app does not become ready within 8 seconds, the user sees a recovery message while their saved bowling data remains untouched. `/api/health` checks telemetry/live-share/runtime database bindings and reports only coarse recent-error/startup-failure flags for external availability monitoring.
+- **Runtime-health monitoring:** `runtime-monitor.js` loads before `app.js`, records privacy-safe `boot_started` / `app_ready` milestones plus sanitized script/stylesheet load errors, uncaught errors, and unhandled promise rejections. Reports use a separate D1 database (`popz-bowling-runtime`) and endpoint (`/api/runtime`). During beta they are required for normal users and suppressed only for `?qa=1`, WebDriver, or HeadlessChrome. If the main app does not become ready within 8 seconds, the user sees a recovery message while saved bowling data remains untouched.
 - Production: Cloudflare Pages project `popzbowling`.
 - Primary custom domain: `popzbowling.com`.
 - Cloudflare Pages default domain: `popzbowling.pages.dev`.
@@ -156,4 +156,16 @@ public-v26 is the first visible **Pro Preview** release. The header and Settings
 - Runtime monitoring remains strict: the reviewed iOS script-load incident and Android startup TypeError were real client events, not a site-wide outage. Both are documented before their incident rows are cleaned from the current health window after this fix is deployed.
 - Regression QA requires the browser install gate to open with no bowling IndexedDB, no adoption telemetry, no `app.js` request, no `.mjs` request, and no 8-second watchdog warning; installed phone/tablet and live/offline scoring regressions remain covered separately.
 - PopzVPS health monitor was updated for the new bootstrap architecture: homepage checks now require `runtime-monitor.js` + `entry.js`, then separately verify that `entry.js` points to the current versioned `app.js` and that the full installed-app asset still reports the expected `APP_VERSION`.
-- Telemetry dashboard reporting now enforces the logical minimum that every recorded series completion implies at least one series start. This corrects the retained 2026-09-30 baseline display from 0 started / 1 completed to 1 started / 1 completed without inserting synthetic telemetry rows; raw event totals remain unchanged.
+- The temporary v39.003 dashboard display rule that inferred a missing Series Started count from Series Completed is superseded by public-v39.004. The dashboard now shows only raw accepted events and never manufactures funnel counts.
+
+## public-v39.004 — clean telemetry baseline + QA phone simulator
+- Production adoption telemetry and runtime-diagnostic D1 tables are reset to a fresh beta baseline. Counts from the earlier test period are intentionally discarded.
+- The telemetry dashboard now shows **actual accepted events only**. It no longer infers or backfills Series Started from Series Completed.
+- `/api/telemetry` rejects downstream funnel milestones when the required earlier stage is missing: app open → Bowl viewed → setup shown → series started → first roll → game completed → series completed.
+- The dashboard adds **Invalid funnel events** as a database consistency check. The expected value is 0.
+- The fresh baseline accepts only telemetry from public-v39.004 or newer. Older installed copies can receive an acknowledgement but their queued adoption/runtime rows are not stored.
+- Local adoption and runtime queues move to v2. New series use `_telemetry.version=2`; pre-reset version-1 series cannot replay old milestones into the new baseline.
+- During the public beta, usage telemetry and privacy-safe runtime diagnostics are mandatory for normal users. Settings shows **Beta telemetry: On** without an Off control.
+- Internal QA remains excluded with `?qa=1`, WebDriver, or HeadlessChrome. The old `?telemetry=off` URL flag no longer disables beta telemetry.
+- Hidden `?qa=1&phone=1` mode bypasses the install-only gate for internal testing, forces Compact Phone layout, and suppresses adoption/runtime telemetry.
+- The MacBook Desktop **Popz Bowling QA Phone** launcher opens that hidden QA phone mode against live `popzbowling.com` using its own Chrome profile, so manual testing always targets the latest production deployment without contaminating telemetry.

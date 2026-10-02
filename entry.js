@@ -4,7 +4,8 @@ const $=id=>document.getElementById(id);
 let deferredInstallPrompt=null;
 const isInstalled=()=>{try{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch{return false}};
 const isProductionWebHost=()=>/^(?:www\.)?popzbowling\.com$/i.test(location.hostname);
-const installGateRequired=()=>isProductionWebHost()&&!isInstalled();
+const qaPhoneMode=()=>{try{const q=new URLSearchParams(location.search);return q.get('qa')==='1'&&q.get('phone')==='1'}catch{return false}};
+const installGateRequired=()=>isProductionWebHost()&&!isInstalled()&&!qaPhoneMode();
 function setHelp(message=''){const el=$('installGateHelp');if(!el)return;el.textContent=message;el.classList.toggle('hidden',!message)}
 function showGate(){document.body.classList.remove('install-check');document.body.classList.add('install-required');$('installGate')?.classList.remove('hidden');setHelp('')}
 function releaseGate(){document.body.classList.remove('install-check','install-required')}
@@ -30,7 +31,7 @@ async function prepareInstallability(){
 function loadApp(){
  const script=document.createElement('script');
  script.type='module';
- script.src='./app.js?v=39.003';
+ script.src='./app.js?v=39.004';
  document.body.appendChild(script);
 }
 if(installGateRequired()){

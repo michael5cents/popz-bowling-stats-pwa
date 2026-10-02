@@ -13,7 +13,7 @@ const maxTime=values=>{
  const xs=values.map(iso).filter(Boolean).sort();
  return xs[xs.length-1]||null;
 };
-const tracked=(s,deviceId)=>s?._telemetry?.version===1&&s._telemetry?.eligible!==false&&s._telemetry?.originDeviceId===deviceId;
+const tracked=(s,deviceId)=>s?._telemetry?.version===2&&s._telemetry?.eligible!==false&&s._telemetry?.originDeviceId===deviceId;
 const hasRoll=s=>(s?.games||[]).some(g=>(g.frames||[]).some(f=>(f.rolls||[]).length));
 const firstRollAt=s=>firstTime(
  s?._telemetry?.firstRollAt,
@@ -26,18 +26,18 @@ function singleMilestones(s){
  const out=[event(`milestone:series:${s.id}:series_started`,'series_started',s._telemetry?.startedAt||s.createdAt)];
  if(hasRoll(s))out.push(event(`milestone:series:${s.id}:first_roll_recorded`,'first_roll_recorded',firstRollAt(s)));
  for(const g of(s.games||[]))if(gameComplete(g))out.push(event(`milestone:game:${g.id}:game_completed`,'game_completed',gameDoneAt(g)));
- if(s.finishedAt)out.push(event(`milestone:series:${s.id}:series_completed`,'series_completed',s.finishedAt));
+ if(s.finishedAt&&(s.games||[]).some(gameComplete))out.push(event(`milestone:series:${s.id}:series_completed`,'series_completed',s.finishedAt));
  return out;
 }
 function groupMilestones(id,rows){
  const out=[event(`milestone:group:${id}:series_started`,'series_started',minTime(rows.map(s=>s._telemetry?.startedAt||s.createdAt)))];
  if(rows.some(hasRoll))out.push(event(`milestone:group:${id}:first_roll_recorded`,'first_roll_recorded',minTime(rows.filter(hasRoll).map(firstRollAt))));
- const games=Math.max(0,...rows.map(s=>(s.games||[]).length));
+ const games=Math.max(0,...rows.map(s=>(s.games||[]).length));let completedGames=0;
  for(let i=0;i<games;i++){
   const set=rows.map(s=>s.games?.[i]);
-  if(set.every(g=>g&&gameComplete(g)))out.push(event(`milestone:group:${id}:game:${i+1}:game_completed`,'game_completed',maxTime(set.map(gameDoneAt))));
+  if(set.every(g=>g&&gameComplete(g))){completedGames++;out.push(event(`milestone:group:${id}:game:${i+1}:game_completed`,'game_completed',maxTime(set.map(gameDoneAt))))}
  }
- if(rows.length&&rows.every(s=>s.finishedAt))out.push(event(`milestone:group:${id}:series_completed`,'series_completed',maxTime(rows.map(s=>s.finishedAt))));
+ if(completedGames&&rows.length&&rows.every(s=>s.finishedAt))out.push(event(`milestone:group:${id}:series_completed`,'series_completed',maxTime(rows.map(s=>s.finishedAt))));
  return out;
 }
 export function buildTelemetryMilestones(state={}){

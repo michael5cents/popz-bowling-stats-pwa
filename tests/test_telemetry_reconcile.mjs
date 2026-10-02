@@ -5,7 +5,7 @@ const framesComplete=()=>[...Array.from({length:9},()=>({rolls:[10]})),{rolls:[1
 const framesStarted=()=>[{rolls:[7]},...Array.from({length:9},()=>({rolls:[]}))];
 const completeGame=(id,at)=>({id,createdAt:at,updatedAt:at,_telemetryCompletedAt:at,frames:framesComplete()});
 const startedGame=(id,at)=>({id,createdAt:at,updatedAt:at,frames:framesStarted()});
-const meta=(device,started,first)=>({version:1,eligible:true,originDeviceId:device,startedAt:started,firstRollAt:first});
+const meta=(device,started,first)=>({version:2,eligible:true,originDeviceId:device,startedAt:started,firstRollAt:first});
 const deviceId='dev-main-12345678';
 
 const single={
@@ -33,6 +33,8 @@ events=buildTelemetryMilestones({deviceId,sessions:[teamA,partialB]});
 assert.equal(events.some(x=>x.event==='game_completed'),false,'team game completes only after every bowler finishes');
 assert.equal(events.some(x=>x.event==='series_completed'),false,'team series completes only after every bowler finishes');
 
-const optedOut={...single,id:'series-optout-123',_telemetry:{...single._telemetry,eligible:false}};
-assert.equal(buildTelemetryMilestones({deviceId,sessions:[optedOut]}).length,0,'opted-out series never backfills later');
+const ineligible={...single,id:'series-ineligible-123',_telemetry:{...single._telemetry,eligible:false}};
+assert.equal(buildTelemetryMilestones({deviceId,sessions:[ineligible]}).length,0,'QA-ineligible series never backfills later');
+const legacy={...single,id:'series-legacy-123',_telemetry:{...single._telemetry,version:1}};
+assert.equal(buildTelemetryMilestones({deviceId,sessions:[legacy]}).length,0,'pre-reset telemetry markers never replay into the fresh baseline');
 console.log('telemetry milestone reconciliation tests passed');

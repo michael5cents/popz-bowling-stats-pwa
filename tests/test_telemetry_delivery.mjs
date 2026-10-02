@@ -8,12 +8,12 @@ Object.defineProperty(globalThis,'navigator',{configurable:true,value:{onLine:fa
 const deviceId='dev-main-12345678';
 const state={deviceId,sessions:[{
  id:'series-delivery-123',createdAt:'2026-09-30T12:00:00Z',updatedAt:'2026-09-30T12:00:00Z',
- _telemetry:{version:1,eligible:true,originDeviceId:deviceId,startedAt:'2026-09-30T12:00:00Z'},
+ _telemetry:{version:2,eligible:true,originDeviceId:deviceId,startedAt:'2026-09-30T12:00:00Z'},
  games:[{id:'game-delivery-123',createdAt:'2026-09-30T12:00:00Z',frames:Array.from({length:10},()=>({rolls:[]}))}]
 }]};
-configureTelemetry({deviceId,appVersion:'public-v33',isInstalled:()=>true,getState:()=>state});
-const queue=()=>JSON.parse(store.get('popz-bowling-telemetry-queue-v1')||'[]');
-const acked=()=>JSON.parse(store.get('popz-bowling-telemetry-acked-v1')||'[]');
+configureTelemetry({deviceId,appVersion:'public-v39.004',isInstalled:()=>true,getState:()=>state});
+const queue=()=>JSON.parse(store.get('popz-bowling-telemetry-queue-v2')||'[]');
+const acked=()=>JSON.parse(store.get('popz-bowling-telemetry-acked-v2')||'[]');
 
 assert.equal(reconcileTelemetry(),1);
 assert.equal(queue().length,1);

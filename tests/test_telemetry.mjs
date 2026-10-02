@@ -1,5 +1,5 @@
 import assert from'node:assert/strict';
-import{normalizeTelemetryEvent,normalizeTelemetryBatch,telemetryPlatform}from'../telemetry.mjs';
+import{normalizeTelemetryEvent,normalizeTelemetryBatch,telemetryPlatform,telemetryVersionAtLeast,telemetryPrerequisite}from'../telemetry.mjs';
 const good={id:'evt-12345678',deviceId:'dev-12345678',event:'series_completed',appVersion:'public-v30',occurredAt:'2026-09-20T20:00:00Z',installMode:'installed',platform:'android',score:300,league:'Secret League'};
 assert.deepEqual(normalizeTelemetryEvent(good),{id:'evt-12345678',deviceId:'dev-12345678',event:'series_completed',appVersion:'public-v30',occurredAt:'2026-09-20T20:00:00.000Z',installMode:'installed',platform:'android'});
 assert.equal(normalizeTelemetryEvent({...good,event:'score_saved'}),null);
@@ -8,4 +8,9 @@ const batch=normalizeTelemetryBatch({events:Array(30).fill(good)});assert.equal(
 assert.equal('score'in batch[0],false);assert.equal('league'in batch[0],false);
 assert.equal(telemetryPlatform('Mozilla Android'),'android');assert.equal(telemetryPlatform('iPhone'),'ios');
 for(const event of ['cloud_sign_in','cloud_sync','bowl_viewed','series_setup_viewed','first_roll_recorded','game_completed'])assert.equal(normalizeTelemetryEvent({...good,event})?.event,event);
-console.log('telemetry privacy allowlist tests passed');
+assert.equal(telemetryVersionAtLeast('public-v39.003'),false);
+assert.equal(telemetryVersionAtLeast('public-v39.004'),true);
+assert.equal(telemetryVersionAtLeast('public-v40'),true);
+assert.equal(telemetryPrerequisite('series_completed'),'game_completed');
+assert.equal(telemetryPrerequisite('settings_viewed'),'');
+console.log('telemetry privacy allowlist and fresh baseline tests passed');
