@@ -87,3 +87,6 @@ The Telegram monitor accepts numeric patch releases such as `public-v37.002`. `/
 - It opens live production at `https://popzbowling.com/?qa=1&phone=1` in a separate Chrome profile and phone-sized app window.
 - `qa=1` suppresses both adoption telemetry and runtime diagnostics; `phone=1` is honored only with QA mode and forces Compact Phone layout while bypassing the public install gate.
 - Use this launcher for manual public-app QA so tests do not alter production adoption counts. Because it loads the live domain, reopening it tests the currently deployed public version rather than a local copy.
+
+### Deployment-race alert protection
+The PopzVPS monitor performs a complete second production check after a short delay whenever the first check finds an issue. Telegram is evaluated only from the second result. This prevents brief deployment version mismatches from producing false alerts while persistent failures still alert normally.

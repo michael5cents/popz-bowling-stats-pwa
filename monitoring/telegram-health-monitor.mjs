@@ -10,6 +10,7 @@ const STATE=process.env.BOWLING_MONITOR_STATE||path.join(process.env.HOME||'.','
 const COOLDOWN=Math.max(5,Number(process.env.BOWLING_ALERT_COOLDOWN_MINUTES||15))*60000;
 const RUNTIME_COOLDOWN=Math.max(60,Number(process.env.BOWLING_RUNTIME_ALERT_COOLDOWN_MINUTES||60))*60000;
 const TIMEOUT=Math.max(5,Number(process.env.BOWLING_HTTP_TIMEOUT_SECONDS||15))*1000;
+const RETRY_DELAY=Math.max(1,Number(process.env.BOWLING_FAILURE_RETRY_SECONDS||3))*1000;
 const UA='Popz-Bowling-Health-Monitor/1.0';
 
 const nowCt=()=>new Date().toLocaleString('en-US',{timeZone:'America/Chicago',dateStyle:'medium',timeStyle:'medium'});
@@ -97,7 +98,14 @@ if(process.argv.includes('--test-notification')){
  console.log('Telegram test notification sent');
  process.exit(0);
 }
-const state=loadState(),{issues,version}=await runChecks(),now=Date.now();
+const state=loadState();let check=await runChecks();
+if(check.issues.length){
+ await new Promise(resolve=>setTimeout(resolve,RETRY_DELAY));
+ const retry=await runChecks();
+ if(!retry.issues.length)console.log(`Transient health mismatch cleared on retry (${check.version} -> ${retry.version})`);
+ check=retry;
+}
+const{issues,version}=check,now=Date.now();
 
 if(issues.length){
  const shouldAlert=shouldSendAlert({issues,lastIssues:state.lastIssues||[],lastAlertAt:state.lastAlertAt||0,now,normalCooldown:COOLDOWN,runtimeCooldown:RUNTIME_COOLDOWN});

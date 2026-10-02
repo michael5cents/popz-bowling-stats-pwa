@@ -169,3 +169,6 @@ public-v26 is the first visible **Pro Preview** release. The header and Settings
 - Internal QA remains excluded with `?qa=1`, WebDriver, or HeadlessChrome. The old `?telemetry=off` URL flag no longer disables beta telemetry.
 - Hidden `?qa=1&phone=1` mode bypasses the install-only gate for internal testing, forces Compact Phone layout, and suppresses adoption/runtime telemetry.
 - The MacBook Desktop **Popz Bowling QA Phone** launcher opens that hidden QA phone mode against live `popzbowling.com` using its own Chrome profile, so manual testing always targets the latest production deployment without contaminating telemetry.
+
+### Telegram monitor rollout-race guard
+- The PopzVPS health monitor now reruns the full production check after a short delay before sending any alert. This prevents a deployment propagation race, such as the version file briefly showing the previous release while the homepage and assets are already on the new release, from generating a false Telegram alarm. Only an issue that survives the fresh retry can alert.
