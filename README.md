@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Current app version: **public-v39.006**
+Current app version: **public-v39.007**
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 
@@ -184,3 +184,10 @@ public-v26 is the first visible **Pro Preview** release. The header and Settings
 - Install notices use a dedicated wide card up to the available phone width and stay visible for 12 seconds instead of 2.4 seconds.
 - Android install guidance is formatted as four numbered steps for easier reading on a phone.
 - Normal short status toasts keep their existing short 2.4-second timing; the longer duration applies only to install guidance.
+
+## public-v39.007 — locked Galaxy Tab S7 QA simulator
+- Adds hidden internal `?qa=1&tablet=1` mode. It bypasses the install-only production gate only for QA, forces the normal **Full Layout**, disables the Layout selector, and is covered by the existing `qa=1` adoption/runtime telemetry suppression.
+- The MacBook desktop launcher **Test Popz Bowling - Galaxy Tab S7.command** opens live production in a dedicated fixed Electron shell modeled on the 11-inch Galaxy Tab S7 in landscape.
+- Emulator geometry is **1280 × 800 CSS px at DPR 2**, corresponding to the Tab S7 native **2560 × 1600** panel. It uses a Galaxy Tab S7 Android user agent plus touch emulation.
+- The tablet window is non-resizable, non-maximizable, non-fullscreenable, and browser zoom is locked at 100%.
+- Local tablet QA verifies Full Layout, install-gate bypass, disabled layout override, and zero telemetry/runtime requests.

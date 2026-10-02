@@ -6,10 +6,10 @@ import{configureTelemetry,startTelemetry,trackTelemetry,flushTelemetry,telemetry
 import{initCloudSync,startCloudSyncWatch,signInGoogle,signOutGoogle,syncCloudNow,cloudUser}from'./cloud-sync.mjs';
 import{PRO_FEATURES,effectiveAccess}from'./entitlements.mjs';
 import{normalizeRoster,activeSessionIds,activeGroupSessions,nextIncompleteGroupIndex}from'./multiplayer.mjs';
-import{LAYOUT_MODES,readLayoutMode,writeLayoutMode,resolveLayoutMode,layoutStatus}from'./layout-mode.mjs?v=39.006';
-import {mountLiveShare} from './live-share-ui.mjs?v=39.006';
+import{LAYOUT_MODES,readLayoutMode,writeLayoutMode,resolveLayoutMode,layoutStatus}from'./layout-mode.mjs?v=39.007';
+import {mountLiveShare} from './live-share-ui.mjs?v=39.007';
 let liveSharing=null;
-const APP_VERSION='public-v39.006',DB='popz-bowling-public',STORE='state',KEY='master',$=id=>document.getElementById(id);let state,toastTimer,pendingLeave=null,leaveSelection=new Set(),editingFrameIndex=null,deferredInstallPrompt=null,cloudStatus={state:'loading',message:'Checking Google Sync…'},updateSignalVersion='',proAccess=effectiveAccess({}),seriesSetupMode='single',setupRoster=[],phoneSeriesOptionsOpen=false,phoneScoringDetailsOpen=false,layoutResizeTimer=null;
+const APP_VERSION='public-v39.007',DB='popz-bowling-public',STORE='state',KEY='master',$=id=>document.getElementById(id);let state,toastTimer,pendingLeave=null,leaveSelection=new Set(),editingFrameIndex=null,deferredInstallPrompt=null,cloudStatus={state:'loading',message:'Checking Google Sync…'},updateSignalVersion='',proAccess=effectiveAccess({}),seriesSetupMode='single',setupRoster=[],phoneSeriesOptionsOpen=false,phoneScoringDetailsOpen=false,layoutResizeTimer=null;
 const uuid=()=>crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(16).slice(2)}`,nowIso=()=>new Date().toISOString();
 const todayLocal=()=>{const d=new Date(),o=d.getTimezoneOffset();return new Date(d.getTime()-o*60000).toISOString().slice(0,10)};
 const defaultState=()=>({version:2,deviceId:uuid(),updatedAt:nowIso(),settingsUpdatedAt:nowIso(),settings:{bowlerName:'',bowlerProfiles:[],statsBowler:'owner',historyBowler:'all',advancedShotTrackingEnabled:false,scoringMode:'simplified'},activeSessionId:null,activeGroup:null,sessions:[],deletedSessions:[],lastBackupAt:null,storagePersistent:null});
@@ -21,17 +21,19 @@ function toast(msg,duration=2400,wide=false){const el=$('toast');el.textContent=
 function isInstalled(){return window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}
 const isProductionWebHost=()=>/^(?:www\.)?popzbowling\.com$/i.test(location.hostname);
 const qaPhoneMode=()=>{try{const q=new URLSearchParams(location.search);return q.get('qa')==='1'&&q.get('phone')==='1'}catch{return false}};
-const installGateRequired=()=>isProductionWebHost()&&!isInstalled()&&!qaPhoneMode();
+const qaTabletMode=()=>{try{const q=new URLSearchParams(location.search);return q.get('qa')==='1'&&q.get('tablet')==='1'}catch{return false}};
+const qaSimulatorMode=()=>qaPhoneMode()||qaTabletMode();
+const installGateRequired=()=>isProductionWebHost()&&!isInstalled()&&!qaSimulatorMode();
 function setInstallGateHelp(message=''){const help=$('installGateHelp');if(!help)return;help.textContent=message;help.classList.toggle('hidden',!message)}
 function showInstallGate(){document.body.classList.remove('install-check');document.body.classList.add('install-required');$('installGate')?.classList.remove('hidden');setInstallGateHelp('')}
 function releaseInstallGate(){document.body.classList.remove('install-check','install-required')}
 const compactPhoneActive=()=>document.body.classList.contains('phone-layout');
 function setPhoneSeriesOptions(open){phoneSeriesOptionsOpen=!!open;const box=$('phoneSeriesOptions'),btn=$('phoneMoreSeriesBtn');box?.classList.toggle('open',phoneSeriesOptionsOpen);btn?.setAttribute('aria-expanded',String(phoneSeriesOptionsOpen));if(btn){btn.querySelector('span:first-child').textContent=phoneSeriesOptionsOpen?'Hide Series Options':'More Series Options';btn.querySelector('span:last-child').textContent=phoneSeriesOptionsOpen?'⌃':'⌄'}}
 function setPhoneScoringDetails(open){phoneScoringDetailsOpen=!!open;const area=$('scoringArea'),btn=$('phoneScoringDetailsBtn');area?.classList.toggle('phone-details-open',phoneScoringDetailsOpen);btn?.setAttribute('aria-expanded',String(phoneScoringDetailsOpen));if(btn){btn.querySelector('span:first-child').textContent=phoneScoringDetailsOpen?'Hide Scoring Details':'More Scoring Details';btn.querySelector('span:last-child').textContent=phoneScoringDetailsOpen?'⌃':'⌄'}}
-const currentLayoutPreference=()=>qaPhoneMode()?LAYOUT_MODES.COMPACT_PHONE:readLayoutMode();
-function renderLayoutSetting(){const preference=currentLayoutPreference(),result=resolveLayoutMode(preference,window),select=$('layoutMode'),status=$('layoutModeStatus');if(select){select.value=preference;select.disabled=qaPhoneMode()}if(status)status.textContent=qaPhoneMode()?'QA Phone Simulator → Compact Phone (telemetry suppressed)':layoutStatus(result)}
+const currentLayoutPreference=()=>qaPhoneMode()?LAYOUT_MODES.COMPACT_PHONE:qaTabletMode()?LAYOUT_MODES.FULL:readLayoutMode();
+function renderLayoutSetting(){const preference=currentLayoutPreference(),result=resolveLayoutMode(preference,window),select=$('layoutMode'),status=$('layoutModeStatus');if(select){select.value=preference;select.disabled=qaSimulatorMode()}if(status)status.textContent=qaPhoneMode()?'QA Phone Simulator → Compact Phone (telemetry suppressed)':qaTabletMode()?'QA Tablet Simulator → Full Layout (telemetry suppressed)':layoutStatus(result)}
 function applyLayoutMode(){const before=compactPhoneActive(),result=resolveLayoutMode(currentLayoutPreference(),window);document.body.classList.toggle('phone-layout',result.compact);document.documentElement.dataset.layout=result.mode;if(!result.compact){setPhoneSeriesOptions(false);setPhoneScoringDetails(false)}renderLayoutSetting();return before!==result.compact}
-function setLayoutPreference(value){if(qaPhoneMode())return toast('QA Phone Simulator keeps Compact Phone layout forced');writeLayoutMode(value);applyLayoutMode();renderAll();toast(readLayoutMode()===LAYOUT_MODES.AUTOMATIC?'Layout set to Automatic':readLayoutMode()===LAYOUT_MODES.COMPACT_PHONE?'Compact Phone layout on':'Full Layout on')}
+function setLayoutPreference(value){if(qaPhoneMode())return toast('QA Phone Simulator keeps Compact Phone layout forced');if(qaTabletMode())return toast('QA Tablet Simulator keeps Full Layout forced');writeLayoutMode(value);applyLayoutMode();renderAll();toast(readLayoutMode()===LAYOUT_MODES.AUTOMATIC?'Layout set to Automatic':readLayoutMode()===LAYOUT_MODES.COMPACT_PHONE?'Compact Phone layout on':'Full Layout on')}
 function handleLayoutResize(){clearTimeout(layoutResizeTimer);layoutResizeTimer=setTimeout(()=>{if(applyLayoutMode())renderScoring()},120)}
 function updateInstallButton(){const installed=isInstalled(),b=$('installAppBtn'),gate=$('installGateBtn');if(b)b.classList.toggle('hidden',installed);if(gate&&!installed&&!gate.disabled)gate.textContent='Install Popz Bowling'}
 const hasProFeature=feature=>!!proAccess?.pro&&Object.values(PRO_FEATURES).includes(feature);
