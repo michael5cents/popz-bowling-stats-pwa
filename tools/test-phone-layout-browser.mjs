@@ -53,6 +53,8 @@ try{
   assert.equal((await p.locator('#pinPad button').first().textContent()).trim(),'1');
   assert.equal((await p.locator('#pinPad button').last().textContent()).trim(),'Miss');
   assert.equal(await p.locator('#currentEnteringAverage').isVisible(),false);
+  const laneFit=await p.locator('#currentLane').evaluate(el=>{const s=getComputedStyle(el),ctx=document.createElement('canvas').getContext('2d');ctx.font=`${s.fontWeight} ${s.fontSize} ${s.fontFamily}`;return{clientWidth:el.clientWidth,textWidth:ctx.measureText(el.placeholder).width,padding:parseFloat(s.paddingLeft)+parseFloat(s.paddingRight)}});
+  assert.ok(laneFit.textWidth+laneFit.padding+4<=laneFit.clientWidth,`Lane placeholder clips: ${JSON.stringify(laneFit)}`);
   await p.locator('#phoneScoringDetailsBtn').click();
   assert.equal(await p.locator('#currentEnteringAverage').isVisible(),true,'secondary scoring details remain accessible');
   await p.locator('#phoneScoringDetailsBtn').click();

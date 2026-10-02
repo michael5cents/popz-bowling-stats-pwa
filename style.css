@@ -142,7 +142,7 @@ main{width:min(1100px,100%);margin:0 auto;padding:18px;flex:1 1 auto;min-height:
 .phone-layout .keypad-actions{grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 .phone-layout .keypad-actions #deleteGameBtn{grid-column:1/-1}
 
-.phone-layout .game-details{order:5;grid-template-columns:minmax(0,1.45fr) minmax(94px,.65fr);gap:8px;padding:10px;margin:10px 0 8px;border-radius:14px}
+.phone-layout .game-details{order:5;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:10px;margin:10px 0 8px;border-radius:14px}
 .phone-layout .game-details label{font-size:12px}
 .phone-layout .game-details input{padding:10px}
 .phone-layout .phone-secondary-game-detail{display:none}

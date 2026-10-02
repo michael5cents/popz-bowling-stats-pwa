@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Current app version: **public-v39.004**
+Current app version: **public-v39.005**
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 
@@ -172,3 +172,9 @@ public-v26 is the first visible **Pro Preview** release. The header and Settings
 
 ### Telegram monitor rollout-race guard
 - The PopzVPS health monitor now reruns the full production check after a short delay before sending any alert. This prevents a deployment propagation race, such as the version file briefly showing the previous release while the homepage and assets are already on the new release, from generating a false Telegram alarm. Only an issue that survives the fresh retry can alert.
+
+## public-v39.005 — Compact Phone lane-field fit
+- Compact Phone gives **Ball Used This Game** and **Lane Number(s)** equal-width columns instead of squeezing Lane into the smaller side of the row.
+- The lane placeholder is shortened from **Example: 17 or 17-18** to **17 or 17-18** so the full hint remains visible on real phone widths.
+- Regression coverage now locks the equal-width phone grid and lane placeholder, and browser QA measures the rendered placeholder text against the actual input width at 390×844 (narrower than the locked 412×915 Pixel 7 QA simulator).
+- No telemetry baseline behavior changes; the fresh telemetry baseline remains public-v39.004 and newer.
