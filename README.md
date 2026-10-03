@@ -191,3 +191,10 @@ public-v26 is the first visible **Pro Preview** release. The header and Settings
 - Emulator geometry is **1280 × 800 CSS px at DPR 2**, corresponding to the Tab S7 native **2560 × 1600** panel. It uses a Galaxy Tab S7 Android user agent plus touch emulation.
 - The tablet window is non-resizable, non-maximizable, non-fullscreenable, and browser zoom is locked at 100%.
 - Local tablet QA verifies Full Layout, install-gate bypass, disabled layout override, and zero telemetry/runtime requests.
+
+## 2026-10-03 — startup-failure alert noise hardening
+- Production health no longer marks the whole app degraded for one unmatched `boot_started` event. A single abandoned/interrupted launch is retained as diagnostic evidence but does not page Telegram.
+- Startup-failure degradation now requires **2 or more** unmatched mature boots within the existing 60-minute health window.
+- Real client runtime/resource errors still degrade health immediately on the first recent error, so this change only filters the lone-boot false-positive pattern seen on October 3.
+- `/api/health` now exposes `recentStartupFailureCount` and `startupFailureAlertThreshold` for diagnosis while keeping `recentStartupFailures` as the alerting boolean.
+- This is a backend monitoring change only; the public client remains **public-v39.007**.
