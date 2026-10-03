@@ -22,7 +22,10 @@ export async function onRequestGet({request,env}){
   "SELECT event,COUNT(DISTINCT device_id) devices FROM telemetry_events WHERE julianday(occurred_at)>=julianday('now','-30 days') AND event IN ('app_open','bowl_viewed','series_setup_viewed','series_started','first_roll_recorded','game_completed','series_completed') GROUP BY event",
   "SELECT substr(occurred_at,1,10) day,COUNT(DISTINCT device_id) devices,SUM(event='app_open') opens,SUM(event='bowl_viewed') bowl_views,SUM(event='series_started') started,SUM(event='first_roll_recorded') first_rolls,SUM(event='game_completed') games_completed,SUM(event='series_completed') completed FROM telemetry_events WHERE julianday(occurred_at)>=julianday('now','-14 days') GROUP BY day ORDER BY day DESC"
  ];
- const r=await env.TELEMETRY_DB.batch(sql.map(q=>env.TELEMETRY_DB.prepare(q)));
+ let r;
+ try{r=await env.TELEMETRY_DB.batch(sql.map(q=>env.TELEMETRY_DB.prepare(q)))}catch{
+  return html('<main style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;max-width:720px;margin:60px auto;padding:24px"><h1>Telemetry dashboard temporarily unavailable</h1><p>The private telemetry query failed. Production bowling data and scoring are not affected. Refresh this page in a moment.</p></main>',503);
+ }
  let runtime={available:false,installedBoots24:0,installedReady24:0,installedStartupFailures24:0,browserBoots24:0,errors24:0,latestErrors:[]};
  if(env.RUNTIME_DB){
   try{
