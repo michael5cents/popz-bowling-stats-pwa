@@ -194,7 +194,7 @@ public-v26 is the first visible **Pro Preview** release. The header and Settings
 
 ## 2026-10-03 — startup-failure alert noise hardening
 - Production health no longer marks the whole app degraded for one unmatched `boot_started` event. A single abandoned/interrupted launch is retained as diagnostic evidence but does not page Telegram.
-- Startup-failure degradation now requires **2 or more** unmatched mature boots within the existing 60-minute health window.
+- Startup-failure degradation now requires **2 or more** unmatched mature boots within a **15-minute** health window, so unrelated abandoned launches spread across an hour do not combine into a false incident.
 - Real client runtime/resource errors still degrade health immediately on the first recent error, so this change only filters the lone-boot false-positive pattern seen on October 3.
-- `/api/health` now exposes `recentStartupFailureCount` and `startupFailureAlertThreshold` for diagnosis while keeping `recentStartupFailures` as the alerting boolean.
+- `/api/health` now exposes `recentStartupFailureCount`, `startupFailureAlertThreshold`, and `startupFailureWindowMinutes` for diagnosis while keeping `recentStartupFailures` as the alerting boolean.
 - This is a backend monitoring change only; the public client remains **public-v39.007**.

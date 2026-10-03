@@ -4,7 +4,7 @@ import{onRequestGet}from'../functions/api/health.js';
 function envFor({errorCount=0,startupCount=0}={}){
   const db={prepare(sql){return{async first(){
     if(sql.includes("event IN ('window_error'"))return{value:errorCount};
-    if(sql.includes("b.event='boot_started'"))return{value:startupCount};
+    if(sql.includes("b.event='boot_started'")){assert.match(sql,/-15 minutes/,'startup-failure health window must stay at 15 minutes');return{value:startupCount};}
     return{value:1};
   }}}};
   return{TELEMETRY_DB:db,LIVE_SHARE_DB:db,RUNTIME_DB:db,ASSETS:{async fetch(){return new Response(JSON.stringify({version:'public-v39.007'}),{status:200,headers:{'content-type':'application/json'}})}}};
@@ -21,6 +21,7 @@ assert.equal(x.body.ok,true);
 assert.equal(x.body.status,'ok');
 assert.equal(x.body.runtime.recentStartupFailureCount,0);
 assert.equal(x.body.runtime.startupFailureAlertThreshold,2);
+assert.equal(x.body.runtime.startupFailureWindowMinutes,15);
 
 x=await health({startupCount:1});
 assert.equal(x.body.ok,true,'one abandoned/interrupted boot must not degrade production');

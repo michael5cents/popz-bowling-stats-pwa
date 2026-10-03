@@ -80,7 +80,7 @@ async function runChecks(){
    if(version&&h.version!==version)add(issues,'Health API',`version ${h.version||'missing'} != ${version}`);
    for(const key of['telemetry','liveSharing','runtime'])if(h.checks?.[key]!==true)add(issues,'Health dependency',key+' is unhealthy');
    if(h.runtime?.recentErrors)add(issues,'Runtime errors','recent client runtime error reported');
-   if(h.runtime?.recentStartupFailures)add(issues,'Startup failures','recent client boot failed to reach app_ready');
+   if(h.runtime?.recentStartupFailures){const c=Number(h.runtime?.recentStartupFailureCount||0),t=Number(h.runtime?.startupFailureAlertThreshold||2),w=Number(h.runtime?.startupFailureWindowMinutes||15);add(issues,'Startup failures',`${c} unmatched client boots in ${w}m (alert threshold ${t})`)}
   }
  }catch(e){add(issues,'Health API',e.message)}
  return{issues,version:version||'unknown'};

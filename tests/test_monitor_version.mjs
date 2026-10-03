@@ -7,6 +7,7 @@ assert.ok(source,'monitor must accept numeric patch versions such as public-v37.
 assert.equal(monitor.includes('entry.js?v=${n}'),true,'monitor homepage check must follow the entry bootstrap');
 assert.equal(monitor.includes("['Entry bootstrap',`${BASE}/entry.js?v=${n}`,`app.js?v=${n}`]"),true,'monitor must verify entry bootstrap points to the current app');
 assert.equal(monitor.includes("['Main app',`${BASE}/app.js?v=${n}`,`APP_VERSION='${version}'`]"),true,'monitor must still verify the full installed app asset');
+assert.match(monitor,/unmatched client boots in \$\{w\}m \(alert threshold \$\{t\}\)/,'startup alerts must state the count, window, and threshold');
 
 const valid=/^public-v\d+(?:\.\d+)*$/;
 for(const v of['public-v37','public-v37.1','public-v37.002','public-v37.002.4'])assert.equal(valid.test(v),true,v);
