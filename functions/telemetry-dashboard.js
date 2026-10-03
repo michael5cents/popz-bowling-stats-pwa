@@ -2,6 +2,21 @@ import{validDashboardAuth,renderTelemetryDashboard}from'../dashboard.mjs';
 import{TELEMETRY_BASELINE_VERSION,TELEMETRY_BASELINE_AT}from'../telemetry.mjs';
 const html=(body,status=200,extra={})=>new Response(body,{status,headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store','x-robots-tag':'noindex, nofollow','content-security-policy':"default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'",...extra}});
 const one=r=>Number(r?.results?.[0]?.value||0);
+export const invalidFunnelSql=`SELECT COUNT(*) value FROM telemetry_events e WHERE
+ (e.event='bowl_viewed' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='app_open' AND julianday(p.occurred_at)<=julianday(e.occurred_at)))
+ OR (e.event='series_setup_viewed' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='bowl_viewed' AND julianday(p.occurred_at)<=julianday(e.occurred_at)))
+ OR (e.event='series_started' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='series_setup_viewed' AND julianday(p.occurred_at)<=julianday(e.occurred_at)))
+ OR (e.event='first_roll_recorded' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='series_started' AND julianday(p.occurred_at)<=julianday(e.occurred_at)))
+ OR (e.event='game_completed' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='first_roll_recorded' AND julianday(p.occurred_at)<=julianday(e.occurred_at)))
+ OR (e.event='series_completed'
+     AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='game_completed' AND julianday(p.occurred_at)<=julianday(e.occurred_at))
+     AND NOT (
+       e.install_mode='installed'
+       AND e.app_version<'${TELEMETRY_BASELINE_VERSION}'
+       AND julianday(e.occurred_at)>=julianday('${TELEMETRY_BASELINE_AT}')
+       AND EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='series_started' AND julianday(p.occurred_at)<=julianday(e.occurred_at))
+     )
+ )`;
 export async function onRequestGet({request,env}){
  if(!validDashboardAuth(request.headers.get('authorization'),env.TELEMETRY_DASHBOARD_PASSWORD)){
   return html('<h1>Authentication required</h1>',401,{'www-authenticate':'Basic realm="Popz Bowling Telemetry", charset="UTF-8"'});
@@ -15,7 +30,7 @@ export async function onRequestGet({request,env}){
   "SELECT COUNT(*) value FROM (SELECT device_id FROM telemetry_events GROUP BY device_id HAVING MIN(julianday(occurred_at))>=julianday('now','-7 days'))",
   "SELECT COUNT(*) value FROM (SELECT device_id FROM telemetry_events GROUP BY device_id HAVING MIN(julianday(occurred_at))>=julianday('now','-30 days'))",
   "SELECT COUNT(*) value FROM (SELECT device_id FROM telemetry_events WHERE julianday(occurred_at)>=julianday('now','-30 days') GROUP BY device_id HAVING COUNT(DISTINCT substr(occurred_at,1,10))>=2)",
-  `SELECT COUNT(*) value FROM telemetry_events e WHERE (e.event='bowl_viewed' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='app_open' AND julianday(p.occurred_at)<=julianday(e.occurred_at))) OR (e.event='series_setup_viewed' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='bowl_viewed' AND julianday(p.occurred_at)<=julianday(e.occurred_at))) OR (e.event='series_started' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='series_setup_viewed' AND julianday(p.occurred_at)<=julianday(e.occurred_at))) OR (e.event='first_roll_recorded' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='series_started' AND julianday(p.occurred_at)<=julianday(e.occurred_at))) OR (e.event='game_completed' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='first_roll_recorded' AND julianday(p.occurred_at)<=julianday(e.occurred_at))) OR (e.event='series_completed' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='game_completed' AND julianday(p.occurred_at)<=julianday(e.occurred_at)) AND NOT (e.install_mode='installed' AND e.app_version<'${TELEMETRY_BASELINE_VERSION}' AND julianday(e.occurred_at)>=julianday('${TELEMETRY_BASELINE_AT}') AND EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='series_started' AND julianday(p.occurred_at)<=julianday(e.occurred_at)))))`,
+  invalidFunnelSql,
   "SELECT event,COUNT(*) events,COUNT(DISTINCT device_id) devices FROM telemetry_events GROUP BY event ORDER BY event",
   "SELECT platform,COUNT(DISTINCT device_id) devices FROM telemetry_events GROUP BY platform ORDER BY devices DESC,platform",
   "SELECT install_mode,COUNT(DISTINCT device_id) devices FROM telemetry_events GROUP BY install_mode ORDER BY devices DESC,install_mode",
