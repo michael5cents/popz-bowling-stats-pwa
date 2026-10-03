@@ -1,5 +1,5 @@
 import assert from'node:assert/strict';
-import{normalizeTelemetryEvent,normalizeTelemetryBatch,telemetryPlatform,telemetryVersionAtLeast,telemetryPrerequisite}from'../telemetry.mjs';
+import{normalizeTelemetryEvent,normalizeTelemetryBatch,telemetryPlatform,telemetryVersionAtLeast,telemetryPrerequisite,telemetryFreshBaselineEligible,telemetryPrerequisiteFor,TELEMETRY_BASELINE_AT}from'../telemetry.mjs';
 const good={id:'evt-12345678',deviceId:'dev-12345678',event:'series_completed',appVersion:'public-v30',occurredAt:'2026-09-20T20:00:00Z',installMode:'installed',platform:'android',score:300,league:'Secret League'};
 assert.deepEqual(normalizeTelemetryEvent(good),{id:'evt-12345678',deviceId:'dev-12345678',event:'series_completed',appVersion:'public-v30',occurredAt:'2026-09-20T20:00:00.000Z',installMode:'installed',platform:'android'});
 assert.equal(normalizeTelemetryEvent({...good,event:'score_saved'}),null);
@@ -13,4 +13,9 @@ assert.equal(telemetryVersionAtLeast('public-v39.004'),true);
 assert.equal(telemetryVersionAtLeast('public-v40'),true);
 assert.equal(telemetryPrerequisite('series_completed'),'game_completed');
 assert.equal(telemetryPrerequisite('settings_viewed'),'');
+assert.equal(telemetryFreshBaselineEligible({...good,appVersion:'public-v39.003',occurredAt:'2026-10-02T14:44:59Z',installMode:'installed'}),false,'pre-reset legacy installed events stay excluded');
+assert.equal(telemetryFreshBaselineEligible({...good,appVersion:'public-v39.003',occurredAt:'2026-10-02T14:45:01Z',installMode:'installed'}),true,'fresh legacy installed events are retained');
+assert.equal(telemetryFreshBaselineEligible({...good,appVersion:'public-v39.003',occurredAt:'2026-10-02T14:45:01Z',installMode:'browser'}),false,'legacy browser traffic stays excluded');
+assert.equal(telemetryPrerequisiteFor({...good,appVersion:'public-v32',event:'series_completed'}),'series_started','legacy installed scoring did not always emit game_completed');
+assert.equal(TELEMETRY_BASELINE_AT,'2026-10-02T14:45:00.000Z');
 console.log('telemetry privacy allowlist and fresh baseline tests passed');

@@ -198,3 +198,11 @@ public-v26 is the first visible **Pro Preview** release. The header and Settings
 - Real client runtime/resource errors still degrade health immediately on the first recent error, so this change only filters the lone-boot false-positive pattern seen on October 3.
 - `/api/health` now exposes `recentStartupFailureCount`, `startupFailureAlertThreshold`, and `startupFailureWindowMinutes` for diagnosis while keeping `recentStartupFailures` as the alerting boolean.
 - This is a backend monitoring change only; the public client remains **public-v39.007**.
+
+## 2026-10-03 — telemetry accuracy correction
+- Runtime diagnostics and adoption/scoring telemetry are separate databases and are now labeled separately in the private dashboard. Browser visits to the public install page are shown as **Website / install-page boots** and no longer look like installed bowling-app launches.
+- Startup-failure health degradation counts only `install_mode=installed` boots. An abandoned browser/install-page visit cannot trigger an installed-app startup alert.
+- The Oct. 2 fresh baseline timestamp is `2026-10-02T14:45:00Z`. Current versions (public-v39.004+) remain eligible normally. Older installed PWAs from public-v31 onward may submit only events that actually occurred after that timestamp; old browser traffic and pre-reset timestamps remain excluded.
+- Legacy installed scoring uses the older compatible milestone chain when necessary so real scoring from a stale installed PWA is not silently discarded just because that client did not emit every newer funnel stage.
+- The private pre-reset SQL backup is retained and proves earlier real scoring existed, but it is not merged into current live adoption totals because that historical period also contained QA contamination.
+- This is backend/admin instrumentation only; the public client remains **public-v39.007**.

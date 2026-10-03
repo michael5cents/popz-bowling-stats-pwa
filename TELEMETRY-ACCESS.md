@@ -76,8 +76,8 @@ For the 2026-10-01 alert, this command recovered the exact row: `2026-10-01T07:0
 The Telegram monitor accepts numeric patch releases such as `public-v37.002`. `/api/health` no longer hard-codes an app version; it reads the current published `latest-version.json`, so health/version checks stay aligned automatically on future `public-v37.xxx` maintenance releases.
 
 ## public-v39.004 fresh baseline
-- The adoption D1 and runtime D1 were deliberately cleared for a new beta baseline. public-v39.004 and newer are the only app versions allowed to store new telemetry/runtime rows.
-- `/api/telemetry` enforces the activation sequence before storing downstream milestones. Invalid/out-of-order downstream rows are acknowledged so clients do not retry forever, but they are not stored.
+- The adoption D1 and runtime D1 were deliberately cleared for a new beta baseline at **2026-10-02T14:45:00Z**. public-v39.004 and newer are eligible normally. Older **installed** PWAs from public-v31 onward may store only fresh events whose own timestamps are at or after that reset point; old browser traffic and pre-reset timestamps stay excluded.
+- `/api/telemetry` enforces the current activation sequence before storing downstream milestones. For fresh legacy installed clients, the server uses a compatible older milestone prerequisite where needed so genuine stale-client scoring is not silently discarded.
 - The dashboard renders raw accepted values only and has an **Invalid funnel events** consistency card. It should remain 0.
 - Adoption queue/ack/first-seen keys and runtime queue use v2 namespaces. Old v1 queues are removed by public-v39.004, and old `_telemetry.version=1` series are not reconciled into the new baseline.
 - Normal public-beta users cannot disable adoption telemetry or runtime diagnostics. Only `?qa=1`, WebDriver, and HeadlessChrome suppress them.

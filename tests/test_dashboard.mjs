@@ -12,7 +12,7 @@ const page=renderTelemetryDashboard({
  platforms:[{platform:'android',devices:9}],modes:[{install_mode:'installed',devices:7}],
  funnel:[{event:'app_open',devices:8},{event:'bowl_viewed',devices:5},{event:'first_roll_recorded',devices:2},{event:'game_completed',devices:1}],
  daily:[{day:'2026-09-20',devices:4,opens:5,bowl_views:4,started:3,first_rolls:2,games_completed:1,completed:1}],
- runtime:{available:true,boots24:9,ready24:8,startupFailures24:1,errors24:2,latestErrors:[{occurred_at:'2026-09-20T20:30:00Z',event:'window_error',app_version:'public-v35',platform:'android',install_mode:'installed',error_kind:'TypeError',error_message:'QA sanitized error',source:'app.js',line:77,col:9}]}
+ runtime:{available:true,installedBoots24:4,installedReady24:4,installedStartupFailures24:0,browserBoots24:5,errors24:2,latestErrors:[{occurred_at:'2026-09-20T20:30:00Z',event:'window_error',app_version:'public-v35',platform:'android',install_mode:'installed',error_kind:'TypeError',error_message:'QA sanitized error',source:'app.js',line:77,col:9}]}
 },'2026-09-20T21:00:00Z');
 assert.match(page,/Popz Bowling Telemetry/);
 assert.match(page,/Profiles seen • 7d/);
@@ -20,16 +20,21 @@ assert.match(page,/Activation funnel/);
 assert.match(page,/First roll recorded/);
 assert.match(page,/QA protection/);
 assert.match(page,/Runtime health/);
-assert.match(page,/Startup failures • 24h/);
+assert.match(page,/Installed app boots • 24h/);
+assert.match(page,/Installed app ready • 24h/);
+assert.match(page,/Installed startup failures • 24h/);
+assert.match(page,/Website \/ install-page boots • 24h/);
 assert.match(page,/Runtime errors • 24h/);
+assert.match(page,/browser visits to popzbowling\.com and are not bowling usage/);
 assert.match(page,/QA sanitized error/);
 assert.match(page,/source filename and line\/column/);
-assert.match(page,/simply opening the app qualifies/);
+assert.match(page,/runtime website boot does <strong>not<\/strong> mean somebody opened the installed bowling app/);
+assert.match(page,/Fresh post-reset events from older <em>installed<\/em> PWAs are accepted/);
 assert.match(page,/http-equiv="refresh" content="60"/);
 assert.match(page,/Auto-refreshes every 60 seconds/);
 assert.equal(formatDashboardGeneratedAt('2026-09-21T01:00:00Z'),'Sep 20, 2026, 8:00 PM');
 assert.match(page,/Generated Sep 20, 2026, 4:00 PM CT/);
-const raw=renderTelemetryDashboard({totalDevices:1,active7:1,active30:1,completedDevices30:1,seriesCompleted30:1,newDevices7:1,newDevices30:1,returningDevices30:0,invalidFunnelEvents:1,events:[{event:'series_completed',events:1,devices:1}],platforms:[],modes:[],funnel:[{event:'series_completed',devices:1}],daily:[{day:'2026-09-30',devices:1,opens:0,bowl_views:2,started:0,first_rolls:0,games_completed:0,completed:1}],runtime:{available:true,boots24:0,ready24:0,startupFailures24:0,errors24:0,latestErrors:[]}},'2026-10-01T20:00:00Z');
+const raw=renderTelemetryDashboard({totalDevices:1,active7:1,active30:1,completedDevices30:1,seriesCompleted30:1,newDevices7:1,newDevices30:1,returningDevices30:0,invalidFunnelEvents:1,events:[{event:'series_completed',events:1,devices:1}],platforms:[],modes:[],funnel:[{event:'series_completed',devices:1}],daily:[{day:'2026-09-30',devices:1,opens:0,bowl_views:2,started:0,first_rolls:0,games_completed:0,completed:1}],runtime:{available:true,installedBoots24:0,installedReady24:0,installedStartupFailures24:0,browserBoots24:0,errors24:0,latestErrors:[]}},'2026-10-01T20:00:00Z');
 assert.match(raw,/Series started<\/td><td>0<\/td>/,'dashboard must show raw start telemetry and never infer a start');
 assert.match(raw,/2026-09-30<\/td><td>1<\/td><td>0<\/td><td>2<\/td><td>0<\/td><td>0<\/td><td>0<\/td><td>1<\/td>/,'daily table must not invent a series start');
 assert.match(raw,/Invalid funnel events<\/span><strong>1<\/strong>/);
