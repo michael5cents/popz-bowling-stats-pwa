@@ -1,6 +1,6 @@
 # Telemetry Dashboard Access Runbook
 
-**Current production baseline (audited 2026-10-05):** public client `public-v39.007`; production/backend code baseline `b4495664c3692efad551258fd953dd464649e5a5`; `/api/health` reports `ok`. Documentation-only commits may advance the repository HEAD without changing that deployed code baseline. The adoption D1 is currently 0 profiles / 0 events after the 2026-10-02 clean reset. Runtime D1 is separate from adoption telemetry and currently contains startup diagnostics only; runtime counts must never be interpreted as bowling usage.
+**Current production baseline (audited 2026-10-05):** public client `public-v39.008`; deployed release/source commit `31a210f29c987fafe591dfa4411f54c9c698d22e`; `/api/health` reports `ok`. The adoption D1 remains 0 profiles / 0 events after the 2026-10-02 clean reset. Runtime D1 is separate from adoption telemetry and currently contains 11 `boot_started` / 10 `app_ready` diagnostic rows; runtime counts must never be interpreted as bowling usage. Documentation-only commits may advance repository HEAD after this release without changing the deployed release commit.
 
 ## Private dashboard
 - URL: `https://popzbowling.com/telemetry-dashboard`
@@ -75,7 +75,7 @@ For the 2026-10-01 alert, this command recovered the exact row: `2026-10-01T07:0
 - Production validation on 2026-09-30: the exact PopzVPS wrapper reported `Healthy: public-v35`, and a real `POPZ BOWLING MONITOR TEST` message was accepted by Telegram using the same bot/chat as the call-forwarding monitor.
 
 ### Patch-version health monitoring
-The Telegram monitor accepts numeric patch releases such as the current `public-v39.007`. `/api/health` does not hard-code the app version; it reads the published `latest-version.json`, so health/version checks stay aligned automatically on future maintenance releases.
+The Telegram monitor accepts numeric patch releases such as the current `public-v39.008`. `/api/health` does not hard-code the app version; it reads the published `latest-version.json`, so health/version checks stay aligned automatically on future maintenance releases.
 
 ## public-v39.004 fresh baseline
 - The adoption D1 and runtime D1 were deliberately cleared for a new beta baseline at **2026-10-02T14:45:00Z**. public-v39.004 and newer are eligible normally. Older **installed** PWAs from public-v31 onward may store only fresh events whose own timestamps are at or after that reset point; old browser traffic and pre-reset timestamps stay excluded.
