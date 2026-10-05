@@ -1,5 +1,7 @@
 # Popz Bowling Stats — User Guide
 
+Current production version: **public-v39.007**.
+
 ## Share Live Scores — Pro
 
 On **Bowl**, complete the setup and press **Start Series**. The initial setup screen does not show Share Live Scores. After the series starts, a small **collapsed Share Live Scores** bar appears and stays visible while you score. It never opens automatically. If you want to share, tap **Open**, choose **Start Sharing**, then **Share Link** to use your phone/tablet's normal share sheet and pick Telegram, Google Messages, email, another compatible messaging app, and the person you want to send it to. If you ignore it, it simply remains collapsed. This is **live-session sharing only**: the spectator link follows the selected bowler's current series as it happens. In team mode, select the bowler you want to share before starting the link; turn rotation does not switch whose live scores are shared. Anyone with the link can watch without an account.
@@ -12,7 +14,7 @@ Production app: https://popzbowling.com
 Open `popzbowling.com`. The normal website is now an **install screen only**; the bowling app itself opens only from the installed PWA. On Android/Chrome, tap **Install Popz Bowling** and accept the browser's install prompt. On iPhone/iPad, tap **Install Popz Bowling** for the instructions, then in Safari use **Share → Add to Home Screen → Add**. After installation, launch Popz Bowling from the Home Screen or app launcher.
 
 ## Phone layout
-**Automatic** is the default. If Popz Bowling is running as an installed PWA on a phone-sized screen (500 CSS pixels or less on the short side), the Bowl screen uses the simpler **Compact Phone** layout. Installed iPads and Samsung/Android tablets keep the existing **Full Layout**, and a phone-sized browser that is not installed also stays Full.
+**Automatic** is the default. If Popz Bowling is running as an installed PWA on a phone-sized screen (500 CSS pixels or less on the short side), the Bowl screen uses the simpler **Compact Phone** layout. Installed iPads and Samsung/Android tablets keep the existing **Full Layout**. A normal production browser visit does not run the bowling UI at all—it shows the install-only gate until the PWA is installed.
 
 Open **Settings → Layout** to choose **Automatic**, **Compact Phone**, or **Full Layout**. This preference stays only on that device; it is not Google-synced and is not part of bowling backups. You can force Compact Phone on a tablet or foldable for testing.
 

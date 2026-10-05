@@ -1,5 +1,7 @@
 # Telemetry Dashboard Access Runbook
 
+**Current production baseline (audited 2026-10-05):** public client `public-v39.007`; source/backend head `b4495664c3692efad551258fd953dd464649e5a5`; `/api/health` reports `ok`. The adoption D1 is currently 0 profiles / 0 events after the 2026-10-02 clean reset. Runtime D1 is separate from adoption telemetry and currently contains startup diagnostics only; runtime counts must never be interpreted as bowling usage.
+
 ## Private dashboard
 - URL: `https://popzbowling.com/telemetry-dashboard`
 - HTTP Basic Auth username: `michael`
@@ -62,18 +64,18 @@ For the 2026-10-01 alert, this command recovered the exact row: `2026-10-01T07:0
 - Privacy-safe error events are `resource_error`, `window_error`, and `unhandled_rejection`. Allowed fields are anonymous runtime/boot IDs, app version, timestamp, browser/installed mode, coarse platform, sanitized error kind/message, source filename, line and column. Scores, bowler names, leagues, centers, balls, oil patterns, leaves, frames, backups, Google/Firebase identity, live-share tokens, and raw URLs are not accepted.
 - During the public beta, runtime diagnostics are mandatory for normal users and there is no user opt-out. WebDriver, HeadlessChrome, and the internal `?qa=1` path suppress both adoption telemetry and runtime diagnostics. `?telemetry=off` is not supported.
 - Runtime reports use separate D1 database `popz-bowling-runtime`, binding `RUNTIME_DB`, migration folder `runtime-migrations/`, and endpoint `/api/runtime`. Do not migrate runtime tables into `TELEMETRY_DB` or `LIVE_SHARE_DB`.
-- The private telemetry dashboard now includes Runtime status, 24-hour boots, ready boots, mature startup failures, runtime-error count, and the latest sanitized errors. Raw runtime IDs/boot IDs are not rendered.
-- Public `/api/health` returns only app version, dependency health, and booleans for a recent runtime error or mature startup failure. It never returns error messages, IDs, bowling data, or adoption counts. External health monitoring should also verify `/`, `/latest-version.json`, `/runtime-monitor.js`, `/app.js`, and `/service-worker.js`.
+- The private telemetry dashboard separates **Installed app boots / Installed app ready / Installed startup failures** from **Website / install-page boots**, plus runtime-error count and latest sanitized errors. Browser/install-page activity is diagnostic traffic, not bowling usage. Raw runtime IDs/boot IDs are not rendered.
+- Public `/api/health` returns only app version, dependency health, and coarse runtime-health fields. Startup degradation is limited to installed-app launches and requires at least **2 unmatched mature boots within the current 15-minute window**; one abandoned launch is retained as diagnostic evidence without degrading production. Runtime/resource errors still degrade on the first qualifying error. The endpoint never returns error messages, IDs, bowling data, or adoption counts. External monitoring also verifies `/`, `/latest-version.json`, `/runtime-monitor.js`, `/app.js`, and `/service-worker.js`.
 - If a boot does not reach ready within 8 seconds, the user receives an on-screen recovery message stating that saved bowling data was not erased and suggesting a complete close/reopen while online.
 ## Telegram production health alerts
 - The authoritative external alert path is Michael's existing Telegram bot, not ChatGPT task notifications. The previous hourly ChatGPT `Popz Bowling Health` task is disabled.
 - PopzVPS runs `~/.local/lib/popz-bowling-monitor/run.sh` from the user crontab every five minutes. The wrapper loads only `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` from `~/.config/popz-bowling-monitor/telegram.env` (mode 600) and runs the deployed copy of `monitoring/telegram-health-monitor.mjs`.
-- Each run verifies `latest-version.json`, homepage versioned asset references, the runtime monitor, main app bundle, service worker, and `/api/health`. A healthy run is silent. A new failure sends `POPZ BOWLING ALERT`. Availability/dependency failures may repeat after 15 minutes. Runtime-diagnostic-only incidents use a 60-minute repeat cooldown so a single client error inside `/api/health`'s 60-minute recent-error window normally produces one alert, followed by recovery when the window clears. The first fully healthy run after an incident sends `POPZ BOWLING RECOVERED`.
+- Each run verifies `latest-version.json`, homepage versioned asset references, the runtime monitor, main app bundle, service worker, and `/api/health`. If the first pass finds an issue, the complete check is repeated after a default **3-second** delay and Telegram is evaluated from the retry result. A healthy run is silent. A new persistent failure sends `POPZ BOWLING ALERT`. Availability/dependency failures may repeat after 15 minutes; runtime-diagnostic-only incidents use a 60-minute repeat cooldown. The first fully healthy run after an incident sends `POPZ BOWLING RECOVERED`.
 - The monitor source and deployment notes live under `monitoring/` in this private repo. Bot token and chat ID must never be committed, documented, copied into Obsidian/Collective/Wiki, or echoed into chat.
 - Production validation on 2026-09-30: the exact PopzVPS wrapper reported `Healthy: public-v35`, and a real `POPZ BOWLING MONITOR TEST` message was accepted by Telegram using the same bot/chat as the call-forwarding monitor.
 
 ### Patch-version health monitoring
-The Telegram monitor accepts numeric patch releases such as `public-v37.002`. `/api/health` no longer hard-codes an app version; it reads the current published `latest-version.json`, so health/version checks stay aligned automatically on future `public-v37.xxx` maintenance releases.
+The Telegram monitor accepts numeric patch releases such as the current `public-v39.007`. `/api/health` does not hard-code the app version; it reads the published `latest-version.json`, so health/version checks stay aligned automatically on future maintenance releases.
 
 ## public-v39.004 fresh baseline
 - The adoption D1 and runtime D1 were deliberately cleared for a new beta baseline at **2026-10-02T14:45:00Z**. public-v39.004 and newer are eligible normally. Older **installed** PWAs from public-v31 onward may store only fresh events whose own timestamps are at or after that reset point; old browser traffic and pre-reset timestamps stay excluded.
@@ -82,11 +84,14 @@ The Telegram monitor accepts numeric patch releases such as `public-v37.002`. `/
 - Adoption queue/ack/first-seen keys and runtime queue use v2 namespaces. Old v1 queues are removed by public-v39.004, and old `_telemetry.version=1` series are not reconciled into the new baseline.
 - Normal public-beta users cannot disable adoption telemetry or runtime diagnostics. Only `?qa=1`, WebDriver, and HeadlessChrome suppress them.
 
-## MacBook QA phone simulator
-- Desktop launcher: `~/Desktop/Popz Bowling QA Phone.app`.
-- It opens live production at `https://popzbowling.com/?qa=1&phone=1` in a separate Chrome profile and phone-sized app window.
-- `qa=1` suppresses both adoption telemetry and runtime diagnostics; `phone=1` is honored only with QA mode and forces Compact Phone layout while bypassing the public install gate.
-- Use this launcher for manual public-app QA so tests do not alter production adoption counts. Because it loads the live domain, reopening it tests the currently deployed public version rather than a local copy.
+## MacBook QA simulators
+- **Canonical phone launcher:** `~/Desktop/Test Popz Bowling - Pixel 7.command`. It starts the fixed Electron QA shell at **412×915 CSS px, DPR 2.625**, Android Pixel 7 user agent, 5-point touch emulation, 100% locked zoom, and a non-resizable/non-maximizable/non-fullscreenable window. It always loads live production at `https://popzbowling.com/?qa=1&phone=1&qaLaunch=<timestamp>`.
+- **Canonical tablet launcher:** `~/Desktop/Test Popz Bowling - Galaxy Tab S7.command`. It starts the fixed Electron tablet shell at **1280×800 CSS px, DPR 2** (matching the 2560×1600 Galaxy Tab S7 panel), Android `SM-T878U` user agent, touch emulation, locked zoom, and fixed Full Layout. It loads `?qa=1&tablet=1&qaLaunch=<timestamp>`.
+- `qa=1` suppresses both adoption telemetry and runtime diagnostics. `phone=1` forces Compact Phone only in QA; `tablet=1` forces Full Layout only in QA. Both paths bypass the install gate only for internal testing.
+- The older `~/Desktop/Popz Bowling QA Phone.app` / Chrome-profile launcher is superseded and is **not** the canonical simulator. Use the two `Test Popz Bowling - ... .command` launchers so geometry cannot drift and every launch targets current production without contaminating telemetry.
 
 ### Deployment-race alert protection
-The PopzVPS monitor performs a complete second production check after a short delay whenever the first check finds an issue. Telegram is evaluated only from the second result. This prevents brief deployment version mismatches from producing false alerts while persistent failures still alert normally.
+The PopzVPS monitor performs a complete second production check after the configured retry delay (default **3 seconds**) whenever the first check finds an issue. Telegram is evaluated only from the retry result. This prevents brief deployment version mismatches from producing false alerts while persistent failures still alert normally.
+
+### Dashboard failure containment
+The private dashboard route catches telemetry-query failures and returns a controlled HTTP 503 page stating that the dashboard is temporarily unavailable while bowling/scoring remain unaffected. The 2026-10-03 Invalid Funnel Events SQL syntax failure was corrected at backend/admin head `b449566`; the query now has direct SQLite regression coverage.

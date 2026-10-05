@@ -1,6 +1,6 @@
 # Share Live Scores — public-v34+
 
-This ports the tested private app's single-bowler spectator experience into **Popz Bowling Pro**, while retaining public-v33's telemetry improvements. The private app and its relay are not changed or used.
+Introduced in public-v34 and still active in current production **public-v39.007**, Share Live Scores ports the tested private app's single-bowler spectator experience into **Popz Bowling Pro**. The public live-sharing database/API remain isolated from adoption telemetry, runtime diagnostics, and Michael's personal-app relay.
 
 ## Using it
 
@@ -30,7 +30,7 @@ One bowler's link is managed per scoring device at a time. Stop/clear it before 
 - API: `/api/live/<viewer-token>` — POST create/idempotent retry, PUT publish, GET read, DELETE revoke.
 - Binding: **LIVE_SHARE_DB**, database **popz-bowling-live** (`4e13df82-3fb9-4225-8174-6c99c7fa7590`).
 - Migration folder: **live-migrations/**. Never apply this migration to TELEMETRY_DB.
-- Existing TELEMETRY_DB ID, ingestion, reconciliation and dashboard are unchanged.
+- `LIVE_SHARE_DB` remains independent of `TELEMETRY_DB` and `RUNTIME_DB`. Later telemetry/runtime changes do not alter live-share records, and live-share payloads do not enter the telemetry dashboard.
 
 ```sh
 npx wrangler d1 migrations apply popz-bowling-live --remote

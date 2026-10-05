@@ -29,7 +29,7 @@ Current/future Pro features:
 
 ## Public usability research
 - **Quick Scoring is implemented in public-v29 and is the default.** It records roll pinfall without asking users to identify the exact standing pins after each first ball. A one-tap **Mark Split** flag is available after a non-strike first ball, and the frame editor can correct that flag later; flagged Quick-mode splits count toward overall Split Conversion %. The existing pin-deck workflow remains available as **Detailed Scoring** for bowlers who want the exact leave pattern, single-pin/10-pin detail, and per-leave conversion analytics. Scoring mode is a device-local usability preference.
-- Current adoption is still very early. On September 22, 2026 the dashboard showed 7 anonymous device profiles and 0 series started/completed. At least one, and possibly two, of those profiles include Michael's own public-app QA checks from his phone/tablet, so raw device count is not outside adoption. public-v30 adds a Bowl -> setup -> start -> first roll -> game complete -> series complete funnel so future decisions can use real activation evidence.
+- **Historical adoption note:** on September 22, 2026 the pre-cleanup dashboard showed 7 anonymous profiles and 0 series started/completed, with known owner-QA contamination. That count is not a current adoption baseline. Production adoption telemetry was deliberately reset on October 2; at the 2026-10-05 documentation audit the clean D1 still showed **0 profiles / 0 events**. Use the post-reset activation funnel—not Cloudflare pageview totals—to judge real app adoption.
 
 ## Entitlement architecture
 Firestore path: `/users/{uid}/entitlements/pro`
@@ -44,13 +44,13 @@ Schema:
 Client apps may **read** their own entitlement but may never write it. Firestore rules reserve entitlement and billing paths for a trusted future billing/admin backend.
 
 ## Preview period
-`PRO_PREVIEW_ENABLED=true` currently grants access to all Pro-designated features without payment. The header and **Settings -> Account & Plan** show that status and label Google Sync, Advanced Shot Tracking, and Team / Multi-Bowler scoring as **PRO PREVIEW**. Starting in public-v28, Advanced Shot Tracking remains available during preview but is **off by default**; each device must explicitly enable it in Settings before Ball + Stand + Target inputs appear or new frame-level setup snapshots are recorded.
+`PRO_PREVIEW_ENABLED=true` currently grants access to all Pro-designated features without payment. The header and **Settings -> Account & Plan** show that status. The current Pro family includes **Google Sync, Advanced Shot Tracking, Team / Multi-Bowler scoring, and Share Live Scores**. Advanced Shot Tracking remains **off by default**; each device must explicitly enable it in Settings before Ball + Stand + Target inputs appear or new frame-level setup snapshots are recorded.
 
 When paid access is ready, preview can be disabled after the payment/entitlement backend exists. Existing testers can be assigned `founder` or `complimentary` entitlement before enforcement.
 
 ## Commercial production checklist — saved for review
 
-1. **Define Pro clearly.** Keep the Free app permanently useful; Pro is for Google Sync, Advanced Shot Tracking, Team / Multi-Bowler scoring, future cloud recovery, and deeper bowling analytics.
+1. **Define Pro clearly.** Keep the Free app permanently useful; the current Pro family is Google Sync, Advanced Shot Tracking, Team / Multi-Bowler scoring, and Share Live Scores, with future cloud recovery and deeper bowling analytics as possible additions.
 2. **Choose billing structure.** Decide monthly, annual, and whether Lifetime is sold at all. Architecture already supports any combination.
 3. **Founder treatment.** Existing qualifying testers receive **Founder Pro free for life** before Pro Preview ends.
 4. **Trial policy.** Decide no trial vs 7/14/30 days. A 14-day trial is the current working recommendation because it spans multiple bowling nights.
