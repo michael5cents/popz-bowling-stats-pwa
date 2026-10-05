@@ -1,5 +1,10 @@
 # Popz Bowling Free + Pro Plan
 
+## Commercialization sequencing decision — 2026-10-05
+The approved strategy is **PWA-first commercialization**. Prove the existing `popzbowling.com` PWA with Stripe, real customers, and a stable paid operating period before starting Android/iOS standalone conversion. Native packaging is a later resilience/distribution phase, not a prerequisite to testing the business. The paid PWA remains available while native apps are developed and may remain a permanent product surface.
+
+The canonical schedule, decision gates, Cloudflare/domain-risk plan, native-conversion sequence, telemetry-dashboard boundary, and platform-neutral billing architecture are documented in `COMMERCIALIZATION-ROADMAP.md`.
+
 ## Product decision
 Popz Bowling remains **free to install/use**. A single optional **Popz Bowling Pro** tier unlocks advanced features. Price and billing cadence are intentionally undecided.
 
