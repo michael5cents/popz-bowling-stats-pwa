@@ -1,6 +1,6 @@
 # Telemetry Dashboard Access Runbook
 
-**Current production baseline (audited 2026-10-05):** public client `public-v39.007`; source/backend head `b4495664c3692efad551258fd953dd464649e5a5`; `/api/health` reports `ok`. The adoption D1 is currently 0 profiles / 0 events after the 2026-10-02 clean reset. Runtime D1 is separate from adoption telemetry and currently contains startup diagnostics only; runtime counts must never be interpreted as bowling usage.
+**Current production baseline (audited 2026-10-05):** public client `public-v39.007`; production/backend code baseline `b4495664c3692efad551258fd953dd464649e5a5`; `/api/health` reports `ok`. Documentation-only commits may advance the repository HEAD without changing that deployed code baseline. The adoption D1 is currently 0 profiles / 0 events after the 2026-10-02 clean reset. Runtime D1 is separate from adoption telemetry and currently contains startup diagnostics only; runtime counts must never be interpreted as bowling usage.
 
 ## Private dashboard
 - URL: `https://popzbowling.com/telemetry-dashboard`
