@@ -1,6 +1,6 @@
 # Popz Bowling Stats — User Guide
 
-Current production version: **public-v39.007**.
+Current production version: **public-v39.008**.
 
 ## Share Live Scores — Pro
 
@@ -43,9 +43,9 @@ Popz Bowling opens on **Bowl** by default on phones, tablets, and Full Layout so
 - Tap **Finish Series** when the session is over. In team mode this finishes every linked bowler series together and shows a team summary. The app then lets you continue to Overall Stats or History.
 
 ## Stats and history
-The **Stats** screen shows average, high game, high series, strike/spare percentages, leave conversions, and performance breakdowns. Filters include bowler, league/practice, bowling center, lane, ball used, and oil pattern. Team-scored bowlers remain separate: choose **My Bowling**, a spouse/teammate, or **All Bowlers**. Quick-mode frames contribute normal scoring/spare statistics and any manually flagged split attempts/conversions. Exact standing-pin patterns, single-pin/10-pin stats, and per-leave conversion rows come from Detailed Scoring.
+The **Stats** screen keeps the main summary visible at the top: average, high game, high series, games, strike/spare percentages, and leave-conversion summary. Detailed sections below it—league/category stats, league running average, performance breakdowns, first-ball leave stats, and recent series—start collapsed. Tap **Show** only for the detail you want; the app remembers each panel's Show/Hide choice on that device. League/category rows inside the detailed Stats view also start collapsed. Filters include bowler, league/practice, bowling center, lane, ball used, and oil pattern. Team-scored bowlers remain separate: choose **My Bowling**, a spouse/teammate, or **All Bowlers**. Quick-mode frames contribute normal scoring/spare statistics and any manually flagged split attempts/conversions. Exact standing-pin patterns, single-pin/10-pin stats, and per-leave conversion rows come from Detailed Scoring.
 
-Use **History** to review completed series and frame-by-frame game details. Expand a completed series to enter or correct its **Entering Average** later. Saving it immediately updates that series handicap and the league running-average calculations.
+Use **History** to review completed bowling grouped by league/category. Those league/category groups start collapsed so a large history stays easy to scan; open the group you want, then expand an individual completed series for frame-by-frame game details or to enter/correct its **Entering Average**. Saving an entering-average correction immediately updates that series handicap and the league running-average calculations.
 
 
 ## League average rules

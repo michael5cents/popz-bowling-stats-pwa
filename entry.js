@@ -33,7 +33,7 @@ async function prepareInstallability(){
 function loadApp(){
  const script=document.createElement('script');
  script.type='module';
- script.src='./app.js?v=39.007';
+ script.src='./app.js?v=39.008';
  document.body.appendChild(script);
 }
 if(installGateRequired()){
