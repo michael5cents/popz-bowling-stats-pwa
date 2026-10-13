@@ -15,6 +15,8 @@ try{localStorage.removeItem(LEGACY_QUEUE_KEY);localStorage.removeItem('popz-bowl
 const runtimeId=getRuntimeId(),bootId='boot-'+randomId(),appVersion=document.querySelector('meta[name="popz-app-version"]')?.content||'unknown';
 const platform=()=>{const x=(navigator.userAgent||'').toLowerCase();if(/android/.test(x))return'android';if(/iphone|ipad|ipod/.test(x))return'ios';if(/windows/.test(x))return'windows';if(/macintosh|mac os/.test(x))return'mac';if(/linux/.test(x))return'linux';return'other'};
 const installed=()=>{try{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch{return false}};
+const CRITICAL_RESOURCES=new Set(['entry.js','app.js','style.css']);
+const criticalResource=v=>{try{const u=new URL(String(v||''),location.href),name=u.pathname.split('/').pop()||'';return u.origin===location.origin&&CRITICAL_RESOURCES.has(name)}catch{return false}};
 const clean=(v,n=180)=>String(v??'').replace(/\s+/g,' ').replace(/https?:\/\/[^\s]+/gi,'[url]').replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi,'[email]').replace(/\b[a-f0-9]{32,}\b/gi,'[token]').trim().slice(0,n);
 const sourceName=v=>{try{return(new URL(String(v||''),location.href).pathname.split('/').pop()||'').slice(0,100)}catch{return clean(v,100)}};
 const readQueue=()=>{try{const x=JSON.parse(localStorage.getItem(QUEUE_KEY)||'[]');return Array.isArray(x)?x:[...memoryQueue]}catch{return[...memoryQueue]}};
@@ -41,8 +43,8 @@ async function flush(){
 window.addEventListener('error',e=>{
  const target=e.target;
  if(target&&target!==window){
-  const tag=String(target.tagName||'').toUpperCase(),rel=String(target.rel||'').toLowerCase();
-  if(tag==='SCRIPT'||(tag==='LINK'&&rel.includes('stylesheet')))enqueue('resource_error',{errorKind:tag==='SCRIPT'?'script_load':'stylesheet_load',errorMessage:'Critical application resource failed to load',source:target.src||target.href});
+  const tag=String(target.tagName||'').toUpperCase(),rel=String(target.rel||'').toLowerCase(),source=target.src||target.href;
+  if((tag==='SCRIPT'||(tag==='LINK'&&rel.includes('stylesheet')))&&criticalResource(source))enqueue('resource_error',{errorKind:tag==='SCRIPT'?'script_load':'stylesheet_load',errorMessage:'Critical application resource failed to load',source});
   return;
  }
  enqueue('window_error',{errorKind:e.error?.name||'Error',errorMessage:e.message||e.error?.message||'Unhandled application error',source:e.filename,line:e.lineno,col:e.colno});

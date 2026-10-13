@@ -25,7 +25,7 @@ insert.run('a4','legacy-device','first_roll_recorded','public-v32','2026-10-03T1
 insert.run('a5','legacy-device','series_completed','public-v32','2026-10-03T12:30:00Z','installed','android');
 assert.equal(stmt.get().value,0,'fresh legacy installed completion is valid without game_completed when its older funnel stages exist');
 
-insert.run('b1','broken-device','series_completed','public-v39.008','2026-10-03T12:30:00Z','installed','android');
+insert.run('b1','broken-device','series_completed','public-v39.009','2026-10-03T12:30:00Z','installed','android');
 assert.equal(stmt.get().value,1,'current completion without game_completed must be counted invalid');
 
 console.log('telemetry dashboard invalid-funnel SQL syntax and compatibility tests passed');
