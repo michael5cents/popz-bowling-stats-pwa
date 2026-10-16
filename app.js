@@ -6,10 +6,10 @@ import{configureTelemetry,startTelemetry,trackTelemetry,flushTelemetry,telemetry
 import{initCloudSync,startCloudSyncWatch,signInGoogle,signOutGoogle,syncCloudNow,cloudUser}from'./cloud-sync.mjs';
 import{PRO_FEATURES,effectiveAccess}from'./entitlements.mjs';
 import{normalizeRoster,activeSessionIds,activeGroupSessions,nextIncompleteGroupIndex}from'./multiplayer.mjs';
-import{LAYOUT_MODES,readLayoutMode,writeLayoutMode,resolveLayoutMode,layoutStatus}from'./layout-mode.mjs?v=39.009';
-import {mountLiveShare} from './live-share-ui.mjs?v=39.009';
+import{LAYOUT_MODES,readLayoutMode,writeLayoutMode,resolveLayoutMode,layoutStatus}from'./layout-mode.mjs?v=39.010';
+import {mountLiveShare} from './live-share-ui.mjs?v=39.010';
 let liveSharing=null;
-const APP_VERSION='public-v39.009',DB='popz-bowling-public',STORE='state',KEY='master',$=id=>document.getElementById(id);let state,toastTimer,pendingLeave=null,leaveSelection=new Set(),editingFrameIndex=null,deferredInstallPrompt=null,cloudStatus={state:'loading',message:'Checking Google Sync…'},updateSignalVersion='',proAccess=effectiveAccess({}),seriesSetupMode='single',setupRoster=[],phoneSeriesOptionsOpen=false,phoneScoringDetailsOpen=false,layoutResizeTimer=null;
+const APP_VERSION='public-v39.010',DB='popz-bowling-public',STORE='state',KEY='master',$=id=>document.getElementById(id);let state,toastTimer,pendingLeave=null,leaveSelection=new Set(),editingFrameIndex=null,deferredInstallPrompt=null,cloudStatus={state:'loading',message:'Checking Google Sync…'},updateSignalVersion='',proAccess=effectiveAccess({}),seriesSetupMode='single',setupRoster=[],phoneSeriesOptionsOpen=false,phoneScoringDetailsOpen=false,layoutResizeTimer=null;
 const uuid=()=>crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(16).slice(2)}`,nowIso=()=>new Date().toISOString();
 const todayLocal=()=>{const d=new Date(),o=d.getTimezoneOffset();return new Date(d.getTime()-o*60000).toISOString().slice(0,10)};
 const defaultState=()=>({version:2,deviceId:uuid(),updatedAt:nowIso(),settingsUpdatedAt:nowIso(),settings:{bowlerName:'',bowlerProfiles:[],statsBowler:'owner',historyBowler:'all',advancedShotTrackingEnabled:false,scoringMode:'simplified'},activeSessionId:null,activeGroup:null,sessions:[],deletedSessions:[],lastBackupAt:null,storagePersistent:null});

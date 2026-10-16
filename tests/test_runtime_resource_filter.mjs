@@ -6,7 +6,7 @@ const source=readFileSync(new URL('../runtime-monitor.js',import.meta.url),'utf8
 const listeners={},sent=[],store=new Map();let seq=0;
 const localStorage={getItem:k=>store.has(k)?store.get(k):null,setItem:(k,v)=>store.set(k,String(v)),removeItem:k=>store.delete(k)};
 const document={
- querySelector:s=>s==='meta[name="popz-app-version"]'?{content:'public-v39.009'}:null,
+ querySelector:s=>s==='meta[name="popz-app-version"]'?{content:'public-v39.010'}:null,
  addEventListener(){},getElementById(){return null},body:{appendChild(){}},documentElement:{appendChild(){}}
 };
 const window={addEventListener:(type,fn)=>{listeners[type]=fn}};
@@ -23,12 +23,12 @@ listeners.error({target:{tagName:'SCRIPT',rel:'',src:'https://static.cloudflarei
 await settle();
 assert.equal(sent.some(x=>x.event==='resource_error'),false,'third-party script failures must be ignored');
 
-listeners.error({target:{tagName:'SCRIPT',rel:'',src:'https://popzbowling.com/app.js?v=39.009'}});
+listeners.error({target:{tagName:'SCRIPT',rel:'',src:'https://popzbowling.com/app.js?v=39.010'}});
 await settle();
 assert.ok(sent.some(x=>x.event==='resource_error'&&x.errorKind==='script_load'&&x.source==='app.js'),'app.js failures must still report');
 
 sent.length=0;
-listeners.error({target:{tagName:'LINK',rel:'stylesheet',href:'https://popzbowling.com/style.css?v=39.009'}});
+listeners.error({target:{tagName:'LINK',rel:'stylesheet',href:'https://popzbowling.com/style.css?v=39.010'}});
 await settle();
 assert.ok(sent.some(x=>x.event==='resource_error'&&x.errorKind==='stylesheet_load'&&x.source==='style.css'),'main stylesheet failures must still report');
 console.log('runtime critical-resource filtering tests passed');

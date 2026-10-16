@@ -3,18 +3,18 @@ import{TELEMETRY_BASELINE_VERSION,TELEMETRY_BASELINE_AT}from'../telemetry.mjs';
 const html=(body,status=200,extra={})=>new Response(body,{status,headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store','x-robots-tag':'noindex, nofollow','content-security-policy':"default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'",...extra}});
 const one=r=>Number(r?.results?.[0]?.value||0);
 export const invalidFunnelSql=`SELECT COUNT(*) value FROM telemetry_events e WHERE
- (e.event='bowl_viewed' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='app_open' AND julianday(p.occurred_at)<=julianday(e.occurred_at)))
- OR (e.event='series_setup_viewed' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='bowl_viewed' AND julianday(p.occurred_at)<=julianday(e.occurred_at)))
- OR (e.event='series_started' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='series_setup_viewed' AND julianday(p.occurred_at)<=julianday(e.occurred_at)))
- OR (e.event='first_roll_recorded' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='series_started' AND julianday(p.occurred_at)<=julianday(e.occurred_at)))
- OR (e.event='game_completed' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='first_roll_recorded' AND julianday(p.occurred_at)<=julianday(e.occurred_at)))
+ (e.event='bowl_viewed' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='app_open'))
+ OR (e.event='series_setup_viewed' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='bowl_viewed'))
+ OR (e.event='series_started' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='series_setup_viewed'))
+ OR (e.event='first_roll_recorded' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='series_started'))
+ OR (e.event='game_completed' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='first_roll_recorded'))
  OR (e.event='series_completed'
-     AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='game_completed' AND julianday(p.occurred_at)<=julianday(e.occurred_at))
+     AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='game_completed')
      AND NOT (
        e.install_mode='installed'
        AND e.app_version<'${TELEMETRY_BASELINE_VERSION}'
        AND julianday(e.occurred_at)>=julianday('${TELEMETRY_BASELINE_AT}')
-       AND EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='series_started' AND julianday(p.occurred_at)<=julianday(e.occurred_at))
+       AND EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='series_started')
      )
  )`;
 export async function onRequestGet({request,env}){

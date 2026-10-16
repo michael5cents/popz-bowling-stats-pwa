@@ -15,7 +15,7 @@ const server=createServer(async(req,res)=>{
    const chunks=[];for await(const c of req)chunks.push(c);const body=JSON.parse(Buffer.concat(chunks).toString()||'{}');
    res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify({ok:true,accepted:(body.events||[]).length}));return;
   }
-  if(u.pathname==='/api/health'){res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify({ok:true,status:'ok',version:'public-v39.009'}));return}
+  if(u.pathname==='/api/health'){res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify({ok:true,status:'ok',version:'public-v39.010'}));return}
   const rel=u.pathname==='/'?'index.html':u.pathname.replace(/^\//,'');const path=resolve(root,rel);
   if(!path.startsWith(root+'/')||!existsSync(path)){res.writeHead(404);res.end();return}
   res.writeHead(200,{'content-type':types[extname(path)]||'text/plain','cache-control':'no-store'});res.end(readFileSync(path));
@@ -27,8 +27,8 @@ const ua='Mozilla/5.0 (Linux; Android 15; Pixel 7) AppleWebKit/537.36 (KHTML, li
 const makeContext=async()=>{const c=await browser.newContext({viewport:{width:390,height:844},userAgent:ua,serviceWorkers:'allow'});await c.addInitScript(()=>Object.defineProperty(navigator,'webdriver',{get:()=>false}));return c};
 try{
  const normal=await makeContext(),page=await normal.newPage();await page.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());
- await page.goto(base+'/',{waitUntil:'domcontentloaded'});await page.waitForFunction(()=>document.getElementById('appVersion')?.textContent==='public-v39.009');await page.waitForTimeout(700);
- const normalEvents=runtimeEvents.filter(x=>x.appVersion==='public-v39.009');
+ await page.goto(base+'/',{waitUntil:'domcontentloaded'});await page.waitForFunction(()=>document.getElementById('appVersion')?.textContent==='public-v39.010');await page.waitForTimeout(700);
+ const normalEvents=runtimeEvents.filter(x=>x.appVersion==='public-v39.010');
  assert.ok(normalEvents.some(x=>x.event==='boot_started'),'normal startup should report boot_started');
  assert.ok(normalEvents.some(x=>x.event==='app_ready'),'normal startup should report app_ready');
  assert.equal(await page.locator('#popzLoadFailure').count(),0);
@@ -40,7 +40,7 @@ try{
 
  runtimeEvents.length=0;
  const broken=await makeContext(),bad=await broken.newPage();await bad.route('**/*',r=>{
-  const u=r.request().url();if(u.startsWith(base)&&u.includes('/app.js?v=39.009'))return r.abort('failed');return u.startsWith(base)?r.continue():r.abort();
+  const u=r.request().url();if(u.startsWith(base)&&u.includes('/app.js?v=39.010'))return r.abort('failed');return u.startsWith(base)?r.continue():r.abort();
  });
  await bad.goto(base+'/',{waitUntil:'domcontentloaded'});
  await bad.waitForFunction(()=>document.getElementById('popzLoadFailure'));

@@ -13,7 +13,7 @@ const state={deviceId,sessions:[{
 }]};
 configureTelemetry({deviceId,appVersion:'public-v39.004',isInstalled:()=>true,getState:()=>state});
 const queue=()=>JSON.parse(store.get('popz-bowling-telemetry-queue-v2')||'[]');
-const acked=()=>JSON.parse(store.get('popz-bowling-telemetry-acked-v2')||'[]');
+const acked=()=>JSON.parse(store.get('popz-bowling-telemetry-acked-v3')||'[]');
 
 assert.equal(reconcileTelemetry(),1);
 assert.equal(queue().length,1);
@@ -24,7 +24,7 @@ let badAck=false,requests=0;
 globalThis.fetch=async(url,options)=>{
  requests++;
  const sent=JSON.parse(options.body).events;
- return new Response(JSON.stringify({ok:true,accepted:badAck?0:sent.length}),{status:200,headers:{'content-type':'application/json'}});
+ return new Response(JSON.stringify({ok:true,accepted:badAck?0:sent.length,stored:badAck?0:sent.length}),{status:200,headers:{'content-type':'application/json'}});
 };
 navigator.onLine=true;
 await flushTelemetry();

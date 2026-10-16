@@ -7,7 +7,7 @@ export async function onRequestPost({request,env}){
   const eligible=rows.filter(telemetryFreshBaselineEligible),seen=new Map(),valid=[];
   for(const row of eligible){
    const need=telemetryPrerequisiteFor(row);let ok=!need;
-   if(need){ok=(seen.get(row.deviceId)||new Set()).has(need);if(!ok){const found=await env.TELEMETRY_DB.prepare('SELECT 1 ok FROM telemetry_events WHERE device_id=? AND event=? AND julianday(occurred_at)<=julianday(?) LIMIT 1').bind(row.deviceId,need,row.occurredAt).first();ok=!!found}}
+   if(need){ok=(seen.get(row.deviceId)||new Set()).has(need);if(!ok){const found=await env.TELEMETRY_DB.prepare('SELECT 1 ok FROM telemetry_events WHERE device_id=? AND event=? LIMIT 1').bind(row.deviceId,need).first();ok=!!found}}
    if(!ok)continue;valid.push(row);if(!seen.has(row.deviceId))seen.set(row.deviceId,new Set());seen.get(row.deviceId).add(row.event);
   }
   if(valid.length){const sql='INSERT OR IGNORE INTO telemetry_events (id,device_id,event,app_version,occurred_at,install_mode,platform) VALUES (?,?,?,?,?,?,?)';await env.TELEMETRY_DB.batch(valid.map(x=>env.TELEMETRY_DB.prepare(sql).bind(x.id,x.deviceId,x.event,x.appVersion,x.occurredAt,x.installMode,x.platform)))}

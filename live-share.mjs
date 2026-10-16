@@ -1,5 +1,5 @@
 // Explicit spectator allowlist: never serialize the session or the application state.
-import {gameComplete,scoreGame,rollMark,summarizeSessions,handicapPins,getCurrentFirstBallSetup} from './scoring.mjs?v=39.009';
+import {gameComplete,scoreGame,rollMark,summarizeSessions,handicapPins,getCurrentFirstBallSetup} from './scoring.mjs?v=39.010';
 
 const clean = value => String(value ?? '').trim().slice(0,120);
 export function buildLiveSnapshot(session,bowlerName='',finished=false) {

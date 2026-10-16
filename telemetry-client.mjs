@@ -1,7 +1,7 @@
 import{normalizeTelemetryEvent,telemetryPlatform}from'./telemetry.mjs';
 import{buildTelemetryMilestones}from'./telemetry-milestones.mjs';
 
-const QUEUE='popz-bowling-telemetry-queue-v2',ACKED='popz-bowling-telemetry-acked-v2',FIRST='popz-bowling-telemetry-first-v2';
+const QUEUE='popz-bowling-telemetry-queue-v2',ACKED='popz-bowling-telemetry-acked-v3',FIRST='popz-bowling-telemetry-first-v2';
 const LEGACY_KEYS=['popz-bowling-telemetry-queue-v1','popz-bowling-telemetry-acked-v1','popz-bowling-telemetry-first-v1','popz-bowling-telemetry-enabled-v1'];
 const MAX_QUEUE=1000,MAX_ACKED=5000,RETRY_MS=30000;
 let ctx=null,flushing=false,retryTimer=null,memoryQueue=[],memoryAcked=[];
@@ -63,7 +63,7 @@ export async function flushTelemetry(){
  try{
   const r=await fetch('/api/telemetry',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({events:sent}),cache:'no-store',keepalive:true});
   const body=await r.json().catch(()=>null);
-  if(r.ok&&body?.ok===true&&Number(body.accepted)===sent.length){
+  if(r.ok&&body?.ok===true&&Number(body.accepted)===sent.length&&Number(body.stored)===sent.length){
    const ids=new Set(sent.map(x=>x.id));acknowledge([...ids]);
    writeQueue(readQueue().filter(x=>!ids.has(x.id)));again=readQueue().length>0;
   }
