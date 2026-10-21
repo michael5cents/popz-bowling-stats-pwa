@@ -1,6 +1,7 @@
 // Standalone read-only viewer: no Firebase, telemetry, IndexedDB, or app service worker registration.
 const token=location.hash.slice(1),$=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+const fmtAverage=v=>v==null||!Number.isFinite(Number(v))?'—':String(Math.floor(Number(v)));
 const pct=v=>v==null?'—':Number(v).toFixed(1)+'%';
 let timer=null,inFlight=false,terminal=false,rendered=false,expiresAt=0,finished=false;
 function boards(games) {
@@ -26,7 +27,7 @@ function render(data) {
   $('finalSummary').classList.toggle('hidden',!finished);
   if(finished&&s.finalStats) {
     const st=s.finalStats;
-    const metrics=[['Games',st.games],['Scratch',st.seriesTotal],['Average',st.average==null?'—':Number(st.average).toFixed(1)],['High Game',st.highGame],['HDCP Series',st.handicapSeries],['Strike %',pct(st.strikePct)],['Spare %',pct(st.sparePct)],['Split Conv %',pct(st.splitPct)],['Single Pin %',pct(st.singlePinPct)],['10-Pin %',pct(st.tenPinPct)]];
+    const metrics=[['Games',st.games],['Scratch',st.seriesTotal],['Average',st.average==null?'—':fmtAverage(st.average)],['High Game',st.highGame],['HDCP Series',st.handicapSeries],['Strike %',pct(st.strikePct)],['Spare %',pct(st.sparePct)],['Split Conv %',pct(st.splitPct)],['Single Pin %',pct(st.singlePinPct)],['10-Pin %',pct(st.tenPinPct)]];
     $('finalGrid').innerHTML=metrics.map(([label,value])=>`<div class="metric"><span>${esc(label)}</span><strong>${esc(value??'—')}</strong></div>`).join('');
   }
   $('updated').textContent=`${finished?'Series complete. ':''}Last received ${new Date(data.updatedAt).toLocaleTimeString()} • link expires ${new Date(expiresAt).toLocaleTimeString()}`;

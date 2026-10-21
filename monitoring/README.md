@@ -1,6 +1,6 @@
 # Popz Bowling Telegram health monitor
 
-Current public client: **public-v39.007**. The production health monitor runs outside Cloudflare on the always-on PopzVPS and checks the public app every five minutes. It verifies the dynamic production version, homepage asset references, runtime monitor, main app, service worker, and `/api/health`. Version validation accepts whole releases and numeric patch releases such as `public-v39.007`.
+Current public client: **public-v39.011**. The production health monitor runs outside Cloudflare on the always-on PopzVPS and checks the public app every five minutes. It verifies the dynamic production version, homepage asset references, runtime monitor, main app, service worker, and `/api/health`. Version validation accepts whole releases and numeric patch releases such as `public-v39.007`.
 
 Alerts use the same Telegram bot/chat as the call-forwarding health monitor. Telegram credentials are never stored in this repository. PopzVPS keeps only TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in a mode-600 file at ~/.config/popz-bowling-monitor/telegram.env.
 

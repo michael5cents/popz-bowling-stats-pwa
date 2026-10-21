@@ -1,6 +1,6 @@
 # Popz Bowling Stats — User Guide
 
-Current production version: **public-v39.008**.
+Current production version: **public-v39.011**.
 
 ## Share Live Scores — Pro
 
@@ -47,6 +47,9 @@ The **Stats** screen keeps the main summary visible at the top: average, high ga
 
 Use **History** to review completed bowling grouped by league/category. Those league/category groups start collapsed so a large history stays easy to scan; open the group you want, then expand an individual completed series for frame-by-frame game details or to enter/correct its **Entering Average**. Saving an entering-average correction immediately updates that series handicap and the league running-average calculations.
 
+
+## Whole-number averages and handicap
+All bowling averages are shown as whole numbers, dropping the fractional portion (181.9 displays as **181**, not 182). **Handicap is also calculated from that whole-number average**: 90% of 220 with 180.8 uses 180 and gives **36 pins/game**. This applies to single/team bowling, the Stats and History views, saved entering averages, and the live spectator final result. Strike/spare percentages can still include one decimal place.
 
 ## League average rules
 In **Settings → League Average Rule**, choose a recorded league and select how that league establishes its average. **Carry Book Average** preserves the original behavior. **Establish After X Games** uses the book/entering average until the selected number of completed actual games is reached, then switches to total actual pinfall divided by actual games with the fraction dropped. The rule is saved separately for each league and is included when backups are transferred between devices.

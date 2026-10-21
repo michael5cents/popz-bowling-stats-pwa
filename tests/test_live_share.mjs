@@ -20,6 +20,10 @@ test('private-feature parity, public handicap, and explicit spectator privacy',(
   while(!gameComplete(g))addRoll(g,0);
   const final=buildLiveSnapshot(s,'Michael',true);assert.equal(final.finalStats.seriesTotal,326);
   assert.equal(final.finalStats.average,163);assert.equal(final.finalStats.handicapPerGame,36);assert.equal(final.finalStats.handicapSeries,398);
+  const fractionalSession={...s,enteringAverage:180.9};
+  const fractionalFinal=buildLiveSnapshot(fractionalSession,'Michael',true);
+  assert.equal(fractionalFinal.finalStats.handicapPerGame,36,'spectator final handicap uses whole entering average');
+  assert.equal(fractionalFinal.finalStats.handicapSeries,398);
   assert.equal(canUseFeature(PRO_FEATURES.LIVE_SCORE_SHARING,{}, {preview:false}),false);
   assert.equal(canUseFeature(PRO_FEATURES.LIVE_SCORE_SHARING,{}, {preview:true}),true);
 });

@@ -6,8 +6,8 @@ const html=read('index.html'),css=read('style.css'),app=read('app.js'),entry=rea
 assert.match(html,/body class="install-check"/);
 assert.match(html,/id="installGate"/);
 assert.match(html,/id="installGateBtn"[^>]*>Install Popz Bowling</);
-assert.match(html,/runtime-monitor\.js\?v=39\.009/);
-assert.match(html,/entry\.js\?v=39\.009/);
+assert.match(html,/runtime-monitor\.js\?v=39\.011/);
+assert.match(html,/entry\.js\?v=39\.011/);
 assert.doesNotMatch(html,/<script type="module" src="\.\/app\.js/,'index must not load full app directly');
 assert.match(css,/\.install-check #appShell,\.install-required #appShell\{display:none!important\}/);
 assert.match(css,/\.install-required \.install-gate\{display:grid\}/);
@@ -18,11 +18,11 @@ assert.match(app,/function installNotice\(message\)\{[^}]*toast\(message,12000,t
 assert.match(entry,/installGateRequired\(\)/);
 assert.match(entry,/window\.PopzRuntimeMonitor\?\.ready\(\)/,'standalone install gate must satisfy runtime watchdog itself');
 assert.match(entry,/script\.type='module'/);
-assert.match(entry,/script\.src='\.\/app\.js\?v=39\.009'/,'entry must load full app only after gate bypass');
+assert.match(entry,/script\.src='\.\/app\.js\?v=39\.011'/,'entry must load full app only after gate bypass');
 assert.match(entry,/q\.get\('qa'\)==='1'&&q\.get\('phone'\)==='1'/,'QA phone mode must remain an explicit hidden bypass');
 assert.match(entry,/q\.get\('qa'\)==='1'&&q\.get\('tablet'\)==='1'/,'QA tablet mode must be an explicit hidden bypass');
 assert.match(entry,/qaSimulatorMode\(\)/,'install gate bypass must be limited to explicit QA simulator modes');
-assert.match(sw,/entry\.js\?v=39\.009/,'entry script must be in offline cache');
+assert.match(sw,/entry\.js\?v=39\.011/,'entry script must be in offline cache');
 assert.match(app,/function activeSession\(\)\{return state\?\.sessions\?\.find/,'active session must tolerate pre-state startup callbacks');
 assert.match(app,/isProductionWebHost=.*popzbowling/);
 const init=app.slice(app.indexOf('async function init()'));
