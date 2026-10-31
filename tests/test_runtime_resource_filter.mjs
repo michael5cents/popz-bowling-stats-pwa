@@ -28,6 +28,15 @@ await settle();
 assert.ok(sent.some(x=>x.event==='resource_error'&&x.errorKind==='script_load'&&x.source==='app.js'),'app.js failures must still report');
 
 sent.length=0;
+listeners.error({target:window,message:'Script error.',filename:'',lineno:0,colno:0,error:null});
+await settle();
+assert.equal(sent.some(x=>x.event==='window_error'),false,'opaque source-less Script error must not be reported as actionable runtime failure');
+
+listeners.error({target:window,message:'Real app failure',filename:'https://popzbowling.com/app.js?v=39.011',lineno:77,colno:9,error:{name:'TypeError',message:'Real app failure'}});
+await settle();
+assert.ok(sent.some(x=>x.event==='window_error'&&x.errorMessage==='Real app failure'&&x.source==='app.js'),'real application window errors must still report');
+
+sent.length=0;
 listeners.error({target:{tagName:'LINK',rel:'stylesheet',href:'https://popzbowling.com/style.css?v=39.011'}});
 await settle();
 assert.ok(sent.some(x=>x.event==='resource_error'&&x.errorKind==='stylesheet_load'&&x.source==='style.css'),'main stylesheet failures must still report');

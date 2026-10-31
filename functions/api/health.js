@@ -19,7 +19,7 @@ export async function onRequestGet({request,env}){
  try{await probe(env.LIVE_SHARE_DB);checks.liveSharing=true}catch{}
  try{
   await probe(env.RUNTIME_DB);checks.runtime=true;
-  const err=await env.RUNTIME_DB.prepare("SELECT COUNT(*) value FROM runtime_events WHERE event IN ('window_error','unhandled_rejection','resource_error') AND julianday(occurred_at)>=julianday('now','-60 minutes')").first();
+  const err=await env.RUNTIME_DB.prepare("SELECT COUNT(*) value FROM runtime_events WHERE event IN ('window_error','unhandled_rejection','resource_error') AND NOT (event='window_error' AND error_message='Script error.' AND COALESCE(source,'')='' AND COALESCE(line,0)=0 AND COALESCE(col,0)=0) AND julianday(occurred_at)>=julianday('now','-60 minutes')").first();
   const fail=await env.RUNTIME_DB.prepare(`SELECT COUNT(*) value FROM runtime_events b WHERE b.event='boot_started' AND b.install_mode='installed' AND julianday(b.occurred_at)>=julianday('now','-${STARTUP_FAILURE_WINDOW_MINUTES} minutes') AND julianday(b.occurred_at)<=julianday('now','-2 minutes') AND NOT EXISTS (SELECT 1 FROM runtime_events r WHERE r.boot_id=b.boot_id AND r.event='app_ready')`).first();
   recentErrors=Number(err?.value||0)>0;recentStartupFailureCount=Number(fail?.value||0);recentStartupFailures=recentStartupFailureCount>=STARTUP_FAILURE_ALERT_THRESHOLD;
  }catch{}
