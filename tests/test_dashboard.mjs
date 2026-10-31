@@ -32,6 +32,13 @@ assert.match(page,/runtime website boot does <strong>not<\/strong> mean somebody
 assert.match(page,/Fresh post-reset events from older <em>installed<\/em> PWAs are accepted/);
 assert.match(page,/http-equiv="refresh" content="60"/);
 assert.match(page,/Auto-refreshes every 60 seconds/);
+assert.match(page,/Android<\/td><td>9<\/td>/,'Android must be shown with its accepted profile count');
+assert.match(page,/iOS<\/td><td>0<\/td>/,'iOS must remain visible when its count is zero');
+assert.match(page,/Windows<\/td><td>0<\/td>/,'Windows must remain visible when its count is zero');
+assert.match(page,/Mac<\/td><td>0<\/td>/,'Mac must remain visible when its count is zero');
+assert.match(page,/Linux<\/td><td>0<\/td>/,'Linux must remain visible when its count is zero');
+assert.match(page,/Other<\/td><td>0<\/td>/,'Other must remain visible when its count is zero');
+
 assert.equal(formatDashboardGeneratedAt('2026-09-21T01:00:00Z'),'Sep 20, 2026, 8:00 PM');
 assert.match(page,/Generated Sep 20, 2026, 4:00 PM CT/);
 const raw=renderTelemetryDashboard({totalDevices:1,active7:1,active30:1,completedDevices30:1,seriesCompleted30:1,newDevices7:1,newDevices30:1,returningDevices30:0,invalidFunnelEvents:1,events:[{event:'series_completed',events:1,devices:1}],platforms:[],modes:[],funnel:[{event:'series_completed',devices:1}],daily:[{day:'2026-09-30',devices:1,opens:0,bowl_views:2,started:0,first_rolls:0,games_completed:0,completed:1}],runtime:{available:true,installedBoots24:0,installedReady24:0,installedStartupFailures24:0,browserBoots24:0,errors24:0,latestErrors:[]}},'2026-10-01T20:00:00Z');
@@ -39,6 +46,13 @@ assert.match(raw,/Series started<\/td><td>0<\/td>/,'dashboard must show raw star
 assert.match(raw,/2026-09-30<\/td><td>1<\/td><td>0<\/td><td>2<\/td><td>0<\/td><td>0<\/td><td>0<\/td><td>1<\/td>/,'daily table must not invent a series start');
 assert.match(raw,/Invalid funnel events<\/span><strong>1<\/strong>/);
 assert.match(raw,/actual accepted events only/);
+assert.match(raw,/Android<\/td><td>0<\/td>/,'empty telemetry must still show Android as zero');
+assert.match(raw,/iOS<\/td><td>0<\/td>/,'empty telemetry must still show iOS as zero');
+assert.match(raw,/Windows<\/td><td>0<\/td>/,'empty telemetry must still show Windows as zero');
+assert.match(raw,/Mac<\/td><td>0<\/td>/,'empty telemetry must still show Mac as zero');
+assert.match(raw,/Linux<\/td><td>0<\/td>/,'empty telemetry must still show Linux as zero');
+assert.match(raw,/Other<\/td><td>0<\/td>/,'empty telemetry must still show Other as zero');
+
 assert.doesNotMatch(page,/device_id/);
 assert.doesNotMatch(page,/dev-/);
 console.log('telemetry dashboard auth and activation-funnel tests passed');

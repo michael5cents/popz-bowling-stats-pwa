@@ -32,7 +32,9 @@ export function renderTelemetryDashboard(data,generatedAt=new Date().toISOString
  ];
  const rows=(data.daily||[]).map(r=>`<tr><td>${esc(r.day)}</td><td>${n(r.devices)}</td><td>${n(r.opens)}</td><td>${n(r.bowl_views)}</td><td>${n(r.started)}</td><td>${n(r.first_rolls)}</td><td>${n(r.games_completed)}</td><td>${n(r.completed)}</td></tr>`).join('');
  const events=(data.events||[]).map(r=>`<tr><td>${esc(r.event)}</td><td>${n(r.events)}</td><td>${n(r.devices)}</td></tr>`).join('');
- const platforms=(data.platforms||[]).map(r=>`<tr><td>${esc(r.platform)}</td><td>${n(r.devices)}</td></tr>`).join('');
+ const platformOrder=[['android','Android'],['ios','iOS'],['windows','Windows'],['mac','Mac'],['linux','Linux'],['other','Other']],platformCounts=new Map(platformOrder.map(([key])=>[key,0]));
+ for(const r of data.platforms||[]){const key=platformCounts.has(String(r.platform||'').toLowerCase())?String(r.platform||'').toLowerCase():'other';platformCounts.set(key,(platformCounts.get(key)||0)+Number(r.devices||0))}
+ const platforms=platformOrder.map(([key,label])=>`<tr><td>${esc(label)}</td><td>${n(platformCounts.get(key)||0)}</td></tr>`).join('');
  const modes=(data.modes||[]).map(r=>`<tr><td>${esc(r.install_mode)}</td><td>${n(r.devices)}</td></tr>`).join('');
  const funnelOrder=[['app_open','App opened'],['bowl_viewed','Bowl viewed'],['series_setup_viewed','Series setup shown'],['series_started','Series started'],['first_roll_recorded','First roll recorded'],['game_completed','Game completed'],['series_completed','Series completed']],funnelMap=new Map((data.funnel||[]).map(r=>[r.event,Number(r.devices||0)])),funnelRows=funnelOrder.map(([event,label])=>`<tr><td>${esc(label)}</td><td>${n(funnelMap.get(event)||0)}</td></tr>`).join('');
  const runtime=data.runtime||{},runtimeBad=Number(runtime.errors24||0)>0||Number(runtime.installedStartupFailures24||0)>0;
