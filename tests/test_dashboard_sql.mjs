@@ -38,8 +38,9 @@ rdb.exec(`CREATE TABLE runtime_events(
 rdb.exec(`INSERT INTO runtime_events VALUES(datetime('now','-1 hour'),'window_error','public-v39.011','android','installed','js','recent problem','app.js',10,2)`);
 rdb.exec(`INSERT INTO runtime_events VALUES(datetime('now','-30 hours'),'window_error','public-v39.011','android','installed','js','stale problem','app.js',9,2)`);
 rdb.exec(`INSERT INTO runtime_events VALUES(datetime('now','-5 minutes'),'window_error','public-v39.011','ios','browser','Error','Script error.','',0,0)`);
+rdb.exec(`INSERT INTO runtime_events VALUES(datetime('now','-4 minutes'),'window_error','public-v39.011','android','browser','Error','Uncaught Error: Error invoking postMessage: Java object is gone','',1,11722)`);
 const runtimeRows=rdb.prepare(currentRuntimeErrorsSql).all();
-assert.equal(runtimeRows.length,1,'Current runtime errors must exclude stale rows and opaque source-less Script error noise');
+assert.equal(runtimeRows.length,1,'Current runtime errors must exclude stale rows, opaque Script error noise, and Android in-app WebView bridge teardown noise');
 assert.equal(runtimeRows[0].error_message,'recent problem');
 
 console.log('telemetry dashboard invalid-funnel SQL syntax and compatibility tests passed');

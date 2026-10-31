@@ -49,6 +49,7 @@ window.addEventListener('error',e=>{
  }
  const message=e.message||e.error?.message||'Unhandled application error',source=e.filename||'',line=Number(e.lineno||0),col=Number(e.colno||0);
  if(message==='Script error.'&&!source&&!line&&!col)return;
+ if(!installed()&&platform()==='android'&&message.includes('Error invoking postMessage: Java object is gone')&&!source)return;
  enqueue('window_error',{errorKind:e.error?.name||'Error',errorMessage:message,source,line,col});
 },true);
 window.addEventListener('unhandledrejection',e=>enqueue('unhandled_rejection',{errorKind:e.reason?.name||'PromiseRejection',errorMessage:e.reason?.message||e.reason||'Unhandled promise rejection'}));

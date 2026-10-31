@@ -32,6 +32,15 @@ listeners.error({target:window,message:'Script error.',filename:'',lineno:0,coln
 await settle();
 assert.equal(sent.some(x=>x.event==='window_error'),false,'opaque source-less Script error must not be reported as actionable runtime failure');
 
+listeners.error({target:window,message:'Uncaught Error: Error invoking postMessage: Java object is gone',filename:'',lineno:1,colno:11722,error:{name:'Error'}});
+await settle();
+assert.equal(sent.some(x=>x.event==='window_error'),false,'Android browser Java-bridge teardown noise must not be reported as actionable runtime failure');
+
+listeners.error({target:window,message:'Uncaught Error: Error invoking postMessage: Java object is gone',filename:'https://popzbowling.com/app.js?v=39.011',lineno:77,colno:9,error:{name:'Error'}});
+await settle();
+assert.ok(sent.some(x=>x.event==='window_error'&&x.source==='app.js'),'same message from a real Popz source must still report');
+sent.length=0;
+
 listeners.error({target:window,message:'Real app failure',filename:'https://popzbowling.com/app.js?v=39.011',lineno:77,colno:9,error:{name:'TypeError',message:'Real app failure'}});
 await settle();
 assert.ok(sent.some(x=>x.event==='window_error'&&x.errorMessage==='Real app failure'&&x.source==='app.js'),'real application window errors must still report');

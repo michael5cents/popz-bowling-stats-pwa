@@ -13,7 +13,7 @@ export async function onRequestPost({request,env}){
  return new Response(null,{status:303,headers:{location:'/telemetry-dashboard','cache-control':'no-store','strict-transport-security':'max-age=31536000','set-cookie':`${SESSION_COOKIE}=${token}; Path=/telemetry-dashboard; Max-Age=2592000; HttpOnly; Secure; SameSite=Strict`}});
 }
 const one=r=>Number(r?.results?.[0]?.value||0);
-export const currentRuntimeErrorsSql="SELECT occurred_at,event,app_version,platform,install_mode,error_kind,error_message,source,line,col FROM runtime_events WHERE event IN ('window_error','unhandled_rejection','resource_error') AND NOT (event='window_error' AND error_message='Script error.' AND COALESCE(source,'')='' AND COALESCE(line,0)=0 AND COALESCE(col,0)=0) AND julianday(occurred_at)>=julianday('now','-24 hours') ORDER BY julianday(occurred_at) DESC LIMIT 20";
+export const currentRuntimeErrorsSql="SELECT occurred_at,event,app_version,platform,install_mode,error_kind,error_message,source,line,col FROM runtime_events WHERE event IN ('window_error','unhandled_rejection','resource_error') AND NOT (event='window_error' AND error_message='Script error.' AND COALESCE(source,'')='' AND COALESCE(line,0)=0 AND COALESCE(col,0)=0) AND NOT (event='window_error' AND platform='android' AND install_mode='browser' AND error_message LIKE '%Error invoking postMessage: Java object is gone%' AND COALESCE(source,'')='') AND julianday(occurred_at)>=julianday('now','-24 hours') ORDER BY julianday(occurred_at) DESC LIMIT 20";
 export const invalidFunnelSql=`SELECT COUNT(*) value FROM telemetry_events e WHERE
  (e.event='bowl_viewed' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='app_open'))
  OR (e.event='series_setup_viewed' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='bowl_viewed'))
@@ -59,7 +59,7 @@ export async function onRequestGet({request,env}){
     "SELECT COUNT(*) value FROM runtime_events WHERE event='app_ready' AND install_mode='installed' AND julianday(occurred_at)>=julianday('now','-24 hours')",
     "SELECT COUNT(*) value FROM runtime_events b WHERE b.event='boot_started' AND b.install_mode='installed' AND julianday(b.occurred_at)>=julianday('now','-24 hours') AND julianday(b.occurred_at)<=julianday('now','-2 minutes') AND NOT EXISTS (SELECT 1 FROM runtime_events x WHERE x.boot_id=b.boot_id AND x.event='app_ready')",
     "SELECT COUNT(*) value FROM runtime_events WHERE event='boot_started' AND install_mode='browser' AND julianday(occurred_at)>=julianday('now','-24 hours')",
-    "SELECT COUNT(*) value FROM runtime_events WHERE event IN ('window_error','unhandled_rejection','resource_error') AND NOT (event='window_error' AND error_message='Script error.' AND COALESCE(source,'')='' AND COALESCE(line,0)=0 AND COALESCE(col,0)=0) AND julianday(occurred_at)>=julianday('now','-24 hours')",
+    "SELECT COUNT(*) value FROM runtime_events WHERE event IN ('window_error','unhandled_rejection','resource_error') AND NOT (event='window_error' AND error_message='Script error.' AND COALESCE(source,'')='' AND COALESCE(line,0)=0 AND COALESCE(col,0)=0) AND NOT (event='window_error' AND platform='android' AND install_mode='browser' AND error_message LIKE '%Error invoking postMessage: Java object is gone%' AND COALESCE(source,'')='') AND julianday(occurred_at)>=julianday('now','-24 hours')",
     currentRuntimeErrorsSql
    ];
    const rr=await env.RUNTIME_DB.batch(rq.map(q=>env.RUNTIME_DB.prepare(q)));

@@ -3,7 +3,7 @@ import{onRequestGet}from'../functions/api/health.js';
 
 function envFor({errorCount=0,startupCount=0}={}){
   const db={prepare(sql){return{async first(){
-    if(sql.includes("event IN ('window_error'")){assert.match(sql,/Script error\./,'opaque source-less Script error noise must be excluded from health');assert.match(sql,/COALESCE\(source/);return{value:errorCount};}
+    if(sql.includes("event IN ('window_error'")){assert.match(sql,/Script error\./,'opaque source-less Script error noise must be excluded from health');assert.match(sql,/COALESCE\(source/);assert.match(sql,/Java object is gone/,'Android in-app WebView bridge teardown noise must be excluded from health');return{value:errorCount};}
     if(sql.includes("b.event='boot_started'")){assert.match(sql,/-15 minutes/,'startup-failure health window must stay at 15 minutes');assert.match(sql,/install_mode='installed'/,'browser install-gate boots must never count as app startup failures');return{value:startupCount};}
     return{value:1};
   }}}};
