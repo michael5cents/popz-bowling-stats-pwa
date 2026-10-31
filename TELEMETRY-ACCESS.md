@@ -4,10 +4,14 @@
 
 ## Private dashboard
 - URL: `https://popzbowling.com/telemetry-dashboard`
-- HTTP Basic Auth username: `michael`
+- Browser access: normal HTTPS password form; successful login stores a Secure/HttpOnly/SameSite cookie for 30 days.
+- Maintenance-script fallback: HTTP Basic Auth username `michael`.
 - Cloudflare Pages secret name: `TELEMETRY_DASHBOARD_PASSWORD`
 - macOS Keychain service used by the repo scripts: `popzbowling-telemetry-dashboard`
 - Keychain account: `michael`
+
+## Normal browser workflow
+Open `https://popzbowling.com/telemetry-dashboard` and enter the dashboard password. The browser receives a secure 30-day session cookie, so the clean HTTPS URL can be reopened without the old browser-level Basic Auth prompt until the cookie expires or the password changes.
 
 ## Normal assistant/operator workflow
 From the public Bowling repo:
@@ -71,7 +75,7 @@ For the 2026-10-01 alert, this command recovered the exact row: `2026-10-01T07:0
 - The authoritative external alert path is Michael's existing Telegram bot, not ChatGPT task notifications. The previous hourly ChatGPT `Popz Bowling Health` task is disabled.
 - PopzVPS runs `~/.local/lib/popz-bowling-monitor/run.sh` from the user crontab every five minutes. The wrapper loads only `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` from `~/.config/popz-bowling-monitor/telegram.env` (mode 600) and runs the deployed copy of `monitoring/telegram-health-monitor.mjs`.
 - Each run verifies `latest-version.json`, homepage versioned asset references, the runtime monitor, main app bundle, service worker, and `/api/health`. If the first pass finds an issue, the complete check is repeated after a default **3-second** delay and Telegram is evaluated from the retry result. A healthy run is silent. A new persistent failure sends `POPZ BOWLING ALERT`. Availability/dependency failures may repeat after 15 minutes; runtime-diagnostic-only incidents use a 60-minute repeat cooldown. The first fully healthy run after an incident sends `POPZ BOWLING RECOVERED`.
-- The monitor source and deployment notes live under `monitoring/` in this private repo. Bot token and chat ID must never be committed, documented, copied into Obsidian/Collective/Wiki, or echoed into chat.
+- The monitor source and deployment notes live under `monitoring/` in this public source repo; credentials remain excluded from Git. Bot token and chat ID must never be committed, documented, copied into Obsidian/Collective/Wiki, or echoed into chat.
 - Production validation on 2026-09-30: the exact PopzVPS wrapper reported `Healthy: public-v35`, and a real `POPZ BOWLING MONITOR TEST` message was accepted by Telegram using the same bot/chat as the call-forwarding monitor.
 
 ### Patch-version health monitoring

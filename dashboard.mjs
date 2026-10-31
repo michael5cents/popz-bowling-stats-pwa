@@ -10,6 +10,16 @@ export function validDashboardAuth(header,password,user='michael'){
   return safeEqual(raw.slice(0,i),user)&&safeEqual(raw.slice(i+1),password);
  }catch{return false}
 }
+export function validDashboardPassword(input,password){return Boolean(password)&&safeEqual(input,password)}
+export async function dashboardSessionToken(password){
+ if(!password)return'';
+ const digest=await crypto.subtle.digest('SHA-256',enc.encode('popz-telemetry-session:'+password));
+ return Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
+}
+export async function validDashboardSession(token,password){
+ if(!token||!password)return false;
+ return safeEqual(token,await dashboardSessionToken(password));
+}
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const n=v=>Number(v||0).toLocaleString('en-US');
 export const formatDashboardGeneratedAt=value=>new Date(value).toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short',timeZone:'America/Chicago'});

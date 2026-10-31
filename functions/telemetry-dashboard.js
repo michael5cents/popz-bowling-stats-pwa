@@ -1,6 +1,17 @@
-import{validDashboardAuth,renderTelemetryDashboard}from'../dashboard.mjs';
+import{validDashboardAuth,validDashboardPassword,dashboardSessionToken,validDashboardSession,renderTelemetryDashboard}from'../dashboard.mjs';
 import{TELEMETRY_BASELINE_VERSION,TELEMETRY_BASELINE_AT}from'../telemetry.mjs';
-const html=(body,status=200,extra={})=>new Response(body,{status,headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store','x-robots-tag':'noindex, nofollow','content-security-policy':"default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'",...extra}});
+const html=(body,status=200,extra={})=>new Response(body,{status,headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store','x-robots-tag':'noindex, nofollow','strict-transport-security':'max-age=31536000','content-security-policy':"default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",...extra}});
+const SESSION_COOKIE='popz_telemetry_session';
+const cookieValue=(header,name)=>String(header||'').split(';').map(v=>v.trim()).find(v=>v.startsWith(name+'='))?.slice(name.length+1)||'';
+const loginPage=(bad=false)=>`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Popz Bowling Telemetry Login</title><style>:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#f8fafc;background:#0b1020}*{box-sizing:border-box}body{margin:0;background:#0b1020;color:#f8fafc;min-height:100vh;display:grid;place-items:center;padding:24px}.card{width:min(430px,100%);background:#141c31;border:1px solid #2d3a58;border-radius:18px;padding:24px}.eyebrow{font-size:12px;font-weight:800;letter-spacing:.1em;color:#38bdf8}h1{margin:6px 0 10px;font-size:26px}p{color:#cbd5e1;line-height:1.45}.error{color:#fecaca;background:#451a1a;border:1px solid #7f1d1d;padding:10px 12px;border-radius:10px}label{display:block;margin-top:18px;font-weight:700}input{width:100%;margin-top:8px;padding:12px;border-radius:10px;border:1px solid #475569;background:#0f172a;color:white;font-size:16px}button{width:100%;margin-top:16px;padding:12px;border:0;border-radius:10px;background:#1d4ed8;color:white;font-size:16px;font-weight:800;cursor:pointer}.note{font-size:12px;color:#94a3b8;margin-top:14px}</style></head><body><main class="card"><div class="eyebrow">PRIVATE ADMIN</div><h1>Popz Bowling Telemetry</h1><p>Enter the dashboard password. This page is protected by HTTPS and stores only a secure private session cookie on this browser.</p>${bad?'<p class="error">That password was not accepted.</p>':''}<form method="post" action="/telemetry-dashboard"><label>Dashboard password<input name="password" type="password" autocomplete="current-password" required autofocus></label><button type="submit">Open dashboard</button></form><div class="note">Session lasts 30 days on this browser unless the dashboard password is changed.</div></main></body></html>`;
+const authorized=async(request,password)=>validDashboardAuth(request.headers.get('authorization'),password)||await validDashboardSession(cookieValue(request.headers.get('cookie'),SESSION_COOKIE),password);
+export async function onRequestPost({request,env}){
+ let form;try{form=await request.formData()}catch{return html(loginPage(true),400)}
+ const password=String(form.get('password')||'');
+ if(!validDashboardPassword(password,env.TELEMETRY_DASHBOARD_PASSWORD))return html(loginPage(true),401);
+ const token=await dashboardSessionToken(env.TELEMETRY_DASHBOARD_PASSWORD);
+ return new Response(null,{status:303,headers:{location:'/telemetry-dashboard','cache-control':'no-store','strict-transport-security':'max-age=31536000','set-cookie':`${SESSION_COOKIE}=${token}; Path=/telemetry-dashboard; Max-Age=2592000; HttpOnly; Secure; SameSite=Strict`}});
+}
 const one=r=>Number(r?.results?.[0]?.value||0);
 export const invalidFunnelSql=`SELECT COUNT(*) value FROM telemetry_events e WHERE
  (e.event='bowl_viewed' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='app_open'))
@@ -18,9 +29,7 @@ export const invalidFunnelSql=`SELECT COUNT(*) value FROM telemetry_events e WHE
      )
  )`;
 export async function onRequestGet({request,env}){
- if(!validDashboardAuth(request.headers.get('authorization'),env.TELEMETRY_DASHBOARD_PASSWORD)){
-  return html('<h1>Authentication required</h1>',401,{'www-authenticate':'Basic realm="Popz Bowling Telemetry", charset="UTF-8"'});
- }
+ if(!await authorized(request,env.TELEMETRY_DASHBOARD_PASSWORD))return html(loginPage());
  const sql=[
   "SELECT COUNT(DISTINCT device_id) value FROM telemetry_events",
   "SELECT COUNT(DISTINCT device_id) value FROM telemetry_events WHERE julianday(occurred_at)>=julianday('now','-7 days')",
