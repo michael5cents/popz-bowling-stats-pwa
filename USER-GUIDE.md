@@ -1,6 +1,6 @@
 # Popz Bowling Stats — User Guide
 
-Release version: **public-v39.012**. Production verification is pending.
+Current production version: **public-v39.012**.
 
 ## Share Live Scores — Pro
 
@@ -36,7 +36,7 @@ Popz Bowling opens on **Bowl** by default on phones, tablets, and Full Layout so
 - **Quick Scoring is the default.** Use the on-screen pin keypad after each roll and enter only how many pins fell. Strikes, spares, opens, 10th-frame scoring, scratch score, handicap, and handicap score are calculated automatically. If the first ball leaves a split, tap **Mark Split** before entering the second ball so Split Conversion % stays accurate.
 - To collect the exact standing-pin pattern and per-leave conversion analytics, open **Settings -> Scoring Mode** and choose **Detailed Scoring**. After a non-strike first ball, mark the exact pins still standing and tap **Save Leave & Continue**.
 - Quick Scoring skips the standing-pin step. It still records the score and spare result; if you use **Mark Split**, that frame counts in overall Split Conversion %. Quick mode does not invent the exact split pattern, single-pin leave, or 10-pin leave. You can correct a forgotten Split flag later by editing the frame.
-- Use **Undo** for the most recent recorded roll in the current game. In Team / Multi-Bowler mode it returns to the bowler who recorded that roll, even if the app has already advanced to the next bowler or you selected a different bowler. You can undo more than one recent roll, and that order survives closing and reopening the app. Editing a frame, starting/deleting a game, finishing/starting a series, or successfully importing a backup starts a new Undo boundary. To correct earlier rolls, select the bowler and tap the frame. Team rolls entered before the v39.012 update use that frame-editing method because their earlier turn order was not recorded.
+- Use **Undo** for the most recent recorded roll. In Team / Multi-Bowler mode it returns to the bowler who recorded that roll, even if the app has already advanced to the next bowler or you selected a different bowler. You can undo more than one recent roll, and that order survives closing and reopening the app. Editing a frame, starting/deleting a game, finishing/starting a series, or successfully importing a backup starts a new Undo boundary. To correct earlier rolls, select the bowler and tap the frame. Team rolls entered before the v39.012 update use that frame-editing method because their earlier turn order was not recorded.
 - Tap an older frame to edit it; later frames remain intact and the score recalculates.
 - Tap **New Game** when the next game is ready.
 - In **Team / Multi-Bowler** mode, Popz advances to the next bowler after each completed frame. The bowler tabs show the current order and score, and you can tap another bowler between frames if the lane order changes. **Start Next Team Game** creates the next game for every bowler together.

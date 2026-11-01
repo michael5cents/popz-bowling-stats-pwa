@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Release under validation: **public-v39.012**. Production verification is pending; the previous release is public-v39.011.
+Current app version: **public-v39.012**
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 
@@ -53,14 +53,14 @@ Open **https://popzbowling.com** in a modern browser.
 
 ## public-v39.012 — Reliability and data protection
 - **Google Sync:** cloud-bound copies omit undefined object properties, including nested optional fields, without changing the local record. New single-bowler series omit unused team linkage fields. The new Undo action history remains device-local.
-- **Team Undo:** a persisted, device-local action history follows the latest recorded roll in the active game across automatic rotation and manual bowler selection, supports repeated Undo after reload, and restores the correct bowler. Frame edits, game changes, series changes, and a successful backup import establish a boundary so Undo cannot alter earlier or unrelated data. Pre-update team rolls without recorded action order remain correctable through the frame editor.
+- **Team Undo:** a persisted, device-local action history follows the latest recorded roll in single-bowler and team scoring, including automatic rotation and manual bowler selection, supports repeated Undo after reload, and restores the correct bowler. Frame edits, game changes, series changes, and a successful backup import establish a boundary so Undo cannot alter earlier or unrelated data. Pre-update team rolls without recorded action order remain correctable through the frame editor.
 - **Backup import:** the complete backup structure is validated before merging or saving. Invalid session, game, frame, or settings data rejects the import as a whole, leaving the existing history and settings intact. Valid legacy backups still use the established non-destructive merge rules.
-- **Offline app shell:** only app-shell navigation may refresh the cached startup page. Dashboard/login pages and API responses stay outside the app cache and cannot replace the offline scoring entry point.
+- **Offline app shell:** only app-shell navigation may refresh the cached startup page. Dashboard/login pages and API responses stay outside the app cache and cannot replace the offline scoring entry point. Precached fetch responses are fully consumed before CacheStorage writes so fresh offline installation completes reliably.
 - **Health reporting:** failed runtime-diagnostic queries are reported as an unhealthy or unavailable dependency instead of being interpreted as zero errors and a healthy result.
 - **Update consistency:** the client, manifest, service worker, cache names, version file, and versioned app assets advance together to public-v39.012.
 - **Missing entering averages:** a blank or missing saved entering average is skipped when finding the carry-book seed; it is not converted into a zero average. A later valid entering average can supply the book seed.
 
-Verification and deployment status are tracked in [the v39.012 release record](docs/releases/2026-11-01-public-v39.012-reliability.md). Production verification is pending.
+Verification and deployment status are tracked in [the v39.012 release record](docs/releases/2026-11-01-public-v39.012-reliability.md). Production was verified November 1, 2026 at 14:52:32 CST on public-v39.012; release/source `d651a037a8279e2df0be817fc25cfdc084b15f54`.
 
 ## public-v39.011 — Whole-number bowling averages and handicap
 - Bowling averages are displayed as whole numbers with the fractional portion **dropped**, never rounded. This includes Stats, league book/latest/next-week averages, ball/center/lane/oil breakdowns, History entering averages, single/team series summaries, roster auto-average hints, score-screen handicap text, and the public live spectator final summary.
