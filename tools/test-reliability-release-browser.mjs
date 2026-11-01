@@ -148,7 +148,9 @@ try{
   await fresh.route('**/*',route=>route.request().url().startsWith(base)?route.continue():route.abort());
   const freshPage=await fresh.newPage();freshPage.on('pageerror',e=>errors.push(e.message));
   await freshPage.goto(base+'/?qa=1',{waitUntil:'domcontentloaded'});await loaded(freshPage,version);
-  await freshPage.waitForFunction(async()=>{const r=await navigator.serviceWorker.getRegistration();return r?.active?.state==='activated'},null,{timeout:15000});
+  await freshPage.waitForFunction(async()=>{const r=await navigator.serviceWorker.getRegistration();return r?.active?.state==='activated'&&!!navigator.serviceWorker.controller},null,{timeout:15000});
+  const freshShell=await freshPage.evaluate(async name=>{const c=await caches.open(name);const r=await c.match('./index.html');return r?await r.text():''},'popz-bowling-'+version);
+  assert.ok(freshShell.includes(version),'fresh offline shell must be completely cached');
   await fresh.setOffline(true);
   await freshPage.reload({waitUntil:'domcontentloaded'});await loaded(freshPage,version);
   assert.ok((await freshPage.evaluate(()=>caches.keys())).includes('popz-bowling-'+version));
