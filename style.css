@@ -189,3 +189,82 @@ main{width:min(1100px,100%);margin:0 auto;padding:18px;flex:1 1 auto;min-height:
 .history-group-hint::before{content:"Show"}
 .history-league-group[open]>summary .history-group-hint::before{content:"Hide"}
 @media(max-width:600px){#dashboardView>.panel[data-stats-collapse="1"]>.panel-title{align-items:flex-start;flex-wrap:wrap}.panel-collapse-btn{margin-left:0}.history-group-hint{display:inline-flex}}
+
+/* Compact Phone refinements. Full Layout keeps its existing presentation. */
+.phone-layout .topbar{gap:8px;padding:4px max(10px,env(safe-area-inset-right)) 4px max(10px,env(safe-area-inset-left));padding-top:max(4px,env(safe-area-inset-top))}
+.phone-layout .topbar>div:first-child{min-width:0}
+.phone-layout .topbar .eyebrow,.phone-layout #planTopBadge{display:none}
+.phone-layout .topbar h1{margin:0;font-size:16px;line-height:1.2;white-space:nowrap}
+.phone-layout .top-actions{gap:6px;flex-wrap:nowrap;align-items:center}
+.phone-layout .topbar .status{max-width:96px;overflow:hidden;text-overflow:ellipsis;font-size:10px;padding:6px 7px}
+.phone-layout #closeAppBtn{width:44px;min-width:44px;height:44px;min-height:44px;padding:0}
+.phone-layout main{padding:10px max(10px,env(safe-area-inset-right)) 10px max(10px,env(safe-area-inset-left))}
+.phone-layout .bottom-nav{padding:4px max(6px,env(safe-area-inset-right)) max(4px,env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left))}
+.phone-layout .bottom-nav .nav-btn{min-height:44px;padding:8px 2px;font-size:12px}
+.phone-layout input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),.phone-layout select{font-size:16px;min-height:44px}
+.phone-layout .live-share-toggle{gap:8px;padding:10px 12px;min-height:44px}
+.phone-layout .live-share-toggle strong{font-size:14px}
+.phone-layout .live-share-toggle .pro-pill{display:none}
+.phone-layout #scoreboard .frame-no{padding:4px}
+.phone-layout #scoreboard .frame-score{min-height:30px}
+.phone-layout .keypad-panel{padding:10px;margin-top:8px}
+.phone-layout .roll-prompt{margin-bottom:8px}
+.phone-layout .pin-pad button:disabled{opacity:.3;cursor:default}
+.phone-layout .pin-pad .phone-next-action{grid-column:1/-1;min-height:58px;padding:12px;font-size:18px;line-height:1.25}
+.phone-layout .keypad-actions{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.phone-layout .keypad-actions>button{min-height:48px;padding:10px 4px;font-size:14px}
+.phone-layout #phoneMissBtn,.phone-layout #phoneSplitBtn{display:block!important}
+.phone-layout #phoneSplitBtn.active{background:#7f1d1d;color:#fff;box-shadow:inset 0 0 0 1px #f87171}
+.phone-layout #phoneSplitBtn:disabled,.phone-layout #phoneMissBtn:disabled{opacity:.35;cursor:default}
+.phone-layout .keypad-actions #newGameBtn,.phone-layout .keypad-actions #deleteGameBtn{display:none}
+.phone-layout .phone-scoring-details-toggle{order:5;margin:8px 0;min-height:46px;font-size:14px}
+.phone-layout .game-details{order:6;display:none;margin:0 0 8px}
+.phone-layout #scoringArea.phone-details-open .game-details{display:grid}
+.phone-layout #phoneGameActions{order:9;gap:8px;margin-top:8px}
+.phone-layout #scoringArea.phone-details-open #phoneGameActions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))}
+.phone-layout #phoneGameActions>button{min-height:48px;padding:10px;font-size:14px}
+.phone-layout #scoringArea .phone-finish-series{order:10;display:none!important;margin-top:8px}
+.phone-layout #scoringArea.phone-details-open .phone-finish-series{display:block!important}
+.phone-layout #dashboardView.active{display:flex;flex-direction:column}
+.phone-layout #dashboardView>*{order:3}
+.phone-layout #dashboardView>.hero-card{order:0;gap:10px;padding:12px;border-radius:16px}
+.phone-layout #dashboardView>.hero-card .eyebrow{display:none}
+.phone-layout #dashboardView>.hero-card h2{font-size:20px;margin:0 0 6px}
+.phone-layout #dashboardView>.hero-card p{font-size:12px;line-height:1.4}
+.phone-layout #dashboardProtectionBtn{min-height:44px;padding:10px 12px;font-size:14px}
+.phone-layout #dashboardView>.stats-grid{order:1;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0}
+.phone-layout #dashboardView>.stats-grid>.stat{padding:12px;min-height:76px;border-radius:14px}
+.phone-layout #dashboardView>.stats-grid>.stat strong{font-size:28px;margin-top:5px}
+.phone-layout #phoneStatsFiltersBtn{order:2;display:flex!important;align-items:center;justify-content:space-between;gap:10px;min-height:52px;margin:0 0 12px;padding:10px 12px;text-align:left}
+.phone-layout #phoneStatsFiltersBtn strong{display:block;font-size:14px}
+.phone-layout #phoneStatsFiltersBtn small{display:block;margin-top:4px;font-size:12px;line-height:1.35;font-weight:400;color:#cbd5e1}
+.phone-layout #statsFiltersPanel{order:2;display:none;margin:0 0 12px}
+.phone-layout #dashboardView.phone-filters-open #statsFiltersPanel{display:grid}
+.phone-layout .panel-collapse-btn{min-height:44px}
+.phone-layout .history-group-hint{min-height:44px}
+.phone-layout .toast{top:calc(max(4px,env(safe-area-inset-top)) + 54px);bottom:auto;font-size:13px;padding:10px 14px;transform:translate(-50%,-12px)}
+.phone-layout .toast.show{transform:translate(-50%,0)}
+
+@media(min-width:560px) and (max-height:520px){
+  .phone-layout.phone-scoring main{padding-top:8px;padding-bottom:8px}
+  .phone-layout.phone-scoring #bowlView.active{display:grid;grid-template-columns:minmax(160px,.8fr) minmax(0,1.2fr);gap:8px 12px;align-items:start}
+  .phone-layout.phone-scoring #scoringArea:not(.hidden){display:contents!important}
+  .phone-layout.phone-scoring #phoneScoringHeader{grid-column:1;grid-row:1;margin:0}
+  .phone-layout.phone-scoring #groupTurnBar{grid-column:1;grid-row:2;margin:0}
+  .phone-layout.phone-scoring #scoreboard{grid-column:1;grid-row:3;min-width:0}
+  .phone-layout.phone-scoring #liveSharePanel{grid-column:1;grid-row:4;margin:0}
+  .phone-layout.phone-scoring .keypad-panel{grid-column:2;grid-row:1 / span 4;margin:0;padding:8px;min-width:0}
+  .phone-layout.phone-scoring .roll-prompt{font-size:13px;margin-bottom:6px}
+  .phone-layout.phone-scoring .pin-pad{gap:6px}
+  .phone-layout.phone-scoring .pin-pad button{min-height:46px;padding:6px 4px}
+  .phone-layout.phone-scoring .pin-pad .phone-next-action{min-height:58px;padding:12px}
+  .phone-layout.phone-scoring .keypad-actions{gap:6px;margin-top:6px}
+  .phone-layout.phone-scoring .keypad-actions>button{min-height:44px;padding:8px 4px}
+  .phone-layout.phone-scoring #frameEditor{grid-column:1/-1;grid-row:5}
+  .phone-layout.phone-scoring .phone-scoring-details-toggle{grid-column:1/-1;grid-row:6;margin:0}
+  .phone-layout.phone-scoring .game-details{grid-column:1/-1;grid-row:7;margin:0}
+  .phone-layout.phone-scoring #shotTrackingLocked,.phone-layout.phone-scoring #firstBallSetup{grid-column:1/-1;grid-row:8;margin:0}
+  .phone-layout.phone-scoring .game-summary{grid-column:1/-1;grid-row:9;margin:0}
+  .phone-layout.phone-scoring #phoneGameActions{grid-column:1/-1;grid-row:10;margin:0}
+  .phone-layout.phone-scoring .phone-finish-series{grid-column:1/-1;grid-row:11;margin:0}
+}
