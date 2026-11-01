@@ -97,5 +97,8 @@ The Telegram monitor accepts numeric patch releases such as the current `public-
 ### Deployment-race alert protection
 The PopzVPS monitor performs a complete second production check after the configured retry delay (default **3 seconds**) whenever the first check finds an issue. Telegram is evaluated only from the retry result. This prevents brief deployment version mismatches from producing false alerts while persistent failures still alert normally.
 
+### D1 read-efficiency guardrails (2026-11-01)
+The dashboard no longer auto-refreshes every 60 seconds. It refreshes only on explicit page load/Refresh now. All recurring runtime-health and recent-window dashboard SQL compares raw ISO `occurred_at` timestamps against `strftime('%Y-%m-%dT%H:%M:%fZ', ...)` cutoffs instead of wrapping the indexed column in `julianday()`. This allows the existing `event, occurred_at` indexes to constrain the time range and prevents the five-minute PopzVPS health monitor from repeatedly scanning historical runtime rows. Do not reintroduce functions around indexed `occurred_at` columns in recurring D1 queries.
+
 ### Dashboard failure containment
 The private dashboard route catches telemetry-query failures and returns a controlled HTTP 503 page stating that the dashboard is temporarily unavailable while bowling/scoring remain unaffected. The 2026-10-03 Invalid Funnel Events SQL syntax failure was corrected at backend/admin head `b449566`; the query now has direct SQLite regression coverage.

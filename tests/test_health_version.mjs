@@ -3,8 +3,8 @@ import{onRequestGet}from'../functions/api/health.js';
 
 function envFor({errorCount=0,startupCount=0}={}){
   const db={prepare(sql){return{async first(){
-    if(sql.includes("event IN ('window_error'")){assert.match(sql,/Script error\./,'opaque source-less Script error noise must be excluded from health');assert.match(sql,/COALESCE\(source/);assert.match(sql,/Java object is gone/,'Android in-app WebView bridge teardown noise must be excluded from health');return{value:errorCount};}
-    if(sql.includes("b.event='boot_started'")){assert.match(sql,/-15 minutes/,'startup-failure health window must stay at 15 minutes');assert.match(sql,/install_mode='installed'/,'browser install-gate boots must never count as app startup failures');return{value:startupCount};}
+    if(sql.includes("event IN ('window_error'")){assert.doesNotMatch(sql,/julianday\(occurred_at\)/,'health error query must use the runtime time index');assert.match(sql,/strftime\('%Y-%m-%dT%H:%M:%fZ'/);assert.match(sql,/Script error\./,'opaque source-less Script error noise must be excluded from health');assert.match(sql,/COALESCE\(source/);assert.match(sql,/Java object is gone/,'Android in-app WebView bridge teardown noise must be excluded from health');return{value:errorCount};}
+    if(sql.includes("b.event='boot_started'")){assert.doesNotMatch(sql,/julianday\(b\.occurred_at\)/,'startup query must use the runtime event/time index');assert.match(sql,/strftime\('%Y-%m-%dT%H:%M:%fZ'/);assert.match(sql,/-15 minutes/,'startup-failure health window must stay at 15 minutes');assert.match(sql,/install_mode='installed'/,'browser install-gate boots must never count as app startup failures');return{value:startupCount};}
     return{value:1};
   }}}};
   return{TELEMETRY_DB:db,LIVE_SHARE_DB:db,RUNTIME_DB:db,ASSETS:{async fetch(){return new Response(JSON.stringify({version:'public-v39.011'}),{status:200,headers:{'content-type':'application/json'}})}}};

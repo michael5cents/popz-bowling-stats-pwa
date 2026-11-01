@@ -13,7 +13,7 @@ export async function onRequestPost({request,env}){
  return new Response(null,{status:303,headers:{location:'/telemetry-dashboard','cache-control':'no-store','strict-transport-security':'max-age=31536000','set-cookie':`${SESSION_COOKIE}=${token}; Path=/telemetry-dashboard; Max-Age=2592000; HttpOnly; Secure; SameSite=Strict`}});
 }
 const one=r=>Number(r?.results?.[0]?.value||0);
-export const currentRuntimeErrorsSql="SELECT occurred_at,event,app_version,platform,install_mode,error_kind,error_message,source,line,col FROM runtime_events WHERE event IN ('window_error','unhandled_rejection','resource_error') AND NOT (event='window_error' AND error_message='Script error.' AND COALESCE(source,'')='' AND COALESCE(line,0)=0 AND COALESCE(col,0)=0) AND NOT (event='window_error' AND platform='android' AND install_mode='browser' AND error_message LIKE '%Error invoking postMessage: Java object is gone%' AND COALESCE(source,'')='') AND julianday(occurred_at)>=julianday('now','-24 hours') ORDER BY julianday(occurred_at) DESC LIMIT 20";
+export const currentRuntimeErrorsSql="SELECT occurred_at,event,app_version,platform,install_mode,error_kind,error_message,source,line,col FROM runtime_events WHERE event IN ('window_error','unhandled_rejection','resource_error') AND NOT (event='window_error' AND error_message='Script error.' AND COALESCE(source,'')='' AND COALESCE(line,0)=0 AND COALESCE(col,0)=0) AND NOT (event='window_error' AND platform='android' AND install_mode='browser' AND error_message LIKE '%Error invoking postMessage: Java object is gone%' AND COALESCE(source,'')='') AND occurred_at>=strftime('%Y-%m-%dT%H:%M:%fZ','now','-24 hours') ORDER BY occurred_at DESC LIMIT 20";
 export const invalidFunnelSql=`SELECT COUNT(*) value FROM telemetry_events e WHERE
  (e.event='bowl_viewed' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='app_open'))
  OR (e.event='series_setup_viewed' AND NOT EXISTS (SELECT 1 FROM telemetry_events p WHERE p.device_id=e.device_id AND p.event='bowl_viewed'))
@@ -33,19 +33,19 @@ export async function onRequestGet({request,env}){
  if(!await authorized(request,env.TELEMETRY_DASHBOARD_PASSWORD))return html(loginPage());
  const sql=[
   "SELECT COUNT(DISTINCT device_id) value FROM telemetry_events",
-  "SELECT COUNT(DISTINCT device_id) value FROM telemetry_events WHERE julianday(occurred_at)>=julianday('now','-7 days')",
-  "SELECT COUNT(DISTINCT device_id) value FROM telemetry_events WHERE julianday(occurred_at)>=julianday('now','-30 days')",
-  "SELECT COUNT(DISTINCT device_id) value FROM telemetry_events WHERE event='series_completed' AND julianday(occurred_at)>=julianday('now','-30 days')",
-  "SELECT COUNT(*) value FROM telemetry_events WHERE event='series_completed' AND julianday(occurred_at)>=julianday('now','-30 days')",
-  "SELECT COUNT(*) value FROM (SELECT device_id FROM telemetry_events GROUP BY device_id HAVING MIN(julianday(occurred_at))>=julianday('now','-7 days'))",
-  "SELECT COUNT(*) value FROM (SELECT device_id FROM telemetry_events GROUP BY device_id HAVING MIN(julianday(occurred_at))>=julianday('now','-30 days'))",
-  "SELECT COUNT(*) value FROM (SELECT device_id FROM telemetry_events WHERE julianday(occurred_at)>=julianday('now','-30 days') GROUP BY device_id HAVING COUNT(DISTINCT substr(occurred_at,1,10))>=2)",
+  "SELECT COUNT(DISTINCT device_id) value FROM telemetry_events WHERE occurred_at>=strftime('%Y-%m-%dT%H:%M:%fZ','now','-7 days')",
+  "SELECT COUNT(DISTINCT device_id) value FROM telemetry_events WHERE occurred_at>=strftime('%Y-%m-%dT%H:%M:%fZ','now','-30 days')",
+  "SELECT COUNT(DISTINCT device_id) value FROM telemetry_events WHERE event='series_completed' AND occurred_at>=strftime('%Y-%m-%dT%H:%M:%fZ','now','-30 days')",
+  "SELECT COUNT(*) value FROM telemetry_events WHERE event='series_completed' AND occurred_at>=strftime('%Y-%m-%dT%H:%M:%fZ','now','-30 days')",
+  "SELECT COUNT(*) value FROM (SELECT device_id FROM telemetry_events GROUP BY device_id HAVING MIN(occurred_at)>=strftime('%Y-%m-%dT%H:%M:%fZ','now','-7 days'))",
+  "SELECT COUNT(*) value FROM (SELECT device_id FROM telemetry_events GROUP BY device_id HAVING MIN(occurred_at)>=strftime('%Y-%m-%dT%H:%M:%fZ','now','-30 days'))",
+  "SELECT COUNT(*) value FROM (SELECT device_id FROM telemetry_events WHERE occurred_at>=strftime('%Y-%m-%dT%H:%M:%fZ','now','-30 days') GROUP BY device_id HAVING COUNT(DISTINCT substr(occurred_at,1,10))>=2)",
   invalidFunnelSql,
   "SELECT event,COUNT(*) events,COUNT(DISTINCT device_id) devices FROM telemetry_events GROUP BY event ORDER BY event",
   "SELECT platform,COUNT(DISTINCT device_id) devices FROM telemetry_events GROUP BY platform ORDER BY devices DESC,platform",
   "SELECT install_mode,COUNT(DISTINCT device_id) devices FROM telemetry_events GROUP BY install_mode ORDER BY devices DESC,install_mode",
-  "SELECT event,COUNT(DISTINCT device_id) devices FROM telemetry_events WHERE julianday(occurred_at)>=julianday('now','-30 days') AND event IN ('app_open','bowl_viewed','series_setup_viewed','series_started','first_roll_recorded','game_completed','series_completed') GROUP BY event",
-  "SELECT substr(occurred_at,1,10) day,COUNT(DISTINCT device_id) devices,SUM(event='app_open') opens,SUM(event='bowl_viewed') bowl_views,SUM(event='series_started') started,SUM(event='first_roll_recorded') first_rolls,SUM(event='game_completed') games_completed,SUM(event='series_completed') completed FROM telemetry_events WHERE julianday(occurred_at)>=julianday('now','-14 days') GROUP BY day ORDER BY day DESC"
+  "SELECT event,COUNT(DISTINCT device_id) devices FROM telemetry_events WHERE occurred_at>=strftime('%Y-%m-%dT%H:%M:%fZ','now','-30 days') AND event IN ('app_open','bowl_viewed','series_setup_viewed','series_started','first_roll_recorded','game_completed','series_completed') GROUP BY event",
+  "SELECT substr(occurred_at,1,10) day,COUNT(DISTINCT device_id) devices,SUM(event='app_open') opens,SUM(event='bowl_viewed') bowl_views,SUM(event='series_started') started,SUM(event='first_roll_recorded') first_rolls,SUM(event='game_completed') games_completed,SUM(event='series_completed') completed FROM telemetry_events WHERE occurred_at>=strftime('%Y-%m-%dT%H:%M:%fZ','now','-14 days') GROUP BY day ORDER BY day DESC"
  ];
  let r;
  try{r=await env.TELEMETRY_DB.batch(sql.map(q=>env.TELEMETRY_DB.prepare(q)))}catch{
@@ -55,11 +55,11 @@ export async function onRequestGet({request,env}){
  if(env.RUNTIME_DB){
   try{
    const rq=[
-    "SELECT COUNT(*) value FROM runtime_events WHERE event='boot_started' AND install_mode='installed' AND julianday(occurred_at)>=julianday('now','-24 hours')",
-    "SELECT COUNT(*) value FROM runtime_events WHERE event='app_ready' AND install_mode='installed' AND julianday(occurred_at)>=julianday('now','-24 hours')",
-    "SELECT COUNT(*) value FROM runtime_events b WHERE b.event='boot_started' AND b.install_mode='installed' AND julianday(b.occurred_at)>=julianday('now','-24 hours') AND julianday(b.occurred_at)<=julianday('now','-2 minutes') AND NOT EXISTS (SELECT 1 FROM runtime_events x WHERE x.boot_id=b.boot_id AND x.event='app_ready')",
-    "SELECT COUNT(*) value FROM runtime_events WHERE event='boot_started' AND install_mode='browser' AND julianday(occurred_at)>=julianday('now','-24 hours')",
-    "SELECT COUNT(*) value FROM runtime_events WHERE event IN ('window_error','unhandled_rejection','resource_error') AND NOT (event='window_error' AND error_message='Script error.' AND COALESCE(source,'')='' AND COALESCE(line,0)=0 AND COALESCE(col,0)=0) AND NOT (event='window_error' AND platform='android' AND install_mode='browser' AND error_message LIKE '%Error invoking postMessage: Java object is gone%' AND COALESCE(source,'')='') AND julianday(occurred_at)>=julianday('now','-24 hours')",
+    "SELECT COUNT(*) value FROM runtime_events WHERE event='boot_started' AND install_mode='installed' AND occurred_at>=strftime('%Y-%m-%dT%H:%M:%fZ','now','-24 hours')",
+    "SELECT COUNT(*) value FROM runtime_events WHERE event='app_ready' AND install_mode='installed' AND occurred_at>=strftime('%Y-%m-%dT%H:%M:%fZ','now','-24 hours')",
+    "SELECT COUNT(*) value FROM runtime_events b WHERE b.event='boot_started' AND b.install_mode='installed' AND b.occurred_at>=strftime('%Y-%m-%dT%H:%M:%fZ','now','-24 hours') AND b.occurred_at<=strftime('%Y-%m-%dT%H:%M:%fZ','now','-2 minutes') AND NOT EXISTS (SELECT 1 FROM runtime_events x WHERE x.boot_id=b.boot_id AND x.event='app_ready')",
+    "SELECT COUNT(*) value FROM runtime_events WHERE event='boot_started' AND install_mode='browser' AND occurred_at>=strftime('%Y-%m-%dT%H:%M:%fZ','now','-24 hours')",
+    "SELECT COUNT(*) value FROM runtime_events WHERE event IN ('window_error','unhandled_rejection','resource_error') AND NOT (event='window_error' AND error_message='Script error.' AND COALESCE(source,'')='' AND COALESCE(line,0)=0 AND COALESCE(col,0)=0) AND NOT (event='window_error' AND platform='android' AND install_mode='browser' AND error_message LIKE '%Error invoking postMessage: Java object is gone%' AND COALESCE(source,'')='') AND occurred_at>=strftime('%Y-%m-%dT%H:%M:%fZ','now','-24 hours')",
     currentRuntimeErrorsSql
    ];
    const rr=await env.RUNTIME_DB.batch(rq.map(q=>env.RUNTIME_DB.prepare(q)));

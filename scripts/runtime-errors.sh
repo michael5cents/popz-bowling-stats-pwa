@@ -26,6 +26,6 @@ if [[ -z "$DB_ID" ]]; then
   exit 1
 fi
 
-SQL="SELECT occurred_at,event,app_version,platform,install_mode,error_kind,error_message,source,line,col FROM runtime_events WHERE event IN ('window_error','unhandled_rejection','resource_error') AND julianday(occurred_at)>=julianday('now','-${HOURS} hours') ORDER BY julianday(occurred_at) DESC LIMIT ${LIMIT};"
+SQL="SELECT occurred_at,event,app_version,platform,install_mode,error_kind,error_message,source,line,col FROM runtime_events WHERE event IN ('window_error','unhandled_rejection','resource_error') AND occurred_at>=strftime('%Y-%m-%dT%H:%M:%fZ','now','-${HOURS} hours') ORDER BY occurred_at DESC LIMIT ${LIMIT};"
 
 exec npx --yes wrangler@latest d1 execute "$DB_ID" --remote --json --command "$SQL"
