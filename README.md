@@ -58,7 +58,7 @@ Open **https://popzbowling.com** in a modern browser.
 - **More usable phone space:** a smaller header, larger form text and touch targets, and notices near the top keep scoring controls clearer. Short landscape phone screens place the scorecard and keypad side by side.
 - **Full Layout is preserved:** the presentation changes are scoped to Compact Phone. Tablet/desktop Full Layout, scoring rules, saved data, Google Sync, and live-sharing behavior retain their existing scope.
 
-Michael reviewed the unpublished candidate in the existing Pixel 7 emulator and approved publication. Validation and deployment details are in [the v39.013 release record](docs/releases/2026-11-01-public-v39.013-compact-phone.md); production verification is pending.
+Michael reviewed the candidate in the existing Pixel 7 emulator and approved publication. **public-v39.013 is deployed and verified** at popzbowling.com as of November 1, 2026, 15:41:49 CST. Source/deploy commit: `3cbcf961dc46f53ed51e3c25e1f4a2a4f81c48e0`. Validation, update/install checks, and production evidence are in [the v39.013 release record](docs/releases/2026-11-01-public-v39.013-compact-phone.md). Existing users keep the installed app and their saved data; an update notice asks them to close and reopen, without reinstalling.
 
 ## public-v39.012 — Reliability and data protection
 - **Google Sync:** cloud-bound copies omit undefined object properties, including nested optional fields, without changing the local record. New single-bowler series omit unused team linkage fields. The new Undo action history remains device-local.
