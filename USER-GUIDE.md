@@ -1,6 +1,6 @@
 # Popz Bowling Stats — User Guide
 
-Current production version: **public-v39.012**.
+Release guide: **public-v39.013**. Production verification is pending.
 
 ## Share Live Scores — Pro
 
@@ -18,7 +18,9 @@ Open `popzbowling.com`. The normal website is now an **install screen only**; th
 
 Open **Settings → Layout** to choose **Automatic**, **Compact Phone**, or **Full Layout**. This preference stays only on that device; it is not Google-synced and is not part of bowling backups. You can force Compact Phone on a tablet or foldable for testing.
 
-Compact Phone keeps the main Start Series fields visible and puts secondary setup choices under **More Series Options**. During scoring it shows Game / Frame / Score / Series at the top, larger scoring buttons, Ball Used and Lane Number close at hand, a compact scorecard, **More Scoring Details** for secondary/Advanced Shot Tracking controls, and a large **Finish Series** button. Share Live Scores keeps its normal behavior: it is absent during setup, then appears collapsed after Start Series and remains available while scoring.
+Compact Phone keeps the main Start Series fields visible and puts secondary setup choices under **More Series Options**. During scoring, the pin buttons stay in fixed positions while impossible counts are disabled. **Miss**, **Undo**, and **Split** sit together below the keypad. The next action—Next Bowler, Start Next Game, or Finish Series—uses a full-width button when it becomes available.
+
+Open **Game details & actions** for Ball Used, Lane Number, entering average/handicap details, New Game, Delete Current Game, and manual Finish Series. In team scoring, the active bowler tab scrolls into view after rotation. Landscape phone scoring places the scorecard and keypad side by side. Share Live Scores keeps its normal behavior: it is absent during setup, then appears collapsed after Start Series and remains available while scoring.
 
 ## Set up and start bowling
 Popz Bowling opens on **Bowl** by default on phones, tablets, and Full Layout so you can get to scoring immediately. **Stats**, History, Help, and Settings remain available from the bottom navigation at any time.
@@ -31,19 +33,21 @@ Popz Bowling opens on **Bowl** by default on phones, tablets, and Full Layout so
 6. Tap **Start Series**.
 
 ## Record a game
-- Enter the ball used and lane number(s) for the game.
+- Enter the ball used and lane number(s) for the game. In Compact Phone, open **Game details & actions** to find these fields.
 - **Advanced Shot Tracking is off by default.** During **PRO PREVIEW** it is unlocked, but you must first open **Settings -> Advanced Shot Tracking** and turn it on. Then Stand Board and Target Board appear while bowling and Ball + Stand + Target are snapshotted with the first ball of each frame and carry forward until you change them. Spare shots do not replace the first-ball setup. Turning the setting off hides those inputs and stops new frame-level setup recording without deleting existing tracked history.
-- **Quick Scoring is the default.** Use the on-screen pin keypad after each roll and enter only how many pins fell. Strikes, spares, opens, 10th-frame scoring, scratch score, handicap, and handicap score are calculated automatically. If the first ball leaves a split, tap **Mark Split** before entering the second ball so Split Conversion % stays accurate.
+- **Quick Scoring is the default.** Use the on-screen pin keypad after each roll and enter only how many pins fell. Strikes, spares, opens, 10th-frame scoring, scratch score, handicap, and handicap score are calculated automatically. If the first ball leaves a split, tap **Split** in Compact Phone or **Mark Split** in Full Layout before entering the second ball so Split Conversion % stays accurate.
 - To collect the exact standing-pin pattern and per-leave conversion analytics, open **Settings -> Scoring Mode** and choose **Detailed Scoring**. After a non-strike first ball, mark the exact pins still standing and tap **Save Leave & Continue**.
-- Quick Scoring skips the standing-pin step. It still records the score and spare result; if you use **Mark Split**, that frame counts in overall Split Conversion %. Quick mode does not invent the exact split pattern, single-pin leave, or 10-pin leave. You can correct a forgotten Split flag later by editing the frame.
+- Quick Scoring skips the standing-pin step. It still records the score and spare result; if you mark the split, that frame counts in overall Split Conversion %. Quick mode does not invent the exact split pattern, single-pin leave, or 10-pin leave. You can correct a forgotten Split flag later by editing the frame.
 - Use **Undo** for the most recent recorded roll. In Team / Multi-Bowler mode it returns to the bowler who recorded that roll, even if the app has already advanced to the next bowler or you selected a different bowler. You can undo more than one recent roll, and that order survives closing and reopening the app. Editing a frame, starting/deleting a game, finishing/starting a series, or successfully importing a backup starts a new Undo boundary. To correct earlier rolls, select the bowler and tap the frame. Team rolls entered before the v39.012 update use that frame-editing method because their earlier turn order was not recorded.
 - Tap an older frame to edit it; later frames remain intact and the score recalculates.
-- Tap **New Game** when the next game is ready.
+- Tap **New Game** when the next game is ready. Compact Phone also offers a full-width **Start Next Game** after completion; the manual New Game control is inside **Game details & actions**.
 - In **Team / Multi-Bowler** mode, Popz advances to the next bowler after each completed frame. The bowler tabs show the current order and score, and you can tap another bowler between frames if the lane order changes. **Start Next Team Game** creates the next game for every bowler together.
-- Tap **Finish Series** when the session is over. In team mode this finishes every linked bowler series together and shows a team summary. The app then lets you continue to Overall Stats or History.
+- Tap **Finish Series** when the session is over. In Compact Phone, it appears at series completion or inside **Game details & actions**. In team mode this finishes every linked bowler series together and shows a team summary. The app then lets you continue to Overall Stats or History.
 
 ## Stats and history
 The **Stats** screen keeps the main summary visible at the top: average, high game, high series, games, strike/spare percentages, and leave-conversion summary. Detailed sections below it—league/category stats, league running average, performance breakdowns, first-ball leave stats, and recent series—start collapsed. Tap **Show** only for the detail you want; the app remembers each panel's Show/Hide choice on that device. League/category rows inside the detailed Stats view also start collapsed. Filters include bowler, league/practice, bowling center, lane, ball used, and oil pattern. Team-scored bowlers remain separate: choose **My Bowling**, a spouse/teammate, or **All Bowlers**. Quick-mode frames contribute normal scoring/spare statistics and any manually flagged split attempts/conversions. Exact standing-pin patterns, single-pin/10-pin stats, and per-leave conversion rows come from Detailed Scoring.
+
+In Compact Phone, the summary cards appear before the collapsed **Filters** button. Tap **Filters** to choose the bowler, league/practice, bowling center, lane, ball, or oil pattern. The selected-filter summary stays visible while closed, and closing the panel keeps your selections. Full Layout retains its existing filter arrangement.
 
 Use **History** to review completed bowling grouped by league/category. Those league/category groups start collapsed so a large history stays easy to scan; open the group you want, then expand an individual completed series for frame-by-frame game details or to enter/correct its **Entering Average**. Saving an entering-average correction immediately updates that series handicap and the league running-average calculations.
 

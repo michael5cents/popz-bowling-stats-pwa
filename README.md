@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Current app version: **public-v39.012**
+Release under validation: **public-v39.013**. Production verification is pending; the previous release is public-v39.012.
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 
@@ -25,17 +25,17 @@ Open **https://popzbowling.com** in a modern browser.
 - iPhone/iPad: open the site in Safari, tap **Install App**, then follow **Share → Add to Home Screen → Add**.
 - The Install App button hides when the app is already running in standalone installed mode.
 
-## Current public-v39.012 behavior
+## Current public-v39.013 behavior
 - Default handicap for new series: **90% of 220**.
 - Bowling-center filtering also limits the lane list and lane breakdown to that center.
 - **Finish Series** first shows statistics for only the just-completed series, then offers **Continue to Overall Stats** for cumulative stats.
 - If the entering average is blank, the app uses the stored running average for the same league or Practice when available; **Entering / Current Average** remains editable during bowling and immediately updates handicap.
 - League average rules are configurable per league in **Settings → League Average Rule**. A league can keep carrying its book average, or use the book average only until a chosen number of actual games is completed; after that threshold, the app uses the whole-number actual pinfall average with the fraction dropped.
-- PWA manifest, icons, service worker, and offline cache are versioned for **public-v39.012**.
+- PWA manifest, icons, service worker, and offline cache are versioned for **public-v39.013**.
 - **Google Sync** is a Pro-designated feature and is visibly labeled **PRO PREVIEW** while preview access is enabled. First sign-in merges existing local completed history with the user's private Firestore history, then subsequent devices use the same merge/tombstone rules automatically. Bowler name, saved team-bowler profiles, and per-league average rules sync; device-specific Stats filters do not.
-- **Quick Scoring remains the default in public-v39.012.** Users enter only how many pins fell on each roll; scoring, strikes, spares, opens, 10th-frame logic, handicap, history, and normal statistics continue to work without a standing-pin step. After a non-strike first ball, Quick mode offers a one-tap **Mark Split** flag so overall Split Conversion % remains accurate without identifying exact pins. The Split flag can also be corrected later in the frame editor. **Detailed Scoring** is available in Settings for users who want the exact standing-pin pattern, single-pin/10-pin detail, and per-leave conversion analytics.
+- **Quick Scoring remains the default in public-v39.013.** Users enter only how many pins fell on each roll; scoring, strikes, spares, opens, 10th-frame logic, handicap, history, and normal statistics continue to work without a standing-pin step. After a non-strike first ball, Quick mode offers a one-tap **Mark Split** flag so overall Split Conversion % remains accurate without identifying exact pins. The Split flag can also be corrected later in the frame editor. **Detailed Scoring** is available in Settings for users who want the exact standing-pin pattern, single-pin/10-pin detail, and per-leave conversion analytics.
 - **Advanced Shot Tracking** is a Pro-designated feature and remains **off by default**. A bowler must explicitly enable it in **Settings -> Advanced Shot Tracking** before the Ball + Stand Board + Target Board controls appear or new frame-level setup snapshots are recorded. Normal game-level Ball and Lane tracking remains available while it is off. The preference is device-local, so enabling it on one device does not silently enable it on another. Previously recorded setup history remains visible and is never erased by turning the preference off.
-- **Team / Multi-Bowler scoring was introduced in public-v31 and remains a Popz Bowling Pro feature in public-v39.012.** One device can score 2–12 bowlers in bowling order. Each bowler gets an independent linked series with separate entering average, handicap, scores, History, Stats, backup data, and cloud records. The scorer can tap a bowler tab to switch manually between frames, and the app advances automatically after each completed frame. During **PRO PREVIEW** it is unlocked for testing.
+- **Team / Multi-Bowler scoring was introduced in public-v31 and remains a Popz Bowling Pro feature in public-v39.013.** One device can score 2–12 bowlers in bowling order. Each bowler gets an independent linked series with separate entering average, handicap, scores, History, Stats, backup data, and cloud records. The scorer can tap a bowler tab to switch manually between frames, and the app advances automatically after each completed frame. During **PRO PREVIEW** it is unlocked for testing.
 - Signed-in users sync when the app opens/returns online or foreground, after important completed-history/settings changes, and on a 60-second background check while open. Manual **Sync now** is also available.
 - Export / Import / Share Backup remains available as recovery and manual-transfer fallback.
 - Anonymous telemetry tracks first seen/app opens plus the activation funnel: Bowl viewed, series setup shown, series started, first roll recorded, game completed, and series completed. It also tracks Stats/History/Help/Settings views, backup export/share/import usage, Google sign-in use, and manual cloud-sync use. It does not receive the Google identity, bowling content, or cloud documents. Events queue locally while offline and flush when connectivity returns.
@@ -50,6 +50,15 @@ Open **https://popzbowling.com** in a modern browser.
 - **Runtime telemetry hardening in public-v39.009:** failed injected or third-party scripts no longer count as Bowling runtime failures. `resource_error` is limited to the app-owned critical resources `entry.js`, `app.js`, and `style.css`; real uncaught JavaScript errors and unhandled promise rejections remain reported normally.
 - **Telemetry delivery repair in public-v39.010:** queued usage milestones are cleared only after the server confirms that the submitted events were stored. Delayed and offline milestones can retry without treating receipt alone as durable storage.
 - Update awareness is dual-signal in public-v24. The app checks uncached production `latest-version.json` at startup, again after 2 and 10 seconds, when returning to the foreground, when connectivity returns, and every 10 minutes while open. It also forces a service-worker update check; newly activated workers broadcast `POPZ_UPDATE_READY` to open clients. Either signal can raise the persistent **Update available — close and reopen** banner, and a service-worker signal stays authoritative even if an edge briefly serves a stale version file.
+
+## public-v39.013 — Compact Phone scoring and Stats
+- **Stable scoring keypad:** phone pin buttons keep fixed positions for 1–10; impossible pin counts are disabled rather than making the remaining buttons move. A separate **Miss / Undo / Split** row keeps the common actions together. Split retains the existing Quick Scoring eligibility and visibly indicates when marked.
+- **Clear game actions:** Next Bowler, Start Next Game, and Finish Series prompts use the full keypad width when appropriate. **Game details & actions** groups Ball, Lane, entering average/handicap details, New Game, Delete Current Game, and manual Finish Series. Team rotation scrolls the active bowler tab into view.
+- **Stats first:** the phone Stats summary appears before a collapsed **Filters** control. The selected-filter summary stays visible while the filters are closed; opening or closing the panel does not change the filters.
+- **More usable phone space:** a smaller header, larger form text and touch targets, and notices near the top keep scoring controls clearer. Short landscape phone screens place the scorecard and keypad side by side.
+- **Full Layout is preserved:** the presentation changes are scoped to Compact Phone. Tablet/desktop Full Layout, scoring rules, saved data, Google Sync, and live-sharing behavior retain their existing scope.
+
+Michael reviewed the unpublished candidate in the existing Pixel 7 emulator and approved publication. Validation and deployment details are in [the v39.013 release record](docs/releases/2026-11-01-public-v39.013-compact-phone.md); production verification is pending.
 
 ## public-v39.012 — Reliability and data protection
 - **Google Sync:** cloud-bound copies omit undefined object properties, including nested optional fields, without changing the local record. New single-bowler series omit unused team linkage fields. The new Undo action history remains device-local.
