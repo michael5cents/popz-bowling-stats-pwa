@@ -192,4 +192,37 @@ function worker(){
   }
 }
 
-console.log('Service worker preserves verified offline scoring, excludes APIs/admin/live data, rejects unsafe refreshes, and retains bundled modules');
+{
+  // Simulate a small HTTP connection pool: each slot stays occupied until its
+  // streamed response body is consumed. Merely fetching all headers deadlocks.
+  const h=worker(),limit=3,waiting=[];
+  let active=0,drained=0,timer;
+  const acquire=()=>active<limit?(active++,Promise.resolve()):new Promise(resolve=>waiting.push(resolve));
+  const releaseConnection=()=>{
+    assert.equal(h.writes.length,0,'the complete bundle must be drained and validated before any cache write');
+    drained++;
+    const next=waiting.shift();if(next)next();else active--;
+  };
+  h.setNetwork(async url=>{
+    await acquire();
+    const isShell=url.pathname==='/'||url.pathname==='/index.html';
+    const bytes=new TextEncoder().encode(isShell?appHTML:'body for '+url.pathname);
+    let sent=false;
+    const body=new ReadableStream({pull(controller){
+      if(!sent){sent=true;controller.enqueue(bytes)}
+      else{controller.close();releaseConnection()}
+    }},{highWaterMark:0});
+    return new Response(body,{status:200,statusText:'OK',headers:{'content-type':isShell?'text/html; charset=utf-8':'application/octet-stream','cache-control':'no-store','x-fixture':'streamed'}});
+  });
+  try{
+    await Promise.race([h.install(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Precache exhausted its connection pool without draining response bodies')),1000)})]);
+  }finally{clearTimeout(timer)}
+  assert.equal(h.installed,true);
+  assert.equal(drained,h.requests.length,'every fetched response must release its connection');
+  assert.equal(active,0);assert.equal(waiting.length,0);
+  const cached=await h.cached('/entry.js?v='+release);
+  assert.equal(cached.status,200);assert.equal(cached.statusText,'OK');assert.equal(cached.headers.get('x-fixture'),'streamed');
+  assert.equal(await cached.text(),'body for /entry.js');
+}
+
+console.log('Service worker preserves verified offline scoring, excludes APIs/admin/live data, rejects unsafe refreshes, drains streamed precache bodies, and retains bundled modules');

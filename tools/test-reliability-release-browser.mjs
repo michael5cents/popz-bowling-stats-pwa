@@ -12,7 +12,7 @@ const oldCommit='56576182b190f6ea863c6c2d559af4a4d7ae2ea7';
 const version=JSON.parse(readFileSync(resolve(root,'latest-version.json'),'utf8')).version;
 const oldVersion=JSON.parse(execFileSync('git',['show',oldCommit+':latest-version.json'],{cwd:root,encoding:'utf8'})).version;
 const types={'.html':'text/html; charset=utf-8','.css':'text/css','.js':'text/javascript','.mjs':'text/javascript','.json':'application/json','.webmanifest':'application/manifest+json','.png':'image/png'};
-let phase='old',failShell=false;
+let phase='old',failShell=false,noStoreAssets=false;
 const requests=[],oldFiles=new Map();
 function file(rel){
  if(phase==='new')return readFileSync(resolve(root,rel));
@@ -31,7 +31,7 @@ const server=createServer((req,res)=>{
   if(!target.startsWith(root+'/')||!existsSync(target)){res.writeHead(404).end();return;}
   // Explicit bundled precache is allowed, dynamic app-shell caching is exercised
   // with ordinary successful HTML and no-store admin/API responses above.
-  res.writeHead(200,{'Content-Type':types[extname(rel)]||'application/octet-stream','Cache-Control':rel==='service-worker.js'||rel==='latest-version.json'?'no-store':'max-age=0'});
+  res.writeHead(200,{'Content-Type':types[extname(rel)]||'application/octet-stream','Cache-Control':noStoreAssets||rel==='service-worker.js'||rel==='latest-version.json'?'no-store':'max-age=0'});
   res.end(file(rel));
  }catch{res.writeHead(404).end();}
 });
@@ -140,5 +140,19 @@ try{
  assert.ok(cacheUrls.some(url=>url.includes('/roll-undo.mjs')));
  assert.deepEqual(errors,[]);
  assert.ok(!requests.some(r=>r.method==='POST'&&(r.path==='/api/telemetry'||r.path==='/api/runtime')));
- console.log('Release browser PASS: actual v39.011-to-current update preserves active team; correct Undo across rotation/reload; invalid import preserves storage and startup; valid legacy import; offline app survives admin visit and 503; API/admin cache isolation.');
+ // A fresh install must drain all precache bodies on a no-store HTTP/1 server.
+ // Waiting for activation here also proves offline readiness before disconnecting.
+ failShell=false;noStoreAssets=true;
+ const fresh=await browser.newContext({serviceWorkers:'allow'});
+ try{
+  await fresh.route('**/*',route=>route.request().url().startsWith(base)?route.continue():route.abort());
+  const freshPage=await fresh.newPage();freshPage.on('pageerror',e=>errors.push(e.message));
+  await freshPage.goto(base+'/?qa=1',{waitUntil:'domcontentloaded'});await loaded(freshPage,version);
+  await freshPage.waitForFunction(async()=>{const r=await navigator.serviceWorker.getRegistration();return r?.active?.state==='activated'},null,{timeout:15000});
+  await fresh.setOffline(true);
+  await freshPage.reload({waitUntil:'domcontentloaded'});await loaded(freshPage,version);
+  assert.ok((await freshPage.evaluate(()=>caches.keys())).includes('popz-bowling-'+version));
+  assert.deepEqual(errors,[]);
+ }finally{await fresh.close()}
+ console.log('Release browser PASS: actual v39.011-to-current update preserves active team; correct Undo across rotation/reload; invalid import preserves storage and startup; valid legacy import; offline app survives admin visit and 503; API/admin cache isolation; fresh no-store HTTP/1 installation and offline reload.');
 }finally{await context.close();await browser.close();await new Promise(ok=>server.close(ok))}

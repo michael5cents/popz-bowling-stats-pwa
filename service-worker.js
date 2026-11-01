@@ -42,7 +42,10 @@ self.addEventListener('install',e=>e.waitUntil((async()=>{
     const url=new URL(asset,self.location.href);
     const response=await fetch(new Request(url,{cache:'reload'}));
     if(!cacheableResponse(response,{precache:true})||(shellURL(url)&&!await verifiedShell(response,{precache:true})))throw Error('Invalid precache response: '+url.pathname);
-    return[asset,response];
+    // Drain each body now: holding unread responses can exhaust the browser's
+    // connection pool before the remaining bundle requests receive headers.
+    const bytes=await response.arrayBuffer();
+    return[asset,new Response(bytes,{status:response.status,statusText:response.statusText,headers:response.headers})];
   }));
   const cache=await caches.open(CACHE);
   await Promise.all(bundle.map(([asset,response])=>cache.put(asset,response)));
