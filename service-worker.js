@@ -1,8 +1,8 @@
-const SW_VERSION='public-v39.012';
-const CACHE='popz-bowling-public-v39.012';
-const ASSETS=['./','./index.html','./style.css?v=39.012','./entry.js?v=39.012','./app.js?v=39.012','./scoring.mjs?v=39.012','./history.mjs?v=39.012','./transfer.mjs?v=39.012','./backup-validation.mjs?v=39.012','./roll-undo.mjs?v=39.012','./update.mjs?v=39.012','./telemetry.mjs?v=39.012','./telemetry-client.mjs?v=39.012','./telemetry-milestones.mjs?v=39.012','./cloud-sync-core.mjs?v=39.012','./cloud-sync.mjs?v=39.012','./entitlements.mjs?v=39.012','./multiplayer.mjs?v=39.012','./layout-mode.mjs?v=39.012','./runtime-monitor.js?v=39.012','./manifest.webmanifest','./icon-192.png?v=39.012','./icon-512.png?v=39.012','./apple-touch-icon.png?v=39.012'];
+const SW_VERSION='public-v39.013';
+const CACHE='popz-bowling-public-v39.013';
+const ASSETS=['./','./index.html','./style.css?v=39.013','./entry.js?v=39.013','./app.js?v=39.013','./scoring.mjs?v=39.013','./history.mjs?v=39.013','./transfer.mjs?v=39.013','./backup-validation.mjs?v=39.013','./roll-undo.mjs?v=39.013','./update.mjs?v=39.013','./telemetry.mjs?v=39.013','./telemetry-client.mjs?v=39.013','./telemetry-milestones.mjs?v=39.013','./cloud-sync-core.mjs?v=39.013','./cloud-sync.mjs?v=39.013','./entitlements.mjs?v=39.013','./multiplayer.mjs?v=39.013','./layout-mode.mjs?v=39.013','./runtime-monitor.js?v=39.013','./manifest.webmanifest','./icon-192.png?v=39.013','./icon-512.png?v=39.013','./apple-touch-icon.png?v=39.013'];
 
-const PRECACHE_ASSETS=[...ASSETS,'./live-share.mjs?v=39.012','./live-share-client.mjs?v=39.012','./live-share-ui.mjs?v=39.012'];
+const PRECACHE_ASSETS=[...ASSETS,'./live-share.mjs?v=39.013','./live-share-client.mjs?v=39.013','./live-share-ui.mjs?v=39.013'];
 const ASSET_URLS=new Set(PRECACHE_ASSETS.map(asset=>new URL(asset,self.location.href).href));
 const MODULE_VERSION=SW_VERSION.replace('public-v','');
 const shellURL=url=>url.origin===self.location.origin&&(url.pathname==='/'||url.pathname==='/index.html');
