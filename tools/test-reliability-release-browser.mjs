@@ -45,6 +45,7 @@ const readState=page=>page.evaluate(()=>new Promise((ok,no)=>{
  open.onerror=()=>no(open.error);
  open.onsuccess=()=>{const db=open.result,read=db.transaction('state').objectStore('state').get('master');read.onsuccess=()=>{db.close();ok(read.result)};read.onerror=()=>{db.close();no(read.error)}};
 }));
+// App readiness is the release gate; optional SDK requests must not hold the load event hostage.
 const loaded=async(page,want)=>page.waitForFunction(v=>document.getElementById('appVersion')?.textContent===v,want);
 const roll=async pins=>{
  await page.locator('[data-pins="'+pins+'"]').click();
@@ -53,9 +54,9 @@ const roll=async pins=>{
 try{
  await context.route('**/*',route=>route.request().url().startsWith(base)?route.continue():route.abort());
  page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());
- await page.goto(base+'/?qa=1');await loaded(page,oldVersion);
+ await page.goto(base+'/?qa=1',{waitUntil:'domcontentloaded'});await loaded(page,oldVersion);
  await page.evaluate(()=>navigator.serviceWorker.ready);
- await page.reload();await loaded(page,oldVersion);
+ await page.reload({waitUntil:'domcontentloaded'});await loaded(page,oldVersion);
  await page.waitForFunction(()=>!!navigator.serviceWorker.controller);
  await page.locator('[data-nav="settings"]').click();
  await page.locator('#bowlerName').fill('QA Release A');await page.locator('#bowlerName').press('Tab');
@@ -76,7 +77,7 @@ try{
  await page.waitForFunction(v=>document.getElementById('updateLatestVersion')?.textContent===v,version,{timeout:30000});
  await page.close();
  page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());
- await page.goto(base+'/?qa=1');await loaded(page,version);
+ await page.goto(base+'/?qa=1',{waitUntil:'domcontentloaded'});await loaded(page,version);
  const updatedState=await readState(page);
  assert.deepEqual(updatedState.sessions,oldState.sessions);
  assert.deepEqual(updatedState.activeGroup,oldState.activeGroup);
@@ -95,7 +96,7 @@ try{
  assert.deepEqual(saved.sessions[0].games[0].frames[1].rolls,[]);
  assert.deepEqual(saved.sessions[1].games[0].frames[0].rolls,[10]);
  // Persisted action order must survive reload and undo B next.
- await page.reload();await loaded(page,version);
+ await page.reload({waitUntil:'domcontentloaded'});await loaded(page,version);
  await page.locator('#undoRollBtn').click();
  await page.waitForFunction(()=>document.getElementById('activeSeriesTitle').textContent.includes('QA Release B'));
  saved=await readState(page);
@@ -109,7 +110,7 @@ try{
  await page.waitForFunction(()=>document.getElementById('toast').textContent.includes('Invalid bowling backup'));
  const afterReject=await readState(page);
  assert.deepEqual(afterReject,beforeImport);
- await page.reload();await loaded(page,version);
+ await page.reload({waitUntil:'domcontentloaded'});await loaded(page,version);
 
  // A valid legacy decimal-average backup still imports and keeps the active team.
  const legacyGame={id:'legacy-game',frames:emptyFrames()};
@@ -125,14 +126,14 @@ try{
  await page.evaluate(()=>fetch('/api/health').then(r=>r.json()));
 
  // Admin navigation and a failed root request must never replace the offline app.
- await page.goto(base+'/telemetry-dashboard');assert.match(await page.textContent('body'),/ADMIN FIXTURE/);
+ await page.goto(base+'/telemetry-dashboard',{waitUntil:'domcontentloaded'});assert.match(await page.textContent('body'),/ADMIN FIXTURE/);
  await context.setOffline(true);
- await page.goto(base+'/?qa=1');await loaded(page,version);
+ await page.goto(base+'/?qa=1',{waitUntil:'domcontentloaded'});await loaded(page,version);
  assert.equal((await readState(page)).sessions.length,3);
  await context.setOffline(false);failShell=true;
- const failed=await page.goto(base+'/?qa=1');assert.equal(failed.status(),503);
+ const failed=await page.goto(base+'/?qa=1',{waitUntil:'domcontentloaded'});assert.equal(failed.status(),503);
  await context.setOffline(true);
- await page.goto(base+'/?qa=1');await loaded(page,version);
+ await page.goto(base+'/?qa=1',{waitUntil:'domcontentloaded'});await loaded(page,version);
  const cacheUrls=await page.evaluate(async()=>{const lists=await Promise.all((await caches.keys()).map(async key=>(await(await caches.open(key)).keys()).map(r=>r.url)));return lists.flat()});
  assert.ok(!cacheUrls.some(url=>url.includes('/telemetry-dashboard')||url.includes('/api/')));
  assert.ok(cacheUrls.some(url=>url.includes('/backup-validation.mjs')));
