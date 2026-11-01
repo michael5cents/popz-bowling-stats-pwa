@@ -1,4 +1,4 @@
-import{mergeCloudBowlingState,stateForCloud,cloudSnapshotToState,cloudDocForSession}from'./cloud-sync-core.mjs';
+import{mergeCloudBowlingState,stateForCloud,cloudSnapshotToState,cloudDocForSession,normalizeCloudDocument}from'./cloud-sync-core.mjs';
 import{PRO_FEATURES,effectiveAccess,canUseFeature}from'./entitlements.mjs';
 
 const FIREBASE_VERSION='12.19.0';
@@ -64,7 +64,7 @@ async function commitOps(ops){
     const batch=storeApi.writeBatch(db);
     for(const op of ops.slice(i,i+400)){
       if(op.kind==='delete')batch.delete(op.ref);
-      else batch.set(op.ref,op.data,{merge:false});
+      else batch.set(op.ref,normalizeCloudDocument(op.data),{merge:false});
     }
     await batch.commit();
   }

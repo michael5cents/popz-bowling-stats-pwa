@@ -1,10 +1,53 @@
-const SW_VERSION='public-v39.011';
-const CACHE='popz-bowling-public-v39.011';
-const ASSETS=['./','./index.html','./style.css?v=39.011','./entry.js?v=39.011','./app.js?v=39.011','./scoring.mjs?v=39.011','./history.mjs?v=39.011','./transfer.mjs?v=39.011','./update.mjs?v=39.011','./telemetry.mjs?v=39.011','./telemetry-client.mjs?v=39.011','./telemetry-milestones.mjs?v=39.011','./cloud-sync-core.mjs?v=39.011','./cloud-sync.mjs?v=39.011','./entitlements.mjs?v=39.011','./multiplayer.mjs?v=39.011','./layout-mode.mjs?v=39.011','./runtime-monitor.js?v=39.011','./manifest.webmanifest','./icon-192.png?v=39.011','./icon-512.png?v=39.011','./apple-touch-icon.png?v=39.011'];
+const SW_VERSION='public-v39.012';
+const CACHE='popz-bowling-public-v39.012';
+const ASSETS=['./','./index.html','./style.css?v=39.012','./entry.js?v=39.012','./app.js?v=39.012','./scoring.mjs?v=39.012','./history.mjs?v=39.012','./transfer.mjs?v=39.012','./backup-validation.mjs?v=39.012','./roll-undo.mjs?v=39.012','./update.mjs?v=39.012','./telemetry.mjs?v=39.012','./telemetry-client.mjs?v=39.012','./telemetry-milestones.mjs?v=39.012','./cloud-sync-core.mjs?v=39.012','./cloud-sync.mjs?v=39.012','./entitlements.mjs?v=39.012','./multiplayer.mjs?v=39.012','./layout-mode.mjs?v=39.012','./runtime-monitor.js?v=39.012','./manifest.webmanifest','./icon-192.png?v=39.012','./icon-512.png?v=39.012','./apple-touch-icon.png?v=39.012'];
 
-self.addEventListener('install',e=>e.waitUntil(
-  caches.open(CACHE).then(c=>c.addAll([...ASSETS,'./live-share.mjs?v=39.011','./live-share-client.mjs?v=39.011','./live-share-ui.mjs?v=39.011'])).then(()=>self.skipWaiting())
-));
+const PRECACHE_ASSETS=[...ASSETS,'./live-share.mjs?v=39.012','./live-share-client.mjs?v=39.012','./live-share-ui.mjs?v=39.012'];
+const ASSET_URLS=new Set(PRECACHE_ASSETS.map(asset=>new URL(asset,self.location.href).href));
+const MODULE_VERSION=SW_VERSION.replace('public-v','');
+const shellURL=url=>url.origin===self.location.origin&&(url.pathname==='/'||url.pathname==='/index.html');
+
+function cacheableResponse(response,{precache=false}={}){
+  if(!response||response.status!==200||!response.ok)return false;
+  const control=response.headers.get('cache-control')||'';
+  // The explicit bundled precache also works on no-store development servers.
+  // Private responses are never stored; later network refreshes honor no-store.
+  return !/\bprivate\b/i.test(control)&&(precache||!/\bno-store\b/i.test(control));
+}
+async function verifiedShell(response,options){
+  if(!cacheableResponse(response,options)||!/^text\/html(?:\s*;|$)/i.test(response.headers.get('content-type')||''))return false;
+  if(response.url&&!shellURL(new URL(response.url)))return false;
+  const tags=(await response.clone().text()).match(/<meta\b[^>]*>/gi)||[];
+  return tags.some(tag=>/\bname\s*=\s*["']popz-app-version["']/i.test(tag)&&(tag.match(/\bcontent\s*=\s*["']([^"']+)["']/i)||[])[1]===SW_VERSION);
+}
+function cachedAssetURL(url){
+  if(ASSET_URLS.has(url.href))return url.href;
+  if(!url.search&&url.pathname.endsWith('.mjs')){
+    const versioned=new URL(url.href);versioned.search='?v='+MODULE_VERSION;
+    if(ASSET_URLS.has(versioned.href))return versioned.href;
+  }
+  return null;
+}
+async function refreshCache(cache,key,response,isShell=false){
+  try{
+    if(isShell?await verifiedShell(response):cacheableResponse(response))await cache.put(key,response.clone());
+  }catch{
+    // A storage/quota failure must not discard a successful network response.
+  }
+}
+
+self.addEventListener('install',e=>e.waitUntil((async()=>{
+  // Validate the whole known bundle before replacing any cache entries.
+  const bundle=await Promise.all(PRECACHE_ASSETS.map(async asset=>{
+    const url=new URL(asset,self.location.href);
+    const response=await fetch(new Request(url,{cache:'reload'}));
+    if(!cacheableResponse(response,{precache:true})||(shellURL(url)&&!await verifiedShell(response,{precache:true})))throw Error('Invalid precache response: '+url.pathname);
+    return[asset,response];
+  }));
+  const cache=await caches.open(CACHE);
+  await Promise.all(bundle.map(([asset,response])=>cache.put(asset,response)));
+  await self.skipWaiting();
+})()));
 
 self.addEventListener('activate',e=>e.waitUntil((async()=>{
   const keys=await caches.keys();
@@ -15,26 +58,36 @@ self.addEventListener('activate',e=>e.waitUntil((async()=>{
 })()));
 
 self.addEventListener('fetch',e=>{
-  const u=new URL(e.request.url);
-  // Never store spectator snapshots or turn a network failure into the scoring app shell.
-  if(u.origin===self.location.origin&&(u.pathname.startsWith('/api/live/')||u.pathname.startsWith('/live/'))){e.respondWith(fetch(e.request));return}
-  if(u.pathname.endsWith('/latest-version.json')){e.respondWith(fetch(e.request));return}
   if(e.request.method!=='GET')return;
+  const u=new URL(e.request.url);
+  // APIs, admin pages, live spectators and external services always use the network.
+  // Never read a historical cache entry for any of these routes.
+  if(u.origin!==self.location.origin||u.pathname==='/api'||u.pathname.startsWith('/api/')||/^\/telemetry-dashboard(?:[/.]|$)/.test(u.pathname)||u.pathname==='/live'||u.pathname.startsWith('/live/')||u.pathname.endsWith('/latest-version.json')){
+    e.respondWith(fetch(e.request));return;
+  }
   if(e.request.mode==='navigate'){
-    e.respondWith(fetch(e.request).then(r=>{const copy=r.clone();caches.open(CACHE).then(c=>c.put('./index.html',copy));return r}).catch(async()=>(await caches.match('./index.html'))||Response.error()));
+    if(!shellURL(u)){e.respondWith(fetch(e.request));return}
+    e.respondWith((async()=>{
+      try{
+        const response=await fetch(e.request);
+        try{await refreshCache(await caches.open(CACHE),'./index.html',response,true)}catch{}
+        return response;
+      }catch{
+        const cache=await caches.open(CACHE);
+        return(await cache.match('./index.html'))||Response.error();
+      }
+    })());
     return;
   }
-  e.respondWith(caches.match(e.request).then(async hit=>{
+  const assetURL=cachedAssetURL(u);
+  if(!assetURL){e.respondWith(fetch(e.request));return}
+  e.respondWith((async()=>{
+    const cache=await caches.open(CACHE),hit=await cache.match(assetURL);
     if(hit)return hit;
-    if(u.origin===self.location.origin&&!u.search&&u.pathname.endsWith('.mjs')){
-      const versioned=await caches.match(`${u.pathname}?v=39.011`);
-      if(versioned)return versioned;
-    }
-    return fetch(e.request).then(r=>{
-      const copy=r.clone();caches.open(CACHE).then(c=>c.put(e.request,copy));return r;
-    }).catch(async()=>{
-      if(e.request.mode==='navigate')return (await caches.match('./index.html'))||Response.error();
-      return Response.error();
-    });
-  }));
+    try{
+      const response=await fetch(e.request);
+      await refreshCache(cache,assetURL,response,shellURL(u));
+      return response;
+    }catch{return Response.error()}
+  })());
 });

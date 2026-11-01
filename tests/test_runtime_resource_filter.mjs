@@ -6,7 +6,7 @@ const source=readFileSync(new URL('../runtime-monitor.js',import.meta.url),'utf8
 const listeners={},sent=[],store=new Map();let seq=0;
 const localStorage={getItem:k=>store.has(k)?store.get(k):null,setItem:(k,v)=>store.set(k,String(v)),removeItem:k=>store.delete(k)};
 const document={
- querySelector:s=>s==='meta[name="popz-app-version"]'?{content:'public-v39.011'}:null,
+ querySelector:s=>s==='meta[name="popz-app-version"]'?{content:'public-v39.012'}:null,
  addEventListener(){},getElementById(){return null},body:{appendChild(){}},documentElement:{appendChild(){}}
 };
 const window={addEventListener:(type,fn)=>{listeners[type]=fn}};
@@ -23,7 +23,7 @@ listeners.error({target:{tagName:'SCRIPT',rel:'',src:'https://static.cloudflarei
 await settle();
 assert.equal(sent.some(x=>x.event==='resource_error'),false,'third-party script failures must be ignored');
 
-listeners.error({target:{tagName:'SCRIPT',rel:'',src:'https://popzbowling.com/app.js?v=39.011'}});
+listeners.error({target:{tagName:'SCRIPT',rel:'',src:'https://popzbowling.com/app.js?v=39.012'}});
 await settle();
 assert.ok(sent.some(x=>x.event==='resource_error'&&x.errorKind==='script_load'&&x.source==='app.js'),'app.js failures must still report');
 
@@ -36,17 +36,17 @@ listeners.error({target:window,message:'Uncaught Error: Error invoking postMessa
 await settle();
 assert.equal(sent.some(x=>x.event==='window_error'),false,'Android browser Java-bridge teardown noise must not be reported as actionable runtime failure');
 
-listeners.error({target:window,message:'Uncaught Error: Error invoking postMessage: Java object is gone',filename:'https://popzbowling.com/app.js?v=39.011',lineno:77,colno:9,error:{name:'Error'}});
+listeners.error({target:window,message:'Uncaught Error: Error invoking postMessage: Java object is gone',filename:'https://popzbowling.com/app.js?v=39.012',lineno:77,colno:9,error:{name:'Error'}});
 await settle();
 assert.ok(sent.some(x=>x.event==='window_error'&&x.source==='app.js'),'same message from a real Popz source must still report');
 sent.length=0;
 
-listeners.error({target:window,message:'Real app failure',filename:'https://popzbowling.com/app.js?v=39.011',lineno:77,colno:9,error:{name:'TypeError',message:'Real app failure'}});
+listeners.error({target:window,message:'Real app failure',filename:'https://popzbowling.com/app.js?v=39.012',lineno:77,colno:9,error:{name:'TypeError',message:'Real app failure'}});
 await settle();
 assert.ok(sent.some(x=>x.event==='window_error'&&x.errorMessage==='Real app failure'&&x.source==='app.js'),'real application window errors must still report');
 
 sent.length=0;
-listeners.error({target:{tagName:'LINK',rel:'stylesheet',href:'https://popzbowling.com/style.css?v=39.011'}});
+listeners.error({target:{tagName:'LINK',rel:'stylesheet',href:'https://popzbowling.com/style.css?v=39.012'}});
 await settle();
 assert.ok(sent.some(x=>x.event==='resource_error'&&x.errorKind==='stylesheet_load'&&x.source==='style.css'),'main stylesheet failures must still report');
 console.log('runtime critical-resource filtering tests passed');

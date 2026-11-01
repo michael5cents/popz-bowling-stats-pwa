@@ -26,7 +26,7 @@ insert.run('a4','legacy-device','first_roll_recorded','public-v32','2026-10-03T1
 insert.run('a5','legacy-device','series_completed','public-v32','2026-10-03T12:30:00Z','installed','android');
 assert.equal(stmt.get().value,0,'fresh legacy installed completion is valid without game_completed when its older funnel stages exist');
 
-insert.run('b1','broken-device','series_completed','public-v39.011','2026-10-03T12:30:00Z','installed','android');
+insert.run('b1','broken-device','series_completed','public-v39.012','2026-10-03T12:30:00Z','installed','android');
 assert.equal(stmt.get().value,1,'current completion without game_completed must be counted invalid');
 
 
@@ -36,10 +36,10 @@ rdb.exec(`CREATE TABLE runtime_events(
  occurred_at TEXT,event TEXT,app_version TEXT,platform TEXT,install_mode TEXT,
  error_kind TEXT,error_message TEXT,source TEXT,line INTEGER,col INTEGER
 )`);
-rdb.exec(`INSERT INTO runtime_events VALUES(strftime('%Y-%m-%dT%H:%M:%fZ','now','-1 hour'),'window_error','public-v39.011','android','installed','js','recent problem','app.js',10,2)`);
-rdb.exec(`INSERT INTO runtime_events VALUES(strftime('%Y-%m-%dT%H:%M:%fZ','now','-30 hours'),'window_error','public-v39.011','android','installed','js','stale problem','app.js',9,2)`);
-rdb.exec(`INSERT INTO runtime_events VALUES(strftime('%Y-%m-%dT%H:%M:%fZ','now','-5 minutes'),'window_error','public-v39.011','ios','browser','Error','Script error.','',0,0)`);
-rdb.exec(`INSERT INTO runtime_events VALUES(strftime('%Y-%m-%dT%H:%M:%fZ','now','-4 minutes'),'window_error','public-v39.011','android','browser','Error','Uncaught Error: Error invoking postMessage: Java object is gone','',1,11722)`);
+rdb.exec(`INSERT INTO runtime_events VALUES(strftime('%Y-%m-%dT%H:%M:%fZ','now','-1 hour'),'window_error','public-v39.012','android','installed','js','recent problem','app.js',10,2)`);
+rdb.exec(`INSERT INTO runtime_events VALUES(strftime('%Y-%m-%dT%H:%M:%fZ','now','-30 hours'),'window_error','public-v39.012','android','installed','js','stale problem','app.js',9,2)`);
+rdb.exec(`INSERT INTO runtime_events VALUES(strftime('%Y-%m-%dT%H:%M:%fZ','now','-5 minutes'),'window_error','public-v39.012','ios','browser','Error','Script error.','',0,0)`);
+rdb.exec(`INSERT INTO runtime_events VALUES(strftime('%Y-%m-%dT%H:%M:%fZ','now','-4 minutes'),'window_error','public-v39.012','android','browser','Error','Uncaught Error: Error invoking postMessage: Java object is gone','',1,11722)`);
 const runtimeRows=rdb.prepare(currentRuntimeErrorsSql).all();
 assert.equal(runtimeRows.length,1,'Current runtime errors must exclude stale rows, opaque Script error noise, and Android in-app WebView bridge teardown noise');
 assert.equal(runtimeRows[0].error_message,'recent problem');

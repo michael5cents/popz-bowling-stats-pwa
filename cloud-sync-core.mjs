@@ -55,6 +55,16 @@ export function cloudSnapshotToState(profile={},sessions=[],deletedSessions=[]){
   };
 }
 
+// Firestore rejects undefined values, including optional fields in older local
+// sessions. Normalize a fresh copy at the write boundary; never rewrite history.
+export function normalizeCloudDocument(value){
+  if(value===undefined)return null;
+  if(value instanceof Date)return new Date(value.getTime());
+  if(Array.isArray(value))return Array.from(value,item=>normalizeCloudDocument(item));
+  if(value&&typeof value==='object')return Object.fromEntries(Object.entries(value).filter(([,item])=>item!==undefined).map(([key,item])=>[key,normalizeCloudDocument(item)]));
+  return value;
+}
+
 export function cloudDocForSession(session){
-  return{data:session,updatedAt:session?.updatedAt||session?.finishedAt||session?.createdAt||null};
+  return normalizeCloudDocument({data:session,updatedAt:session?.updatedAt||session?.finishedAt||session?.createdAt||null});
 }

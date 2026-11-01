@@ -1,6 +1,6 @@
 # Popz Bowling Stats — User Guide
 
-Current production version: **public-v39.011**.
+Release version: **public-v39.012**. Production verification is pending.
 
 ## Share Live Scores — Pro
 
@@ -36,7 +36,7 @@ Popz Bowling opens on **Bowl** by default on phones, tablets, and Full Layout so
 - **Quick Scoring is the default.** Use the on-screen pin keypad after each roll and enter only how many pins fell. Strikes, spares, opens, 10th-frame scoring, scratch score, handicap, and handicap score are calculated automatically. If the first ball leaves a split, tap **Mark Split** before entering the second ball so Split Conversion % stays accurate.
 - To collect the exact standing-pin pattern and per-leave conversion analytics, open **Settings -> Scoring Mode** and choose **Detailed Scoring**. After a non-strike first ball, mark the exact pins still standing and tap **Save Leave & Continue**.
 - Quick Scoring skips the standing-pin step. It still records the score and spare result; if you use **Mark Split**, that frame counts in overall Split Conversion %. Quick mode does not invent the exact split pattern, single-pin leave, or 10-pin leave. You can correct a forgotten Split flag later by editing the frame.
-- Use **Undo** for the most recent roll.
+- Use **Undo** for the most recent recorded roll in the current game. In Team / Multi-Bowler mode it returns to the bowler who recorded that roll, even if the app has already advanced to the next bowler or you selected a different bowler. You can undo more than one recent roll, and that order survives closing and reopening the app. Editing a frame, starting/deleting a game, finishing/starting a series, or successfully importing a backup starts a new Undo boundary. To correct earlier rolls, select the bowler and tap the frame. Team rolls entered before the v39.012 update use that frame-editing method because their earlier turn order was not recorded.
 - Tap an older frame to edit it; later frames remain intact and the score recalculates.
 - Tap **New Game** when the next game is ready.
 - In **Team / Multi-Bowler** mode, Popz advances to the next bowler after each completed frame. The bowler tabs show the current order and score, and you can tap another bowler between frames if the lane order changes. **Start Next Team Game** creates the next game for every bowler together.
@@ -52,7 +52,7 @@ Use **History** to review completed bowling grouped by league/category. Those le
 All bowling averages are shown as whole numbers, dropping the fractional portion (181.9 displays as **181**, not 182). **Handicap is also calculated from that whole-number average**: 90% of 220 with 180.8 uses 180 and gives **36 pins/game**. This applies to single/team bowling, the Stats and History views, saved entering averages, and the live spectator final result. Strike/spare percentages can still include one decimal place.
 
 ## League average rules
-In **Settings → League Average Rule**, choose a recorded league and select how that league establishes its average. **Carry Book Average** preserves the original behavior. **Establish After X Games** uses the book/entering average until the selected number of completed actual games is reached, then switches to total actual pinfall divided by actual games with the fraction dropped. The rule is saved separately for each league and is included when backups are transferred between devices.
+In **Settings → League Average Rule**, choose a recorded league and select how that league establishes its average. **Carry Book Average** preserves the original behavior. **Establish After X Games** uses the book/entering average until the selected number of completed actual games is reached, then switches to total actual pinfall divided by actual games with the fraction dropped. A blank saved entering average does not count as zero when the app looks for the league's book average; it skips that blank entry and uses a valid saved entering average when available. The rule is saved separately for each league and is included when backups are transferred between devices.
 
 ## Free vs Pro Preview
 The header and **Settings -> Account & Plan** show whether the app is running as Free, Pro Preview, or Pro. During the current public test, **Pro Preview** is enabled for everyone, so Google Sync, Advanced Shot Tracking, Team / Multi-Bowler scoring, and Share Live Scores are available without payment. Advanced Shot Tracking still requires an explicit device-local opt-in in Settings. Core scoring, handicap, history, existing statistics, leave tracking, league-average rules, offline use, and manual backup remain the intended Free baseline.
@@ -63,10 +63,10 @@ Your scores are always stored locally on the device so scoring continues to work
 ### Use your bowling history on another device
 The easiest method in public-v23 and later is **Settings → Google Sync → Sign in with Google**. Sign in with the same Google account on each phone, tablet, or computer. Your completed series and stats merge automatically, along with your bowler name, saved team-bowler profiles, and per-league average rules. An unfinished series remains only on the device where you started it until you choose **Finish Series**, so another device cannot accidentally change a live game.
 
-**Share / Transfer Backup** and **Import JSON** remain available as a manual transfer or recovery fallback. Manual import still merges rather than replaces history: unique series are kept, newer copies win, and an in-progress local series is protected.
+**Share / Transfer Backup** and **Import JSON** remain available as a manual transfer or recovery fallback. Manual import still merges rather than replaces history: unique series are kept, newer copies win, and an in-progress local series is protected. The app checks the entire backup before importing it. If the file has an invalid structure or invalid bowling data, the import is rejected without changing your existing history or settings; choose a valid exported backup and try again.
 
 ## Updating the app
-If Popz Bowling Stats is already installed, you do **not** need to uninstall or reinstall it. Updates replace the cached app files and do **not** erase your bowling history stored on the device.
+If Popz Bowling Stats is already installed, you do **not** need to uninstall or reinstall it. Updates replace the cached app files and do **not** erase your bowling history stored on the device. After an update has loaded while online, close and reopen the app to use the new version. The installed app can still open for scoring while offline after its files have been cached.
 
 - **Android:** Make sure the phone is online, fully close Popz Bowling Stats from Recent Apps, and reopen it. If the old version still appears, open `popzbowling.com` in Chrome, refresh once, then reopen the installed app.
 - **iPhone/iPad:** Open `popzbowling.com` in Safari, refresh once, then close and reopen the Home Screen version of Popz Bowling Stats.
