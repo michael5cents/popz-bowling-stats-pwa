@@ -10,7 +10,7 @@ const {chromium}=await import(process.env.PLAYWRIGHT_MODULE||'playwright');
 const root=resolve(import.meta.dirname,'..');
 const appVersion=JSON.parse(readFileSync(resolve(root,'latest-version.json'),'utf8')).version;
 const appReady=page=>page.waitForFunction(v=>document.querySelector('#appVersion')?.textContent===v,appVersion);
-const workerReady=page=>page.waitForFunction(async()=>{const r=await navigator.serviceWorker.getRegistration();return r?.active?.state==='activated'},null,{timeout:15000});
+const workerReady=page=>page.waitForFunction(()=>navigator.serviceWorker.controller?.state==='activated',null,{timeout:15000});
 const sql=new DatabaseSync(':memory:');sql.exec(readFileSync(resolve(root,'live-migrations/0001_live_shares.sql'),'utf8'));
 const db={prepare(query){const stmt=sql.prepare(query);return {bind(...args){return {first:async()=>stmt.get(...args)||null,run:async()=>stmt.run(...args)};}};}};
 const types={'.html':'text/html','.css':'text/css','.js':'text/javascript','.mjs':'text/javascript','.json':'application/json','.webmanifest':'application/manifest+json','.png':'image/png'};
