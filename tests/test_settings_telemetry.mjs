@@ -28,7 +28,7 @@ const source = app.match(/^function showView\(name\)\{.*\}$/m)?.[0];
 assert.ok(source, 'view navigation function found');
 const renderSettings = ()=>{renders++};
 const showView = vm.runInNewContext(source+';showView', {
-  document:{querySelectorAll:()=>[]}, $:()=>({classList:{add(){}}}),
+  document:{body:{classList:{remove(){}}},querySelectorAll:()=>[]}, $:()=>({classList:{add(){}}}),
   trackTelemetry, renderSettings, renderHistory(){}, renderScoring(){}
 });
 showView('settings');
