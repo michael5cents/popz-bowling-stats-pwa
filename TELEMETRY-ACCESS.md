@@ -1,6 +1,6 @@
 # Telemetry Dashboard Access Runbook
 
-**Current client version (verified 2026-10-21):** public-v39.011. **Historical telemetry audit (2026-10-13):** under public-v39.009, adoption D1 had 1 anonymous profile / 4 events (`first_seen`, `app_open`, `bowl_viewed`, `series_setup_viewed`) and 0 series starts/completions after the 2026-10-02 clean reset; runtime D1 separately held 26 `boot_started`, 24 `app_ready`, and 3 historical non-app `resource_error` rows. These are historical counts, **not a claim about current live adoption**. The v39.010 telemetry delivery repair is retained in v39.011. The separate dashboard remains the authoritative place to inspect current adoption. Runtime counts must never be treated as bowling usage.
+**Current client version (reverified 2026-11-11):** public-v39.013. **Historical telemetry audit (2026-10-13):** under public-v39.009, adoption D1 had 1 anonymous profile / 4 events (`first_seen`, `app_open`, `bowl_viewed`, `series_setup_viewed`) and 0 series starts/completions after the 2026-10-02 clean reset; runtime D1 separately held 26 `boot_started`, 24 `app_ready`, and 3 historical non-app `resource_error` rows. These are historical counts, **not a claim about current live adoption**. The v39.010 telemetry delivery repair is retained in v39.013. The separate dashboard remains the authoritative place to inspect current adoption. Runtime counts must never be treated as bowling usage.
 
 ## Private dashboard
 - URL: `https://popzbowling.com/telemetry-dashboard`
@@ -79,7 +79,7 @@ For the 2026-10-01 alert, this command recovered the exact row: `2026-10-01T07:0
 - Production validation on 2026-09-30: the exact PopzVPS wrapper reported `Healthy: public-v35`, and a real `POPZ BOWLING MONITOR TEST` message was accepted by Telegram using the same bot/chat as the call-forwarding monitor.
 
 ### Patch-version health monitoring
-The Telegram monitor accepts numeric patch releases such as the current `public-v39.011`. `/api/health` does not hard-code the app version; it reads the published `latest-version.json`, so health/version checks stay aligned automatically on future maintenance releases.
+The Telegram monitor accepts numeric patch releases such as the current `public-v39.013`. `/api/health` does not hard-code the app version; it reads the published `latest-version.json`, so health/version checks stay aligned automatically on future maintenance releases.
 
 ## public-v39.004 fresh baseline
 - The adoption D1 and runtime D1 were deliberately cleared for a new beta baseline at **2026-10-02T14:45:00Z**. public-v39.004 and newer are eligible normally. Older **installed** PWAs from public-v31 onward may store only fresh events whose own timestamps are at or after that reset point; old browser traffic and pre-reset timestamps stay excluded.

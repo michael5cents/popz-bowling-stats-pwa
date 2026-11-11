@@ -2,9 +2,11 @@
 
 Production URL: **https://popzbowling.com**
 
-Release under validation: **public-v39.013**. Production verification is pending; the previous release is public-v39.012.
+Current production release: **public-v39.013**, deployed and verified November 1, 2026 and reverified November 11. Original runtime release commit: 3cbcf96; November 4 source/build-hardening baseline: 2f4501d. Later documentation-only commits do not change the installed version.
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
+
+**November 11 source alignment:** MacBook, .56 fallback, GitHub and Gitea shared commit 2f4501d before this documentation update. Deployment uses the explicit dist/ allowlist; never deploy the repository root. The modified QA-phone launcher remains uncommitted. See [source sync audit](docs/releases/2026-11-11-public-v39.013-source-sync.md).
 
 ## Separation from Michael's personal app
 This repository is the public/friends version only. It is completely separate from Michael's personal bowling app (`bowling-stats-offline`) and has its own code, IndexedDB database, deployment, and update path. Changes here must not be applied to the personal app unless explicitly requested.

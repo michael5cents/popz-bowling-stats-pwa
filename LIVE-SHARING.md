@@ -1,6 +1,6 @@
 # Share Live Scores — public-v34+
 
-Introduced in public-v34 and still active in current production **public-v39.011**, Share Live Scores ports the tested private app's single-bowler spectator experience into **Popz Bowling Pro**. The public live-sharing database/API remain isolated from adoption telemetry, runtime diagnostics, and Michael's personal-app relay.
+Introduced in public-v34 and still active in current production **public-v39.013**, Share Live Scores ports the tested Personal Bowling app's single-bowler spectator experience into **Popz Bowling Pro**. The public live-sharing database/API remain isolated from adoption telemetry, runtime diagnostics, and Michael's personal-app relay.
 
 ## Using it
 

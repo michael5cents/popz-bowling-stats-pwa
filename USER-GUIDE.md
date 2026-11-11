@@ -1,6 +1,6 @@
 # Popz Bowling Stats — User Guide
 
-Release guide: **public-v39.013**. Production verification is pending.
+Release guide: **public-v39.013**, verified in production November 1 and rechecked November 11, 2026. Installed users update in place; no reinstall or deletion of bowling data is required.
 
 ## Share Live Scores — Pro
 
