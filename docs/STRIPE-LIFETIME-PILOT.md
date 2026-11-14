@@ -48,3 +48,11 @@ Stripe webhook destination when ready: https://popzbowling.com/api/billing/webho
 - Wrangler Pages Functions bundler compiled all three billing routes; server-only helper not exposed in public routes.
 - Static dist allowlist isolates server code. No live deployment or production charge.
 - Production main remains public-v39.013.
+
+## 2026-11-14 — Stripe sandbox product confirmed
+- Stripe connection: Popz Computers & App Development **sandbox** only (livemode=false). Live merchant account was not authorized.
+- Product: Popz Bowling Pro Lifetime; ID `prod_Vd6n0W8JakrQl9`.
+- One-time Price: `price_1UbqZiBmwB4QMGDE6oIXNFL0`, USD 999 cents ($9.99), `recurring=null`, `type=one_time`, `livemode=false`.
+- Stripe Tax remains unconfigured; the customer has not previously collected sales tax on software sales. Before going live, determine applicable tax obligations; do not assume none are due.
+- This Price ID is safe to reference as the future **sandbox-only** `STRIPE_LIFETIME_PRICE_ID`. The production Price ID will be different.
+- No test charge has been made, no webhook secret, Stripe API secret, or Firebase service credentials were configured, and `BILLING_CHECKOUT_ENABLED` must remain false.
