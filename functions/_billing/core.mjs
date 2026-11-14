@@ -5,6 +5,8 @@ export const CURRENCY='usd';
 export const PROJECT_ID='popz-bowling-stats';
 export const PUBLIC_ORIGIN='https://popzbowling.com';
 const STRIPE_API='https://api.stripe.com/v1';
+const stripeKeyValid=key=>/^(?:sk|rk)_(?:test|live)_/.test(key||'');
+const stripeIsLive=key=>/^(?:sk|rk)_live_/.test(key||'');
 const FIRESTORE_API='https://firestore.googleapis.com/v1';
 
 export function json(body,status=200){
@@ -17,7 +19,7 @@ export class BillingError extends Error{
  constructor(message,status=500){super(message);this.status=status}
 }
 export function webhookConfigured(env={}){
- return /^sk_(test|live)_/.test(env.STRIPE_SECRET_KEY||'')
+ return stripeKeyValid(env.STRIPE_SECRET_KEY)
   && /^whsec_/.test(env.STRIPE_WEBHOOK_SECRET||'')
   && /^price_[A-Za-z0-9]+$/.test(env.STRIPE_LIFETIME_PRICE_ID||'')
   && !!env.FIREBASE_SERVICE_ACCOUNT_JSON;
@@ -37,9 +39,10 @@ export function secureEqual(a,b){
 }
 export async function verifyStripeSignature(raw,header,secret,nowMs=Date.now()){
  if(!header||!secret||typeof raw!=='string')return false;
- const t=/\bt=(\d+)(?:,|$)/.exec(header)?.[1];
+ const fields=header.split(',').map(field=>field.trim());
+ const t=fields.find(field=>/^t=\d+$/.test(field))?.slice(2);
  const timestamp=Number(t);
- const signatures=[...header.matchAll(/(?:^|,)v1=([a-f0-9]{64})(?:,|$)/g)].map(m=>m[1]);
+ const signatures=fields.filter(field=>/^v1=[a-f0-9]{64}$/.test(field)).map(field=>field.slice(3));
  if(!Number.isSafeInteger(timestamp)||!t||Math.abs(Math.floor(nowMs/1000)-timestamp)>300||!signatures.length)return false;
  const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);
  const input=new TextEncoder().encode(String(timestamp)+'.'+raw);
@@ -48,8 +51,8 @@ export async function verifyStripeSignature(raw,header,secret,nowMs=Date.now()){
  return signatures.some(s=>secureEqual(s,expected));
 }
 export async function stripeRequest(env,path,{method='GET',fields=null,idempotencyKey=''}={}){
- if(!/^sk_(test|live)_/.test(env.STRIPE_SECRET_KEY||''))throw new BillingError('Billing not configured',503);
- const headers={authorization:'Bearer '+env.STRIPE_SECRET_KEY};
+ if(!stripeKeyValid(env.STRIPE_SECRET_KEY))throw new BillingError('Billing not configured',503);
+ const headers={authorization:'Bearer '+env.STRIPE_SECRET_KEY,'stripe-version':'2026-09-30.endive'};
  if(fields)headers['content-type']='application/x-www-form-urlencoded';
  if(idempotencyKey)headers['idempotency-key']=idempotencyKey;
  const response=await fetch(STRIPE_API+'/'+path,{
@@ -62,7 +65,9 @@ export async function stripeRequest(env,path,{method='GET',fields=null,idempoten
 export function validateStripePrice(price,env){
  return price?.id===env.STRIPE_LIFETIME_PRICE_ID && price?.active===true
   && price?.type==='one_time' && price?.currency===CURRENCY
-  && price?.unit_amount===PRICE_CENTS && !price?.recurring;
+  && price?.unit_amount===PRICE_CENTS && !price?.recurring
+  && price?.livemode===stripeIsLive(env.STRIPE_SECRET_KEY)
+  && (!env.STRIPE_LIFETIME_PRODUCT_ID || price?.product===env.STRIPE_LIFETIME_PRODUCT_ID);
 }
 export function validatePaidSession(session,env){
  if(!/^cs_(test|live)_[A-Za-z0-9_]+$/.test(session?.id||''))return null;
@@ -71,7 +76,7 @@ export function validatePaidSession(session,env){
  if(session?.metadata?.product!==PRODUCT_CODE)return null;
  if(session?.mode!=='payment'||session?.status!=='complete'||session?.payment_status!=='paid')return null;
  if(session?.currency!==CURRENCY||session?.amount_subtotal!==PRICE_CENTS||session?.amount_total!==PRICE_CENTS)return null;
- if(session?.livemode!==env.STRIPE_SECRET_KEY.startsWith('sk_live_'))return null;
+ if(session?.livemode!==stripeIsLive(env.STRIPE_SECRET_KEY))return null;
  const items=session?.line_items?.data;
  if(!Array.isArray(items)||items.length!==1)return null;
  if(items[0]?.quantity!==1||items[0]?.price?.id!==env.STRIPE_LIFETIME_PRICE_ID)return null;

@@ -23,7 +23,7 @@ Source: MacBook ~/popz-bowling-stripe-pro, branch feature/stripe-lifetime-pro.
 
 ## Keys and setup: not yet configured
 No Stripe or Firebase administrative credentials were installed, no real/test payments occurred, and no customer entitlements were changed. Do not paste secrets in chats or store them in Git, Obsidian, Wiki or the Collective. Use encrypted Cloudflare Pages secrets after account connection:
-- STRIPE_SECRET_KEY (Stripe test-mode key for the first integration test)
+- STRIPE_SECRET_KEY (prefer a least-privilege restricted rk_test_ key in the sandbox; never commit secret credentials)
 - STRIPE_WEBHOOK_SECRET (Stripe event destination signing secret)
 - FIREBASE_SERVICE_ACCOUNT_JSON (dedicated, least-privileged Firebase service account, not an Owner credential)
 
@@ -56,3 +56,6 @@ Stripe webhook destination when ready: https://popzbowling.com/api/billing/webho
 - Stripe Tax remains unconfigured; the customer has not previously collected sales tax on software sales. Before going live, determine applicable tax obligations; do not assume none are due.
 - This Price ID is safe to reference as the future **sandbox-only** `STRIPE_LIFETIME_PRICE_ID`. The production Price ID will be different.
 - No test charge has been made, no webhook secret, Stripe API secret, or Firebase service credentials were configured, and `BILLING_CHECKOUT_ENABLED` must remain false.
+
+## Sandbox Checkout verification (continued November 14)
+The real Stripe sandbox Price and actual unpaid Checkout Session were verified by Stripe API, and Wrangler local Pages endpoints were smoke-tested with checkout disabled. See docs/STRIPE-SANDBOX-VERIFICATION-2026-11-14.md for the exact product/price IDs, test session details, integration refinements, and remaining secure preview credentials. Nothing was deployed or charged.

@@ -17,10 +17,16 @@ export async function onRequestPost({request,env}){
   if(isPermanentPro(existing))return json({ok:true,alreadyPro:true});
   const price=await stripeRequest(env,'prices/'+encodeURIComponent(env.STRIPE_LIFETIME_PRICE_ID));
   if(!validateStripePrice(price,env))throw new BillingError('Unexpected Stripe price',503);
+  // Retry of the same account's checkout within a UTC day reuses one Stripe Session.
+  const day=Math.floor(Date.now()/86400000);
+  const idempotencyKey='popz_lifetime_'+user.uid+'_'+day;
+  // The integration label must remain identical on retries using the same idempotency key.
+  const digest=new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(idempotencyKey)));
+  const letters=Array.from(digest.slice(0,8),n=>String.fromCharCode(97+n%26)).join('');
   const checkout=await stripeRequest(env,'checkout/sessions',{
-   method:'POST',fields:{
+   method:'POST',idempotencyKey,fields:{
     mode:'payment',
-    'payment_method_types[0]':'card',
+    integration_identifier:'popzbowling_'+letters,
     'line_items[0][price]':env.STRIPE_LIFETIME_PRICE_ID,
     'line_items[0][quantity]':'1',
     client_reference_id:user.uid,
