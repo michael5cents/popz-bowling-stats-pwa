@@ -6,3 +6,4 @@ data/
 
 .wrangler/
 dist/
+\n.dev.vars*\n.env*\n*.jks\n*.keystore\n*.p12\n*.pem\n

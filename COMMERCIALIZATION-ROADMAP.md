@@ -1,5 +1,10 @@
 # Popz Bowling Commercialization and Platform Roadmap
 
+## November 14, 2026 — superseding distribution and price decision
+The earlier October 5 PWA-subscriptions-first schedule below is historical. The current direction is to implement **$9.99 one-time Lifetime Pro via PWA/Stripe first**, keep the Free PWA and all history safe, and separately finish a **signed direct-download Android APK on PopzBowling.com** when native compatibility and data migration are tested. Play Store distribution remains optional because of the new personal-developer testing requirements. The Android pilot is already isolated on feature/play-store-android; Stripe billing work is isolated on feature/stripe-lifetime-pro. Neither development branch has been merged or deployed. No billing/trial/Founder access enforcement is authorized before full tests and legal/account setup; see docs/STRIPE-LIFETIME-PILOT.md and docs/ANDROID-GOOGLE-PLAY-PILOT.md (the latter exists on the Android branch).
+The earlier fixed 2026/2027 sequence and subscription economics no longer govern current development.
+
+
 Last updated: 2026-10-05
 Current public client at planning baseline: public-v39.008
 Canonical product repo: `~/popz-bowling-stats-pwa`

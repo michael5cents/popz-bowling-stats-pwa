@@ -47,6 +47,7 @@ runtime_files=(
   telemetry-milestones.mjs
   cloud-sync-core.mjs
   cloud-sync.mjs
+  billing-client.mjs
   entitlements.mjs
   multiplayer.mjs
   layout-mode.mjs
@@ -63,6 +64,8 @@ runtime_files=(
   live/index.html
   live/viewer.css
   live/viewer.mjs
+  payment/success/index.html
+  payment/cancel/index.html
 )
 
 for rel in "${runtime_files[@]}"; do

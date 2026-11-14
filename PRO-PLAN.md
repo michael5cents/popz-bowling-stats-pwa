@@ -1,5 +1,9 @@
 # Popz Bowling Free + Pro Plan
 
+## November 14, 2026 — new commercial policy (supersedes October pricing discussion)
+The proposed product is **free installation plus $9.99 one-time Lifetime Pro**, with no recurring subscription. Existing qualifying Founder Pro remains free for life; the exact trial policy is still undecided. A server-verified Stripe integration has been staged in branch feature/stripe-lifetime-pro, **not deployed**, and purchases remain disabled until Stripe/Firebase credentials, refund/tax/legal policies and live tests are complete. Pro Preview is still enabled. The earlier monthly/annual subscription checklist is retained below for historical reference, not the current product decision. See docs/STRIPE-LIFETIME-PILOT.md.
+
+
 ## Commercialization sequencing decision — 2026-10-05
 The approved strategy is **PWA-first commercialization**. Prove the existing `popzbowling.com` PWA with Stripe, real customers, and a stable paid operating period before starting Android/iOS standalone conversion. Native packaging is a later resilience/distribution phase, not a prerequisite to testing the business. The paid PWA remains available while native apps are developed and may remain a permanent product surface.
 

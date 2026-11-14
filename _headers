@@ -10,3 +10,11 @@
   X-Robots-Tag: noindex, nofollow, noarchive
   X-Content-Type-Options: nosniff
   Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'
+
+
+/payment/*
+  Cache-Control: no-store, max-age=0
+  Referrer-Policy: no-referrer
+  X-Robots-Tag: noindex, nofollow
+  X-Content-Type-Options: nosniff
+  Content-Security-Policy: default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'

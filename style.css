@@ -268,3 +268,4 @@ main{width:min(1100px,100%);margin:0 auto;padding:18px;flex:1 1 auto;min-height:
   .phone-layout.phone-scoring #phoneGameActions{grid-column:1/-1;grid-row:10;margin:0}
   .phone-layout.phone-scoring .phone-finish-series{grid-column:1/-1;grid-row:11;margin:0}
 }
+\n/* Lifetime Pro purchase follows the existing responsive Settings layout. */\n.billing-row{align-items:center}\n.billing-row .setting-actions,.billing-row button{flex-shrink:0}\n@media(max-width:560px){.billing-row{align-items:stretch}.billing-row button{width:100%}}\n
