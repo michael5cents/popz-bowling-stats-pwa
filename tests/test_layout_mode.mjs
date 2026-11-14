@@ -1,5 +1,5 @@
 import assert from'node:assert/strict';
-import{LAYOUT_MODES,PHONE_SHORT_SIDE_MAX,normalizeLayoutMode,isStandaloneEnvironment,shortScreenSide,resolveLayoutMode,readLayoutMode,writeLayoutMode,layoutStatus}from'../layout-mode.mjs';
+import{LAYOUT_MODES,PHONE_SHORT_SIDE_MAX,normalizeLayoutMode,isNativeEnvironment,isStandaloneEnvironment,shortScreenSide,resolveLayoutMode,readLayoutMode,writeLayoutMode,layoutStatus}from'../layout-mode.mjs';
 
 const env=(width,height,standalone=false)=>({
   screen:{width,height},
@@ -14,6 +14,16 @@ assert.equal(normalizeLayoutMode('bogus'),LAYOUT_MODES.AUTOMATIC);
 assert.equal(isStandaloneEnvironment(env(390,844,true)),true);
 assert.equal(shortScreenSide(env(844,390,true)),390);
 
+const nativePhone=env(390,844,false);
+nativePhone.Capacitor={isNativePlatform:()=>true};
+assert.equal(isNativeEnvironment(nativePhone),true);
+assert.equal(isStandaloneEnvironment(nativePhone),true);
+assert.equal(resolveLayoutMode(LAYOUT_MODES.AUTOMATIC,nativePhone).compact,true,'native phone must be Compact Phone in Automatic');
+const nativeTablet=env(820,1180,false);
+nativeTablet.Capacitor={isNativePlatform:()=>true};
+assert.equal(resolveLayoutMode(LAYOUT_MODES.AUTOMATIC,nativeTablet).compact,false,'native tablet must keep Full Layout');
+const browser=env(390,844,false);
+assert.equal(isNativeEnvironment(browser),false);
 let r=resolveLayoutMode(LAYOUT_MODES.AUTOMATIC,env(390,844,true));
 assert.equal(r.compact,true,'installed phone must use Compact Phone in Automatic');
 assert.match(layoutStatus(r),/Compact Phone/);

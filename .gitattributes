@@ -1,0 +1,2 @@
+# Preserve Gradle Windows launcher line endings
+android/*.bat text eol=crlf

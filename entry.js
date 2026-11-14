@@ -2,7 +2,7 @@
 'use strict';
 const $=id=>document.getElementById(id);
 let deferredInstallPrompt=null;
-const isInstalled=()=>{try{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch{return false}};
+const isInstalled=()=>{try{return globalThis.Capacitor?.isNativePlatform?.()===true||matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch{return false}};
 const isProductionWebHost=()=>/^(?:www\.)?popzbowling\.com$/i.test(location.hostname);
 const qaPhoneMode=()=>{try{const q=new URLSearchParams(location.search);return q.get('qa')==='1'&&q.get('phone')==='1'}catch{return false}};
 const qaTabletMode=()=>{try{const q=new URLSearchParams(location.search);return q.get('qa')==='1'&&q.get('tablet')==='1'}catch{return false}};

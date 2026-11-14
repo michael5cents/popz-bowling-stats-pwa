@@ -1,0 +1,18 @@
+{
+  "name": "popz-bowling-stats-android",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.mjs",
+    "build:site": "bash scripts/build-dist.sh",
+    "android:sync": "npm run build:site && cap sync android"
+  },
+  "dependencies": {
+    "@capacitor/core": "8.6.2",
+    "@capacitor/android": "8.6.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.6.2"
+  }
+}

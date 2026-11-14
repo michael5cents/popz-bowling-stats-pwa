@@ -1,0 +1,8 @@
+{
+  "appId": "com.popz.bowlingstats",
+  "appName": "Popz Bowling Stats",
+  "webDir": "dist",
+  "android": {
+    "backgroundColor": "#111827"
+  }
+}

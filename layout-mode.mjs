@@ -6,7 +6,12 @@ export function normalizeLayoutMode(value){
   return Object.values(LAYOUT_MODES).includes(value)?value:LAYOUT_MODES.AUTOMATIC;
 }
 
+export function isNativeEnvironment(env=globalThis){
+  try{return env.Capacitor?.isNativePlatform?.()===true}catch{return false}
+}
+
 export function isStandaloneEnvironment(env=globalThis){
+  if(isNativeEnvironment(env))return true;
   try{
     return !!env.matchMedia?.('(display-mode: standalone)')?.matches||env.navigator?.standalone===true;
   }catch{return env.navigator?.standalone===true}
