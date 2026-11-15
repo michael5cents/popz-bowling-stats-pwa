@@ -6,6 +6,9 @@ Source: MacBook ~/popz-bowling-stripe-pro, branch feature/stripe-lifetime-pro.
 
 
 ## Current status — post-successful sandbox payment
+
+**New development safeguard:** Firestore atomic Checkout reservation prevents parallel and cross-day Stripe purchase attempts; only a Stripe-confirmed expired/unpaid session can be replaced. Checkout remains disabled and the implementation is not in production.
+
 The full Stripe test payment -> signature-verified webhook -> Firestore Lifetime Pro activation was independently verified on November 14. The disposable QA user and its test Firestore billing/entitlement documents were removed afterward. Cloudflare Preview is deployed but Checkout is disabled; the production PWA remains public-v39.013 with no live payments.
 Further launch safeguards, including append-only duplicate-payment/refund/dispute review, are in docs/STRIPE-LAUNCH-SAFEGUARDS.md.
 **All paragraphs below describing credentials as missing, a preview as not deployed, or all tests as mocks are historical setup notes; they no longer describe the current sandbox state.** They do not authorize a production deployment or paid launch.

@@ -28,7 +28,7 @@ Do not interpret a dispute's temporary status as a final loss; do not equate a p
 
 ## Remains BLOCKING before live sales
 
-- **Prevent parallel/cross-day Checkout charges, not merely detect them afterward.** The current Checkout uses Stripe idempotency for retries within a UTC day but does not yet have a durable Firestore reservation for an open session across days, tabs, or concurrent requests. This remains a launch blocker.
+- **Finish integration validation of the reservation.** Atomic Firestore locking and safe Stripe Session reuse are implemented and tested on the development branch. A new disposable QA account and full Cloudflare/Firestore/Stripe integration regression are still required. Build a documented manual unlock/reconciliation procedure for an ambiguous Stripe outcome older than 20 hours.
 - **Owner alerts and a resolution workflow.** The billing review ledger currently records an event but does not notify the owner or provide a reviewed/resolved status workflow. Build and test before live sales; don't leave unread review records.
 - **Real review-record fulfillment still requires a new disposable test.** Stripe's real sandbox full refund generated refund.created and charge.refunded (both delivered), while the QA account had already been deleted and the QA grant gate was closed. Thus the HTTPS delivery was verified but no new Firestore review document was written; automated tests separately verify records, retries, amounts and Founder preservation. A fresh disposable test identity will be needed before launch for true refund/dispute-to-Firestore proof.
 - **Finalize a written refund policy and dispute handling procedure.** No arbitrary full-refund window, fees, or unilateral revocation policy has been set.
@@ -47,3 +47,12 @@ Do not interpret a dispute's temporary status as a final loss; do not equate a p
 - `docs/STRIPE-SANDBOX-VERIFICATION-2026-11-14.md` — dated real sandbox payment evidence and cleanup.
 
 Do not merge, deploy to production, enable real Stripe payments, issue customer refunds, or change user entitlements without explicit owner approval.
+
+
+## Durable per-account Checkout reservation — November 14
+- Added functions/_billing/checkout-reservation.mjs. Before contacting Stripe, the authenticated backend claims a Firestore document at users/{uid}/billing/checkoutReservation with the atomic exists:false precondition; races cannot each create a chargeable session.
+- The reservation stores the original verified UID, price, origin, email, 45-minute expiration, and a random 128-bit nonce. Stripe idempotency is derived from that nonce, NOT the calendar day. Repeated tabs, devices, and midnight crossings reuse the same Checkout URL.
+- Lost Stripe responses can be retried with the SAME nonce, expiration and request parameters within a conservative 20-hour Stripe idempotency safety period. An older ambiguous creation remains blocked for owner review; it is never automatically assigned a fresh payment.
+- Session reuse independently re-reads Stripe and verifies the user, reservation nonce, product, amount, currency, account mode, and expiration. A session that is complete (including delayed payment) cannot trigger a new charge. Only a Stripe-confirmed expired and unpaid session may be replaced with an updateTime compare-and-set.
+- Client billing adapter and app show a payment-processing message instead of redirecting to an undefined URL. Existing bowling history, Founder and complimentary entitlements remain untouched.
+- New tests/test_stripe_checkout_reservation.mjs covers races, device reuse, UTC midnight, safe expiry rotation, network-response loss, stale idempotency, tampering and Firestore outage. The existing mock Checkout test now enforces creation of an atomic reservation.

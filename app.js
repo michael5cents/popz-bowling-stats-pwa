@@ -72,6 +72,7 @@ async function upgradeLifetimePro(){
  try{
   const result=await createLifetimeCheckout(user);
   if(result.alreadyPro){await syncCloudNow();toast('Lifetime Pro is already unlocked');return}
+  if(result.paymentProcessing){toast('Your payment is being verified. Pro unlocks after Stripe confirmation.',8500);return}
   window.location.assign(result.url);
  }catch(e){toast(e?.message||'Could not start secure checkout',8000,true)}
  finally{billingBusy=false;renderBillingOffer()}

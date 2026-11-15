@@ -239,5 +239,5 @@ export async function grantStripeLifetime(uid,session,eventId,env){
 }
 export function errorResponse(error){
  const status=error instanceof BillingError?error.status:503;
- return json({ok:false,error:status===401||status===403?error.message:'Billing temporarily unavailable'},status);
+ return json({ok:false,error:[401,403,409].includes(status)?error.message:'Billing temporarily unavailable'},status);
 }

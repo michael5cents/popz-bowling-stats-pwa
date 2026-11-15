@@ -5,6 +5,9 @@ The earlier October 5 PWA-subscriptions-first schedule below is historical. The 
 The earlier fixed 2026/2027 sequence and subscription economics no longer govern current development.
 
 
+## November 14 — duplicate-charge prevention
+The isolated Stripe development branch now uses a Firestore compare-and-set Checkout reservation for each Firebase UID instead of a day-based idempotency key. Tests cover simultaneous callers, lost responses, safe expiry, pending payments, cross-midnight retries and Firestore outage. A fresh end-to-end sandbox regression, Founder migration, owner alerts, tax/legal policies and explicit release approval remain required. Production is unchanged.
+
 Last updated: 2026-10-05
 Current public client at planning baseline: public-v39.008
 Canonical product repo: `~/popz-bowling-stats-pwa`

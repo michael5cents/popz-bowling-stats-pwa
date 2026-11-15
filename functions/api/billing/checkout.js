@@ -1,8 +1,9 @@
 import {
  json,checkoutEnabled,BillingError,errorResponse,authenticatedFirebaseUser,
  firestoreAccessToken,loadEntitlement,loadBillingLifetime,isPermanentPro,stripeRequest,
- validateStripePrice,allowedCheckoutOrigin,previewSandboxAccountAllowed,PRODUCT_CODE
+ validateStripePrice,allowedCheckoutOrigin,previewSandboxAccountAllowed
 } from '../../_billing/core.mjs';
+import {reserveLifetimeCheckout} from '../../_billing/checkout-reservation.mjs';
 
 export async function onRequestPost({request,env}){
  try{
@@ -21,31 +22,12 @@ export async function onRequestPost({request,env}){
   if(previous)return json({ok:true,alreadyPro:true});
   const price=await stripeRequest(env,'prices/'+encodeURIComponent(env.STRIPE_LIFETIME_PRICE_ID));
   if(!validateStripePrice(price,env))throw new BillingError('Unexpected Stripe price',503);
-  // Retry of the same account's checkout within a UTC day reuses one Stripe Session.
-  const day=Math.floor(Date.now()/86400000);
-  const idempotencyKey='popz_lifetime_'+user.uid+'_'+day;
-  // The integration label must remain identical on retries using the same idempotency key.
-  const digest=new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(idempotencyKey)));
-  const letters=Array.from(digest.slice(0,8),n=>String.fromCharCode(97+n%26)).join('');
-  const checkout=await stripeRequest(env,'checkout/sessions',{
-   method:'POST',idempotencyKey,fields:{
-    mode:'payment',
-    integration_identifier:'popzbowling_'+letters,
-    'line_items[0][price]':env.STRIPE_LIFETIME_PRICE_ID,
-    'line_items[0][quantity]':'1',
-    client_reference_id:user.uid,
-    customer_email:user.email,
-    'metadata[uid]':user.uid,
-    'metadata[product]':PRODUCT_CODE,
-    'payment_intent_data[metadata][uid]':user.uid,
-    'payment_intent_data[metadata][product]':PRODUCT_CODE,
-    success_url:checkoutOrigin+'/payment/success/',
-    cancel_url:checkoutOrigin+'/payment/cancel/',
-   }
-  });
-  if(!checkout?.id?.startsWith('cs_')||!checkout?.url?.startsWith('https://checkout.stripe.com/'))
-   throw new BillingError('Unexpected payment redirect',503);
-  return json({ok:true,url:checkout.url});
+  // Firestore compare-and-set reserves this verified UID before any Stripe session
+  // can be created. Multiple tabs/days/devices can only reuse the same session,
+  // until Stripe confirms it expired without payment.
+  const result=await reserveLifetimeCheckout({uid:user.uid,email:user.email,
+   origin:checkoutOrigin,token:access,env});
+  return json({ok:true,...result});
  }catch(error){return errorResponse(error)}
 }
 export function onRequest(){return json({ok:false,error:'Method not allowed'},405)}

@@ -18,6 +18,7 @@ export async function createLifetimeCheckout(user){
  const result=await response.json().catch(()=>({}));
  if(!response.ok||!result?.ok)throw Error(result?.error||'Secure checkout is currently unavailable');
  if(result.alreadyPro===true)return {alreadyPro:true};
+ if(result.paymentProcessing===true)return {paymentProcessing:true};
  if(typeof result.url!=='string'||!result.url.startsWith('https://checkout.stripe.com/'))
   throw Error('Invalid checkout destination');
  return {url:result.url};

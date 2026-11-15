@@ -132,3 +132,10 @@ Detailed original implementation architecture: docs/STRIPE-LIFETIME-PILOT.md.
 - Verified Stripe sandbox charge ch_3UbuHXBmwB4QMGDE19ljAfnP was originally USD 999 cents and not refunded; then issued an explicit USD 999-cent **sandbox-only** full refund re_3UbuHXBmwB4QMGDE1qRHFsfL for payment intent pi_3UbuHXBmwB4QMGDE14La2wcX. Refund succeeded, and Stripe emitted refund.created evt_3UbuHXBmwB4QMGDE1x5gRfDN and charge.refunded evt_3UbuHXBmwB4QMGDE14zGFT3p with pending_webhooks=0.
 - The real Stripe Refund API response omits a livemode property. The code was corrected to validate mode using the original verified PaymentIntent, and its tests now use a refund fixture without livemode. The already-closed preview QA gate acknowledges these events; no deleted Firebase test identity was re-created and no bowling user was modified.
 - Follow-up blocker: this proves real Stripe sandbox refund event delivery, not refund-to-Firestore review storage with a current, matching QA account. Full manual-owner-alerting and duplicate parallel purchase prevention remain future prelaunch tasks. See docs/STRIPE-LAUNCH-SAFEGUARDS.md.
+
+
+## November 14 — durable Checkout reservation preparation (development)
+- Added atomic Firestore Checkout reservation, server-only source module, stable nonce-based Stripe idempotency and Stripe-verified expiration renewal with Firestore updateTime CAS.
+- Additional concurrency and recovery tests cover parallel tabs, UTC day boundary, lost network response, stale unknown payments, paid/unpaid processing, identity mismatch and outages; existing tests were updated for actual reservation reads/writes.
+- Checkout remains disabled in the Cloudflare Preview. No new production or live Stripe payment was attempted and the previous disposable QA identity is still deleted.
+- Full rollout requires testing with a NEW disposable Firebase QA account and signed Stripe sandbox payment; currently the module has mock coverage and Wrangler build validation.
