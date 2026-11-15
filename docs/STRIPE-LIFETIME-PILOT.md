@@ -84,3 +84,6 @@ The real Stripe sandbox Price and actual unpaid Checkout Session were verified b
 
 ## Owner alerts (sandbox preview only)
 Billing risk events and Checkout creation ambiguity are now queued in an isolated preview D1 database for Telegram delivery through PopzVPS. The authorized Mac owner CLI can acknowledge/resolve review rows without touching payments or customer access. See docs/STRIPE-BILLING-REVIEW-RUNBOOK.md. Separate production setup and testing remain required before live checkout.
+
+## November 15 - Full sandbox commercial E2E verified
+The isolated Stripe Preview passed a genuine $9.99 test purchase with a Firestore atomic Checkout reservation, signed webhook Lifetime Pro activation, second-charge prevention, a full Stripe sandbox refund, verified Firestore/D1 risk records and real Telegram alerts, followed by operator review and full disposable Firebase cleanup. Preview checkout and QA fulfillment are OFF, production is unchanged at public-v39.013. This is not production release approval: Founder migration, tax/legal/terms/refund policies, separate production alerts, live restricted Stripe keys and a final rollout decision remain.

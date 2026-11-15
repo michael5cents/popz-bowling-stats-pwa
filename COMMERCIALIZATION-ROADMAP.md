@@ -327,3 +327,6 @@ The next product action is to run the structured free PWA beta and collect clean
 
 ## November 15 — owner billing incident review (sandbox only)
 The Stripe development branch now includes a separate Cloudflare preview D1 incident inbox, a Telegram delivery monitor using the existing PopzVPS health-alert bot, and an authenticated owner-only review CLI. Sandbox events remain recorded until acknowledged or resolved; neither path can refund money or change Pro entitlements. See docs/STRIPE-BILLING-REVIEW-RUNBOOK.md. Production checkout remains disabled, and live-specific infrastructure and owner approvals are still required.
+
+## November 15 - Full sandbox commercial E2E verified
+The isolated Stripe Preview passed a genuine $9.99 test purchase with a Firestore atomic Checkout reservation, signed webhook Lifetime Pro activation, second-charge prevention, a full Stripe sandbox refund, verified Firestore/D1 risk records and real Telegram alerts, followed by operator review and full disposable Firebase cleanup. Preview checkout and QA fulfillment are OFF, production is unchanged at public-v39.013. This is not production release approval: Founder migration, tax/legal/terms/refund policies, separate production alerts, live restricted Stripe keys and a final rollout decision remain.
