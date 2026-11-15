@@ -54,3 +54,14 @@ Detailed original implementation architecture: docs/STRIPE-LIFETIME-PILOT.md.
 - STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, and FIREBASE_SERVICE_ACCOUNT_JSON are still not configured. Nothing can start real checkout or grant Pro.
 - Checkout origin checks additionally require the exact branch-alias URL and the proper Stripe key mode; the production origin is accepted only with live mode on branch main (but checkout remains absent/disabled on the live main app).
 - Stripe restricted test API key, signed test webhook, and minimal Firebase service account are future secure prerequisites, never stored in code or ordinary documentation.
+
+
+## November 14, 2026 — Cloudflare OAuth recovered and Stripe preview deployed
+- Correct existing Cloudflare Pages project is popzbowling; Wrangler was previously deployed but its saved OAuth access token expired. Reauthorized the existing Wrangler on MacBook with the user's browser approval.
+- Working Stripe source branch feature/stripe-lifetime-pro, commit 590f2746a2d1, synchronized on GitHub and Gitea. Strict one-time $9.99 Stripe sandbox price and verified Stripe product remain configured.
+- Separate branch preview deployed to https://stripe-lifetime-pro-preview.popzbowling.pages.dev (deployment beb008b8); production main was NOT deployed.
+- Preview-only encrypted bindings added: BILLING_CHECKOUT_ENABLED=false, STRIPE_LIFETIME_PRICE_ID, STRIPE_LIFETIME_PRODUCT_ID, FIREBASE_WEB_API_KEY (public Firebase client key). The secret Stripe API key, Stripe webhook signing secret, and Firebase service account are not configured.
+- API smoke on live preview: GET billing config returned HTTP 200, price 999 USD cents, enabled false. POST checkout and POST webhook returned HTTP 503 (blocked); payment success/cancel pages and billing-client module returned HTTP 200.
+- Strict checkout origin isolation: only the explicit preview branch on the preview alias can use test Stripe keys; only production main at popzbowling.com can use live keys. Mocked signed webhook checks prevent unpaid grants and preserve Founder Pro.
+- All 79 Node tests passed; no production billing, real payments, database migration, customer history edits, or Personal Bowling changes. Production /api/health returned ok=true and public-v39.013.
+- Next: provision encrypted least-privilege Stripe test API key, sandbox webhook signing secret, and dedicated Firebase service account; run authenticated browser test purchase and verified Firebase lifetime entitlement; then plan refund/dispute, duplicate purchases, tax/legal, and Founder migration before going live. Never put credential values in Git, logs, wiki, or chat.
