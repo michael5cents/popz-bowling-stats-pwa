@@ -6,11 +6,17 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-const ROOT='https://stripe-lifetime-pro-preview.popzbowling.pages.dev';
-const TOKEN_FILE=path.join(os.homedir(),'.config/popz-bowling-billing/review-admin-token');
+const argv=process.argv.slice(2);
+const live=argv[0]==='--production';
+if(live)argv.shift();
+if(argv.includes('--production'))throw Error('Production mode must be the first argument');
+const ROOT=live?'https://popzbowling.com':
+ 'https://stripe-lifetime-pro-preview.popzbowling.pages.dev';
+const TOKEN_FILE=path.join(os.homedir(),'.config/popz-bowling-billing',
+ live?'review-production-admin-token':'review-admin-token');
 const TOKEN=fs.readFileSync(TOKEN_FILE,'utf8').trim();
 if(!/^[a-f0-9]{64}$/.test(TOKEN))throw Error('Missing secure billing review admin token');
-const [action='open',id,...noteParts]=process.argv.slice(2);
+const [action='open',id,...noteParts]=argv;
 const ID=/^(?:evt_[A-Za-z0-9_]+|checkout_[a-f0-9]{32})$/;
 const options={headers:{authorization:'Bearer '+TOKEN,'cache-control':'no-store'}};
 let url=ROOT+'/api/billing/reviews';
@@ -26,11 +32,11 @@ if(['open','all','alerts'].includes(action)){
 const result=await fetch(url,options);
 const body=await result.json().catch(()=>({}));
 if(!result.ok||body.ok!==true){
- console.error('Billing review request failed (HTTP '+result.status+'). Verify preview/operator authorization.');
+ console.error('Billing review request failed (HTTP '+result.status+'). Verify '+(live?'production':'sandbox')+' operator authorization.');
  process.exit(1);
 }
 if(Array.isArray(body.reviews)){
- console.log('Popz Bowling SANDBOX reviews: '+body.count+' (scope: '+body.scope+')');
+ console.log('Popz Bowling '+(live?'LIVE':'SANDBOX')+' reviews: '+body.count+' (scope: '+body.scope+')');
  for(const r of body.reviews){
   console.log([r.id,'$'+(r.amountCents/100).toFixed(2),r.kind,r.status,
    r.reviewState??'pending',r.alertState??'',

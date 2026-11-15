@@ -1,0 +1,11 @@
+[Unit]
+Description=Poll Popz Bowling LIVE Billing Incidents Every Minute (Disabled Until Launch)
+
+[Timer]
+OnCalendar=*-*-* *:*:00
+AccuracySec=15s
+Persistent=true
+Unit=popz-billing-alerts-production.service
+
+[Install]
+WantedBy=timers.target

@@ -1,6 +1,6 @@
-// Operator-only billing review ledger. Preview-branch only.
-// Never expose user billing records to ordinary customers or anonymous callers.
-// Credentials are Cloudflare encrypted preview secrets, never browser code.
+// Operator-only billing review ledger. Distinct sandbox and PRODUCTION scopes.
+// Live API remains disabled unless an explicit owner-approved release config
+// enables it; never expose billing records or credentials to the browser.
 import {
  json,secureEqual,BILLING_PREVIEW_BRANCH,BILLING_PREVIEW_ORIGIN
 } from '../../_billing/core.mjs';
@@ -10,9 +10,15 @@ const ALLOWED_ACTIONS=new Set(['acknowledge','resolve','mark_notified']);
 const rowFields='id,uid,kind,provider_status,reference_id,payment_intent_id,amount_cents,review_state,alert_state,created_at,updated_at,notified_at,acknowledged_at,resolved_at,reviewer_note';
 
 function allowed(request,env){
- if(env?.CF_PAGES_BRANCH!==BILLING_PREVIEW_BRANCH)return null;
  const url=new URL(request.url);
- if(url.origin!==BILLING_PREVIEW_ORIGIN)return null;
+ const preview=env?.CF_PAGES_BRANCH===BILLING_PREVIEW_BRANCH &&
+   url.origin===BILLING_PREVIEW_ORIGIN;
+ const production=env?.CF_PAGES_BRANCH==='main' &&
+   env?.BILLING_REVIEW_PRODUCTION_ENABLED==='true' &&
+   url.origin==='https://popzbowling.com';
+ // Production is fail-closed by default. No production endpoint is deployed
+ // or callable just because a D1 database exists.
+ if(!preview&&!production)return null;
  const header=request.headers.get('authorization')||'';
  const input=header.startsWith('Bearer ')?header.slice(7):'';
  if(!/^[a-f0-9]{64}$/.test(input))return null;

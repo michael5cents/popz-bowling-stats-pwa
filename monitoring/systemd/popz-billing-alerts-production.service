@@ -1,0 +1,14 @@
+[Unit]
+Description=Popz Bowling LIVE Billing Telegram Alerts (Not Enabled Until Launch)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/michael5cents/.local/lib/popz-bowling-monitor
+ExecStart=/home/michael5cents/.local/lib/popz-bowling-monitor/run-billing-telegram-production.sh
+TimeoutStartSec=75
+UMask=0077
+NoNewPrivileges=true
+StandardOutput=journal
+StandardError=journal

@@ -45,6 +45,14 @@ database_name = "popz-bowling-runtime"
 database_id = "177005c0-0b95-4187-8a39-bfc0fa564f9a"
 migrations_dir = "runtime-migrations"
 
+# New, empty production-only billing review inbox. Source configuration
+# is staged on the development branch; DO NOT deploy until approved.
+# Never reuse the sandbox review database or its bearer tokens.
+[[env.production.d1_databases]]
+binding = "BILLING_REVIEW_DB"
+database_name = "popz-bowling-billing-review-production"
+database_id = "821922f7-63cf-43a3-acb4-a446c1764c74"
+
 # Preview binding for isolated billing-review metadata. Never point this at production D1.
 [env.preview]
 

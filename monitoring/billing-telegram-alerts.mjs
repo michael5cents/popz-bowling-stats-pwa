@@ -1,12 +1,18 @@
 #!/usr/bin/env node
-// PopzVPS delivery agent for Popz Bowling sandbox billing reviews.
-// Uses existing Telegram monitor bot; never sends Firebase identity or card details.
+// PopzVPS delivery agent for Popz Bowling billing reviews.
+// SANDBOX by default; explicit production mode requires separate credentials
+// and an independently enabled production API. No Firebase/card details sent.
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-const BASE='https://stripe-lifetime-pro-preview.popzbowling.pages.dev';
-const TOKEN_FILE=path.join(os.homedir(),'.config/popz-bowling-monitor/billing-review-monitor-token');
+const mode=process.env.POPZ_BILLING_ALERT_ENV||'sandbox';
+if(!['sandbox','production'].includes(mode))throw Error('Unsupported billing monitor environment');
+const live=mode==='production';
+const BASE=live?'https://popzbowling.com':
+ 'https://stripe-lifetime-pro-preview.popzbowling.pages.dev';
+const TOKEN_FILE=path.join(os.homedir(),'.config/popz-bowling-monitor',
+ live?'billing-review-production-monitor-token':'billing-review-monitor-token');
 const TOKEN=fs.readFileSync(TOKEN_FILE,'utf8').trim();
 const BOT=process.env.TELEGRAM_BOT_TOKEN||'';
 const CHAT=process.env.TELEGRAM_CHAT_ID||'';
@@ -31,7 +37,7 @@ const notify=async (review)=>{
  const cents=Number(review.amountCents);
  if(!Number.isSafeInteger(cents)||cents<0||cents>999)throw Error('Invalid alert amount');
  const text=[
-  '🚨 POPZ BOWLING BILLING REVIEW — SANDBOX',
+  live?'POPZ BOWLING LIVE BILLING REVIEW':'POPZ BOWLING SANDBOX BILLING REVIEW',
   'Issue: '+kind.replace(/_/g,' '),
   'Stripe status: '+status.replace(/_/g,' '),
   'Amount: $'+(cents/100).toFixed(2),
@@ -67,4 +73,4 @@ for(const incident of await get()){
  await mark(incident.id);
  n++;
 }
-if(n>0)console.log('Popz Bowling billing review notifications delivered: '+n);
+if(n>0)console.log('Popz Bowling '+mode+' billing review notifications delivered: '+n);
