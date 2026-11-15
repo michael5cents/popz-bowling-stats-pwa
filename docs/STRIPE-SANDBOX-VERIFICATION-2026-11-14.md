@@ -139,3 +139,13 @@ Detailed original implementation architecture: docs/STRIPE-LIFETIME-PILOT.md.
 - Additional concurrency and recovery tests cover parallel tabs, UTC day boundary, lost network response, stale unknown payments, paid/unpaid processing, identity mismatch and outages; existing tests were updated for actual reservation reads/writes.
 - Checkout remains disabled in the Cloudflare Preview. No new production or live Stripe payment was attempted and the previous disposable QA identity is still deleted.
 - Full rollout requires testing with a NEW disposable Firebase QA account and signed Stripe sandbox payment; currently the module has mock coverage and Wrangler build validation.
+
+
+## November 15 — preview billing owner inbox and Telegram integration
+- Created an independent Cloudflare D1 database popz-bowling-billing-review-preview (b86d17e8-6d9b-4039-af8f-2e6b8f7fb464). Created the billing_reviews table, with append-only Stripe event IDs, pending/notified Telegram states, manual_review_required/acknowledged/resolved owner review states, and timestamps. No production D1 database was altered.
+- Added an env.preview.d1_databases binding named BILLING_REVIEW_DB in wrangler.toml; explicitly retained all three original app D1 bindings and left production D1 configuration unchanged.
+- Added D1 queue ingestion to the existing Firestore private incident documents and the stale unknown Stripe Checkout lock. A D1 outage is treated as a retryable webhook failure. No customer emails, names, scores, card data or API credentials enter the D1 review queue.
+- Added separate review-owner and Telegram-monitor 256-bit bearer tokens in Cloudflare Preview; only the owner token is stored locally on the MacBook and only the scoped monitor token is stored on PopzVPS. Telegram bot/chat remain exclusively on PopzVPS. Monitoring and review authorization are separate.
+- Added preview-exclusive /api/billing/reviews endpoints and scripts/billing-review-owner.mjs, plus monitoring/billing-telegram-alerts.mjs and its VPS wrapper. Owner actions only acknowledge/resolve an audit row; no Stripe refunds or user entitlement changes. The VPS monitor sends only type/status/amount/review ID, not Firebase UID.
+- Tests using real in-memory SQLite migration SQL verify D1 uniqueness, Stripe webhook retry behavior, role isolation, anonymous 404, replay deduplication, owner acknowledge/resolve and unknown Checkout event idempotency. Full suite 82/82 passed before deployment. The preview remains disabled for checkout.
+- Runbook: docs/STRIPE-BILLING-REVIEW-RUNBOOK.md. Production billing is still disabled and lacks separately provisioned production owner alerts, real customer policy approvals, and a fresh E2E sandbox regression.

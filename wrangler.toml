@@ -44,3 +44,29 @@ binding = "RUNTIME_DB"
 database_name = "popz-bowling-runtime"
 database_id = "177005c0-0b95-4187-8a39-bfc0fa564f9a"
 migrations_dir = "runtime-migrations"
+
+# Preview binding for isolated billing-review metadata. Never point this at production D1.
+[env.preview]
+
+[env.preview.vars]
+LIVE_SHARE_PREVIEW = "true"
+
+[[env.preview.d1_databases]]
+binding = "TELEMETRY_DB"
+database_name = "popz-bowling-telemetry"
+database_id = "6491ea01-4d72-4121-9eb6-a96d159b316b"
+
+[[env.preview.d1_databases]]
+binding = "LIVE_SHARE_DB"
+database_name = "popz-bowling-live"
+database_id = "4e13df82-3fb9-4225-8174-6c99c7fa7590"
+
+[[env.preview.d1_databases]]
+binding = "RUNTIME_DB"
+database_name = "popz-bowling-runtime"
+database_id = "177005c0-0b95-4187-8a39-bfc0fa564f9a"
+
+[[env.preview.d1_databases]]
+binding = "BILLING_REVIEW_DB"
+database_name = "popz-bowling-billing-review-preview"
+database_id = "b86d17e8-6d9b-4039-af8f-2e6b8f7fb464"

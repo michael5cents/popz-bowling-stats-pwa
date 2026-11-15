@@ -1,3 +1,4 @@
+import {queueBillingReview} from './review-queue.mjs';
 // Server-only billing helpers. Not included in the public browser bundle.
 export const PRODUCT_CODE='popz_bowling_lifetime_v1';
 export const PRICE_CENTS=999;
@@ -168,7 +169,7 @@ export async function loadBillingLifetime(uid,token){
   updateTime:doc.updateTime};
 }
 // Append-only per-event review documents: repeated webhooks cannot duplicate a review.
-export async function recordBillingReview(uid,token,eventId,{kind,status,referenceId,paymentIntentId,amountCents}){
+export async function recordBillingReview(uid,token,eventId,{kind,status,referenceId,paymentIntentId,amountCents},env){
  if(!/^[A-Za-z0-9_-]{1,128}$/.test(uid||'')||!/^evt_[A-Za-z0-9_]+$/.test(eventId||''))
   throw new BillingError('Invalid billing audit reference',400);
  if(!/^[a-z_]{3,40}$/.test(kind||'')||!status||!referenceId||!paymentIntentId||
@@ -185,30 +186,37 @@ export async function recordBillingReview(uid,token,eventId,{kind,status,referen
   method:'POST',headers:{authorization:'Bearer '+token,'content-type':'application/json'},
   body:JSON.stringify({writes:[{update:{name,fields},currentDocument:{exists:false}}]}),
  });
- if(result.ok)return {recorded:true};
- if([400,409,412].includes(result.status)){
+ let recorded=false;
+ if(result.ok)recorded=true;
+ else if([400,409,412].includes(result.status)){
   const prior=await fetch(FIRESTORE_API+'/'+name,{headers:{authorization:'Bearer '+token}});
   if(prior.ok){
    const doc=await prior.json();
-   if(readField(doc.fields,'stripeEventId')===eventId &&
-      readField(doc.fields,'referenceId')===referenceId)return {recorded:false};
-  }
- }
- throw new BillingError('Billing audit awaiting secure retry',503);
+   if(readField(doc.fields,'stripeEventId')!==eventId ||
+      readField(doc.fields,'referenceId')!==referenceId)
+    throw new BillingError('Billing audit reference conflict',503);
+  }else throw new BillingError('Billing audit reference unavailable',503);
+ }else throw new BillingError('Billing audit awaiting secure retry',503);
+ // Stripe retries on a database failure, even when the private Firestore record
+ // already exists. Missing operator notifications must not be silently dropped.
+ await queueBillingReview(env,{
+  id:eventId,uid,kind,status,referenceId,paymentIntentId,amountCents
+ });
+ return {recorded};
 }
-async function reconcilePaidReplay(uid,token,existing,session,eventId){
+async function reconcilePaidReplay(uid,token,existing,session,eventId,env){
  const prior=await loadBillingLifetime(uid,token);
  const same=prior?.checkoutSessionId===session.id && prior?.paymentIntentId===session.payment_intent;
  if(!same)await recordBillingReview(uid,token,eventId,{
   kind:'duplicate_paid_purchase',status:'needs_review',referenceId:session.id,
   paymentIntentId:session.payment_intent,amountCents:PRICE_CENTS,
- });
+ },env);
  return {already:true,status:existing.status,duplicate:!same};
 }
 export async function grantStripeLifetime(uid,session,eventId,env){
  const token=await firestoreAccessToken(env);
  const existing=await loadEntitlement(uid,token);
- if(isPermanentPro(existing))return reconcilePaidReplay(uid,token,existing,session,eventId);
+ if(isPermanentPro(existing))return reconcilePaidReplay(uid,token,existing,session,eventId,env);
  const now=new Date().toISOString();
  const entitlement={
   name:pathOf(uid,'entitlements/pro'),
@@ -232,7 +240,7 @@ export async function grantStripeLifetime(uid,session,eventId,env){
  });
  if([400,409,412].includes(res.status)){
   const after=await loadEntitlement(uid,token);
-  if(isPermanentPro(after))return reconcilePaidReplay(uid,token,after,session,eventId);
+  if(isPermanentPro(after))return reconcilePaidReplay(uid,token,after,session,eventId,env);
  }
  if(!res.ok)throw new BillingError('Pro activation awaiting secure retry',503);
  return {already:false,status:'lifetime'};

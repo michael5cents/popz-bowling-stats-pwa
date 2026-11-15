@@ -3,11 +3,14 @@ import {createHmac,generateKeyPairSync} from 'node:crypto';
 import {grantStripeLifetime,PRODUCT_CODE} from '../functions/_billing/core.mjs';
 import {REVIEW_EVENT_TYPES} from '../functions/_billing/reconciliation.mjs';
 import {onRequestPost as webhook} from '../functions/api/billing/webhook.js';
+import {makeFakeBillingReviewD1} from './helpers/billing-review-d1.mjs';
 
 const uid='popz_preview_e2e_20261114';
 const originalSession='cs_test_original';
 const originalIntent='pi_original';
+const reviewDB=makeFakeBillingReviewD1();
 const env={
+ BILLING_REVIEW_DB:reviewDB,
  CF_PAGES_BRANCH:'stripe-lifetime-pro-preview',
  BILLING_PREVIEW_QA_ACTIVE:'true',
  STRIPE_SECRET_KEY:'rk_test_mock_review',
@@ -175,6 +178,10 @@ try{
  assert.equal(closedResponse.status,200);
  assert.equal((await closedResponse.json()).sandboxQAClosed,true,'deleted test identity must not be silently reactivated by a late Stripe event');
  assert(audit.size===4,'Only one duplicate, two refunds and one dispute review should exist');
+ assert.equal(reviewDB.sqlite.prepare('SELECT COUNT(*) n FROM billing_reviews').get().n,4,
+  'Every private Firestore risk record must also appear in the durable owner inbox');
+ assert.equal(reviewDB.sqlite.prepare("SELECT alert_state FROM billing_reviews WHERE id='evt_refundfull'").get().alert_state,
+  'pending','Refund alert remains pending until Telegram confirms delivery');
  assert(!calls.some(x=>x.uri.includes('accounts:delete')),'Risk handler must not delete users');
  console.log('Duplicate paid-session audit, replay idempotency, full/partial refund review, dispute review, cross-product isolation, retry behavior and Founder/lifetime preservation PASSED');
-}finally{globalThis.fetch=originalFetch;}
+}finally{globalThis.fetch=originalFetch;reviewDB.close();}

@@ -81,3 +81,6 @@ The real Stripe sandbox Price and actual unpaid Checkout Session were verified b
 - After operator copies it on the Mac, execute node scripts/configure-stripe-preview-key.mjs. It validates the exact Stripe sandbox product/price and uploads securely to Cloudflare Preview without writing to disk.
 - For a dedicated Firebase service-account JSON, execute node scripts/configure-firebase-preview-service-account.mjs /absolute/path/to/file.json after Google Cloud IAM creation with minimum permissions; do not commit the JSON.
 - Keep billing disabled until a completed sandbox purchase has confirmed a verified signed webhook and entitlement grant to the correct Google identity. Production remains unchanged.
+
+## Owner alerts (sandbox preview only)
+Billing risk events and Checkout creation ambiguity are now queued in an isolated preview D1 database for Telegram delivery through PopzVPS. The authorized Mac owner CLI can acknowledge/resolve review rows without touching payments or customer access. See docs/STRIPE-BILLING-REVIEW-RUNBOOK.md. Separate production setup and testing remain required before live checkout.

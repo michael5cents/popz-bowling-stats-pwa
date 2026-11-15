@@ -324,3 +324,6 @@ Until the paid PWA proof period is complete:
 Do **not** begin native conversion yet.
 
 The next product action is to run the structured free PWA beta and collect clean real-bowler usage through November 15 while preparing the commercial requirements. Stripe implementation begins only after the Phase 1 usage gate is reviewed.
+
+## November 15 — owner billing incident review (sandbox only)
+The Stripe development branch now includes a separate Cloudflare preview D1 incident inbox, a Telegram delivery monitor using the existing PopzVPS health-alert bot, and an authenticated owner-only review CLI. Sandbox events remain recorded until acknowledged or resolved; neither path can refund money or change Pro entitlements. See docs/STRIPE-BILLING-REVIEW-RUNBOOK.md. Production checkout remains disabled, and live-specific infrastructure and owner approvals are still required.

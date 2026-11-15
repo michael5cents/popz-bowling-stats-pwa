@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {reserveLifetimeCheckout,CHECKOUT_SECONDS,RETRY_SECONDS,IDEMPOTENCY_SAFETY_SECONDS} from '../functions/_billing/checkout-reservation.mjs';
+import {makeFakeBillingReviewD1} from './helpers/billing-review-d1.mjs';
 
 const origin='https://stripe-lifetime-pro-preview.popzbowling.pages.dev';
 const uid='qa_reservation_exclusive_test';
@@ -9,12 +10,13 @@ const env={
 };
 const start=Math.floor(Date.UTC(2026,10,14,23,59,0)/1000);
 const input=(h,nowSeconds=start)=>({
- uid,email:'res_test@example.com',origin,token:'mock_firestore_access',env,nowSeconds
+ uid,email:'res_test@example.com',origin,token:'mock_firestore_access',env:{...env,BILLING_REVIEW_DB:h.reviewDB},nowSeconds
 });
 const json=(body,status=200)=>new Response(JSON.stringify(body),{status,headers:{'content-type':'application/json'}});
 function newHarness(){
  let savedDoc=null,version=0,postCalls=0,creates=0,failOnce='',failOnRead=false;
  const sessions=new Map(),byKey=new Map(),stripeFields=new Map();
+ const reviewDB=makeFakeBillingReviewD1();
  const commits=[];
  const fetchFn=async (url,opts={})=>{
   const addr=String(url),method=opts.method||'GET';
@@ -81,7 +83,7 @@ function newHarness(){
   throw new Error('Unexpected network request: '+method+' '+addr);
  };
  return {
-  fetchFn,get state(){return {
+  fetchFn,reviewDB,get state(){return {
    savedDoc,version,postCalls,creates,commits,sessions,byKey
   }},
   set failOnce(value){failOnce=value},
@@ -92,7 +94,7 @@ function newHarness(){
 async function withHarness(fn){
  const h=newHarness(),prior=globalThis.fetch;
  globalThis.fetch=h.fetchFn;
- try{await fn(h)}finally{globalThis.fetch=prior}
+ try{await fn(h)}finally{globalThis.fetch=prior;h.reviewDB.close()}
 }
 await withHarness(async h=>{
  const results=await Promise.allSettled([
@@ -166,6 +168,12 @@ await withHarness(async h=>{
   err=>err?.status===409,'unknown >20-hour session creation outcome must remain blocked');
  assert.equal(h.state.creates,0);
  assert.equal(h.state.postCalls,count,'no Stripe retries after idempotency safety window');
+ assert.equal(h.reviewDB.sqlite.prepare("SELECT COUNT(*) n FROM billing_reviews WHERE kind='checkout_uncertain'").get().n,1,
+  'Only one durable owner alert must be queued when Stripe creation outcome is uncertain');
+ await assert.rejects(()=>reserveLifetimeCheckout(input(h,start+IDEMPOTENCY_SAFETY_SECONDS+2)),
+  err=>err?.status===409);
+ assert.equal(h.reviewDB.sqlite.prepare('SELECT COUNT(*) n FROM billing_reviews').get().n,1,
+  'repeated stale checkout must not flood the inbox');
 });
 console.log('PASS: stuck creation fails closed after Stripe idempotency safety window');
 

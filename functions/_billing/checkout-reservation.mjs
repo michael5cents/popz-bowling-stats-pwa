@@ -1,3 +1,4 @@
+import {queueBillingReview} from './review-queue.mjs';
 // Durable, per-Firebase-UID reservation for Popz Bowling one-time Stripe Checkout.
 // Cloudflare Workers are stateless: Firestore compare-and-set is the concurrency gate.
 // Never generate a second Stripe session while a first session can still be paid.
@@ -136,7 +137,17 @@ async function resolveExisting(res,uid,origin,token,env,nowSeconds){
   // the same Stripe idempotency key; never mint a new one for an unknown result.
   const age=nowSeconds-res.createdAtSeconds;
   if(age<RETRY_SECONDS)throw new BillingError('Checkout is starting. Try again shortly.',409);
-  if(age<0||age>=IDEMPOTENCY_SAFETY_SECONDS)fail();
+  if(age<0)fail();
+  if(age>=IDEMPOTENCY_SAFETY_SECONDS){
+   // Do not let a lost Stripe response create a second charge after the
+   // idempotency guarantee expires. Create one durable operator alert.
+   await queueBillingReview(env,{
+    id:'checkout_'+res.nonce,uid,kind:'checkout_uncertain',
+    status:'locked_manual_review',referenceId:'checkout:'+res.nonce,
+    paymentIntentId:null,amountCents:PRICE_CENTS
+   });
+   fail();
+  }
   return createStripeSession(res,token,env);
  }
  if(!res.sessionId)fail();

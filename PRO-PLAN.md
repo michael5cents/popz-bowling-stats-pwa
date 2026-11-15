@@ -85,3 +85,6 @@ When paid access is ready, preview can be disabled after the payment/entitlement
 - Founder enrollment will be capped; the exact maximum is still **TBD**.
 - Preferred cutoff logic: choose a telemetry adoption threshold that closes new Founder eligibility once reached, then use the count of unique Founder Firebase UIDs as the authoritative grant count so one person using multiple devices cannot consume multiple Founder slots.
 - Anyone already granted `status=founder` keeps lifetime Pro even after the Founder window closes.
+
+## November 15 — owner billing incident review (sandbox only)
+The Stripe development branch now includes a separate Cloudflare preview D1 incident inbox, a Telegram delivery monitor using the existing PopzVPS health-alert bot, and an authenticated owner-only review CLI. Sandbox events remain recorded until acknowledged or resolved; neither path can refund money or change Pro entitlements. See docs/STRIPE-BILLING-REVIEW-RUNBOOK.md. Production checkout remains disabled, and live-specific infrastructure and owner approvals are still required.
