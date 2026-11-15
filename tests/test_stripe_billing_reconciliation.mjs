@@ -56,13 +56,13 @@ function fakeFetch(url,options={}){
   return Promise.resolve(asJson({writeResults:[{}]}));
  }
  if(uri.endsWith('/refunds/re_full'))return Promise.resolve(asJson({
-  id:'re_full',livemode:false,currency:'usd',amount:999,status:'succeeded',payment_intent:originalIntent
+  id:'re_full',currency:'usd',amount:999,status:'succeeded',payment_intent:originalIntent
  }));
  if(uri.endsWith('/refunds/re_partial'))return Promise.resolve(asJson({
-  id:'re_partial',livemode:false,currency:'usd',amount:300,status:'pending',payment_intent:originalIntent
+  id:'re_partial',currency:'usd',amount:300,status:'pending',payment_intent:originalIntent
  }));
  if(uri.endsWith('/refunds/re_wrong'))return Promise.resolve(asJson({
-  id:'re_wrong',livemode:false,currency:'usd',amount:999,status:'succeeded',payment_intent:'pi_unrelated'
+  id:'re_wrong',currency:'usd',amount:999,status:'succeeded',payment_intent:'pi_unrelated'
  }));
  if(uri.endsWith('/disputes/dp_one'))return Promise.resolve(asJson({
   id:'dp_one',livemode:false,currency:'usd',amount:999,status:'needs_response',charge:'ch_primary',payment_intent:null

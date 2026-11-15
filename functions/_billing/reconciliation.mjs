@@ -13,6 +13,9 @@ export const REVIEW_EVENT_TYPES=new Set([
 ]);
 const isId=(id,prefix)=>typeof id==='string'&&new RegExp('^'+prefix+'_[A-Za-z0-9_]+$').test(id);
 const livemodeMatches=(item,env)=>item?.livemode===/^(?:rk|sk)_live_/.test(env.STRIPE_SECRET_KEY||'');
+// Stripe Refund objects omit livemode, so verify mode on the fetched PaymentIntent;
+// only reject an optional resource-level mode when Stripe actually supplies it.
+const optionalLivemodeMatches=(item,env)=>typeof item?.livemode!=='boolean'||livemodeMatches(item,env);
 
 export async function reconcileStripeRiskEvent(event,env){
  if(!REVIEW_EVENT_TYPES.has(event?.type))return {ignored:true};
@@ -25,10 +28,11 @@ export async function reconcileStripeRiskEvent(event,env){
  // Never trust event snapshots for the latest status, amount, or account mode.
  const resource=await stripeRequest(env,
   (refund?'refunds/':dispute?'disputes/':'charges/')+encodeURIComponent(referenceId));
- if(resource.id!==referenceId || !livemodeMatches(resource,env) ||
-    resource.currency!==CURRENCY || !Number.isSafeInteger(resource.amount) ||
-    resource.amount<0 || (refund&&resource.amount>PRICE_CENTS))
+ if(resource.id!==referenceId || !optionalLivemodeMatches(resource,env) ||
+    !Number.isSafeInteger(resource.amount) || resource.amount<0)
   throw new BillingError('Stripe audit verification failed',422);
+ if(resource.currency!==CURRENCY || (refund&&resource.amount>PRICE_CENTS))
+  return {ignored:true}; // Unrelated merchant payment; do not retry its webhook.
  let charge=null;
  let paymentIntentId=resource.payment_intent;
  if(!isId(paymentIntentId,'pi')){
