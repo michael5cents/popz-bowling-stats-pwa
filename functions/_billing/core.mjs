@@ -158,7 +158,9 @@ export async function loadEntitlement(uid,token){
  if(!res.ok)throw new BillingError('Cannot check existing Pro access',503);
  const doc=await res.json();
  return {plan:readField(doc.fields,'plan'),status:readField(doc.fields,'status'),
-  source:readField(doc.fields,'source'),updateTime:doc.updateTime};
+  source:readField(doc.fields,'source'),expiresAt:readField(doc.fields,'expiresAt'),
+  trialStartedAt:readField(doc.fields,'trialStartedAt'),
+  updateTime:doc.updateTime};
 }
 export async function loadBillingLifetime(uid,token){
  const res=await fetch(FIRESTORE_API+'/'+pathOf(uid,'billing/stripeLifetime'),{

@@ -12,7 +12,34 @@ const config={
 };
 const base=`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}`;
 let api=null,appApi=null,authApi=null,storeApi=null,auth=null,db=null,currentUser=null,currentEntitlement={},syncing=null;
-let callbacks={getState:null,setState:null,onStatus:null,onSignedIn:null,onEntitlement:null};
+let callbacks={getState:null,setState:null,onStatus:null,onSignedIn:null,
+ onEntitlement:null,onEntitlementCache:null};
+let trialConfigCheckedAt=0,trialEnrollmentEnabled=false;
+const accountTrialStatus=async()=>{
+ if(Date.now()-trialConfigCheckedAt<300000)return trialEnrollmentEnabled;
+ trialConfigCheckedAt=Date.now();
+ try{
+  const res=await fetch('/api/billing/trial',{cache:'no-store'});
+  const conf=res.ok?await res.json():{};
+  trialEnrollmentEnabled=conf.enabled===true;
+ }catch{trialEnrollmentEnabled=false}
+ return trialEnrollmentEnabled;
+};
+const effectiveClock=()=>{
+ const last=Date.parse(callbacks.getState?.()?.trialLastSeenAt||'');
+ return Math.max(Date.now(),Number.isFinite(last)?last:0);
+};
+const signedOutAccess=()=>{
+ const state=callbacks.getState?.();
+ const cached=state?.entitlementCache;
+ if(state?.lastCloudUserUid && cached?.uid===state.lastCloudUserUid)
+  return effectiveAccess(cached.record||{},{now:effectiveClock()});
+ return effectiveAccess({},{
+  signedOut:true,now:effectiveClock(),
+  localTrialStartedAt:state?.trialStartedAt,
+  localTrialLastSeenAt:state?.trialLastSeenAt
+ });
+};
 const stamp=v=>{const t=Date.parse(v||'');return Number.isFinite(t)?t:0};
 const sessionStamp=s=>Math.max(stamp(s?.updatedAt),stamp(s?.finishedAt),stamp(s?.createdAt));
 
@@ -37,10 +64,29 @@ async function loadFirebase(){
 }
 
 async function refreshEntitlement(uid=currentUser?.uid){
-  if(!uid){currentEntitlement={};callbacks.onEntitlement?.(effectiveAccess(currentEntitlement));return currentEntitlement}
-  const snap=await storeApi.getDoc(storeApi.doc(db,'users',uid,'entitlements','pro'));
+  if(!uid){
+   currentEntitlement={};callbacks.onEntitlement?.(signedOutAccess());
+   return currentEntitlement
+  }
+  let snap=await storeApi.getDoc(storeApi.doc(db,'users',uid,'entitlements','pro'));
+  if(!snap.exists()&&currentUser?.uid===uid&&await accountTrialStatus()){
+   // Server verifies the Firebase ID token, chooses the UTC start/end, and
+   // creates one entitlement with exists:false. Browser never writes grants.
+   const userToken=await currentUser.getIdToken();
+   const firstUseAt=callbacks.getState?.()?.trialStartedAt;
+   const res=await fetch('/api/billing/trial',{
+    method:'POST',headers:{authorization:'Bearer '+userToken,
+     'content-type':'application/json'},
+    body:JSON.stringify({installationStartedAt:firstUseAt})
+   });
+   if(!res.ok)throw Error('Cannot verify the 30-day Pro trial right now');
+   snap=await storeApi.getDoc(storeApi.doc(db,'users',uid,'entitlements','pro'));
+  }
   currentEntitlement=snap.exists()?snap.data():{};
-  callbacks.onEntitlement?.(effectiveAccess(currentEntitlement));
+  if(currentUser?.uid===uid)
+   await callbacks.onEntitlementCache?.({uid,record:currentEntitlement,
+    verifiedAt:new Date().toISOString()});
+  callbacks.onEntitlement?.(effectiveAccess(currentEntitlement,{now:effectiveClock()}));
   return currentEntitlement;
 }
 
@@ -98,7 +144,7 @@ async function pushCloud(uid,state,remote){
 
 export function cloudUser(){return currentUser}
 export function cloudAvailable(){return !!currentUser}
-export function accountAccess(){return effectiveAccess(currentEntitlement)}
+export function accountAccess(){return currentUser?effectiveAccess(currentEntitlement,{now:effectiveClock()}):signedOutAccess()}
 export function cloudFeatureAvailable(feature){return canUseFeature(feature,currentEntitlement)}
 
 export async function syncCloudNow(){
@@ -143,20 +189,24 @@ export async function signOutGoogle(){
   await authApi.signOut(auth);
   currentUser=null;
   currentEntitlement={};
-  callbacks.onEntitlement?.(effectiveAccess(currentEntitlement));
+  callbacks.onSignedIn?.(null);
+  callbacks.onEntitlement?.(signedOutAccess());
   status('signed-out','Cloud sync off • local data stays on this device');
 }
 
 export async function initCloudSync(options){
   callbacks={...callbacks,...options};
-  if(navigator.onLine===false){status('offline','Offline • local scoring still works');return}
+  if(navigator.onLine===false){
+   currentEntitlement={};callbacks.onEntitlement?.(signedOutAccess());
+   status('offline','Offline • local scoring still works');return
+  }
   try{
     await loadFirebase();
     authApi.onAuthStateChanged(auth,async user=>{
       currentUser=user||null;
       callbacks.onSignedIn?.(currentUser);
       if(currentUser){try{await refreshEntitlement(currentUser.uid);await syncCloudNow()}catch{}}
-      else{currentEntitlement={};callbacks.onEntitlement?.(effectiveAccess(currentEntitlement));status('signed-out','Sign in with Google to sync across devices')}
+      else{currentEntitlement={};callbacks.onEntitlement?.(signedOutAccess());status('signed-out','Sign in with Google to sync across devices')}
     });
   }catch(e){status('error',e?.message||'Cloud sync unavailable')}
 }

@@ -25,6 +25,7 @@ const required=[
   'cloud-sync-core.mjs',
   'cloud-sync.mjs',
   'entitlements.mjs',
+  'trial-policy.mjs',
   'entry.js',
   'history.mjs',
   'icon-192.png',

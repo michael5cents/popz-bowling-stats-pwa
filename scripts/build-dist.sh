@@ -49,6 +49,7 @@ runtime_files=(
   cloud-sync.mjs
   billing-client.mjs
   entitlements.mjs
+  trial-policy.mjs
   multiplayer.mjs
   layout-mode.mjs
   live-share.mjs

@@ -1,7 +1,7 @@
 # Popz Bowling Free + Pro Plan
 
 ## November 14, 2026 — new commercial policy (supersedes October pricing discussion)
-The proposed product is **free installation plus $9.99 one-time Lifetime Pro**, with no recurring subscription. Existing qualifying Founder Pro remains free for life; the exact trial policy is still undecided. A server-verified Stripe integration has been staged in branch feature/stripe-lifetime-pro, **deployed to an isolated Cloudflare preview, not production**, and production purchases remain disabled until Stripe/Firebase credentials, refund/tax/legal policies and live tests are complete. Pro Preview is still enabled. The earlier monthly/annual subscription checklist is retained below for historical reference, not the current product decision. See docs/STRIPE-LIFETIME-PILOT.md and docs/STRIPE-LAUNCH-SAFEGUARDS.md.
+The proposed product is **free installation plus $9.99 one-time Lifetime Pro**, with no recurring subscription. Existing qualifying Founder Pro remains free for life; the newly approved trial is 30 days for new installs. A server-verified Stripe integration has been staged in branch feature/stripe-lifetime-pro, **deployed to an isolated Cloudflare preview, not production**, and production purchases remain disabled until Stripe/Firebase credentials, refund/tax/legal policies and live tests are complete. Pro Preview is still enabled. The earlier monthly/annual subscription checklist is retained below for historical reference, not the current product decision. See docs/STRIPE-LIFETIME-PILOT.md and docs/STRIPE-LAUNCH-SAFEGUARDS.md.
 
 
 ## November 14 — durable Stripe Checkout reservation
@@ -65,7 +65,7 @@ When paid access is ready, preview can be disabled after the payment/entitlement
 1. **Define Pro clearly.** Keep the Free app permanently useful; the current Pro family is Google Sync, Advanced Shot Tracking, Team / Multi-Bowler scoring, and Share Live Scores, with future cloud recovery and deeper bowling analytics as possible additions.
 2. **Choose billing structure.** Decide monthly, annual, and whether Lifetime is sold at all. Architecture already supports any combination.
 3. **Founder treatment.** Existing qualifying testers receive **Founder Pro free for life** before Pro Preview ends.
-4. **Trial policy.** Decide no trial vs 7/14/30 days. A 14-day trial is the current working recommendation because it spans multiple bowling nights.
+4. **Trial policy.** DECIDED November 15: 30-day Pro trial for new installs. **Superseded November 15:** the owner approved a 30-day full-Pro trial beginning at the first installed-app launch; Free features remain available afterwards and $9.99 one-time Lifetime Pro can be purchased.
 5. **Purchase flow.** Build Upgrade to Pro → hosted checkout → verified payment → server-side entitlement activation → app immediately shows Pro.
 6. **Keep card data out of Popz.** Use a payment provider for card/payment details; Popz stores only customer/billing references and entitlement state.
 7. **Tie Pro to the signed-in account.** A purchase belongs to the Firebase/Google user, not a phone/tablet, so Pro follows the user across devices.
@@ -82,7 +82,7 @@ When paid access is ready, preview can be disabled after the payment/entitlement
 
 ### Founder Pro policy
 - **Decision:** Founder Pro is free for life.
-- Founder enrollment will be capped; the exact maximum is still **TBD**.
+- Founder enrollment is closed at **3**, the three verified Google/Firebase accounts existing by November 15, 2026 12:12:36 PM CST (18:12:36 UTC).
 - Preferred cutoff logic: choose a telemetry adoption threshold that closes new Founder eligibility once reached, then use the count of unique Founder Firebase UIDs as the authoritative grant count so one person using multiple devices cannot consume multiple Founder slots.
 - Anyone already granted `status=founder` keeps lifetime Pro even after the Founder window closes.
 
@@ -91,3 +91,6 @@ The Stripe development branch now includes a separate Cloudflare preview D1 inci
 
 ## November 15 - Full sandbox commercial E2E verified
 The isolated Stripe Preview passed a genuine $9.99 test purchase with a Firestore atomic Checkout reservation, signed webhook Lifetime Pro activation, second-charge prevention, a full Stripe sandbox refund, verified Firestore/D1 risk records and real Telegram alerts, followed by operator review and full disposable Firebase cleanup. Preview checkout and QA fulfillment are OFF, production is unchanged at public-v39.013. This is not production release approval: Founder migration, tax/legal/terms/refund policies, separate production alerts, live restricted Stripe keys and a final rollout decision remain.
+
+## November 15 - Founder cap three, 30-day trial approved
+The owner explicitly selected exactly three existing verified Google accounts to receive free Lifetime Founder Pro. All three were committed atomically to Firestore with source=founder/status=founder and independently verified. Founder enrollment was closed at the exact cutoff 2026-11-15T18:12:36Z. Every later new install is to receive 30 x 24 hours of Pro features, then Free scoring/history continue; an optional explicit $9.99 one-time Lifetime Pro unlock restores paid features permanently. No automatic charge, no subscriptions. Account-bound trial creation is server-only and create-only, while anonymous installations maintain a local first-launch trial clock. Trial implementation is staged on the Stripe development branch, but production Pro Preview and real paid Checkout are unchanged until release safeguards are complete. See docs/FOUNDER-AND-30DAY-TRIAL-POLICY.md.

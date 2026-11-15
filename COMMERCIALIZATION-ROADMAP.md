@@ -43,7 +43,7 @@ The planned Pro family is:
 - Future advanced line/ball/oil and lane-transition analytics
 - Possible future AI Bowling Coach only if private-app testing proves it useful
 
-Existing qualifying beta testers may receive Founder Pro free for life before Pro Preview ends.
+The three existing verified Google/Firebase accounts were granted Founder Pro free for life on November 15, 2026 (cutoff 18:12:36Z). Founder enrollment is now closed; new installs qualify for a 30-day Pro trial, then $9.99 one-time Lifetime Pro.
 
 ## Telemetry dashboard boundary
 
@@ -330,3 +330,6 @@ The Stripe development branch now includes a separate Cloudflare preview D1 inci
 
 ## November 15 - Full sandbox commercial E2E verified
 The isolated Stripe Preview passed a genuine $9.99 test purchase with a Firestore atomic Checkout reservation, signed webhook Lifetime Pro activation, second-charge prevention, a full Stripe sandbox refund, verified Firestore/D1 risk records and real Telegram alerts, followed by operator review and full disposable Firebase cleanup. Preview checkout and QA fulfillment are OFF, production is unchanged at public-v39.013. This is not production release approval: Founder migration, tax/legal/terms/refund policies, separate production alerts, live restricted Stripe keys and a final rollout decision remain.
+
+## November 15 - Three Founders confirmed and post-cutoff 30-day Pro trial
+The owner approved exactly three pre-cutoff Google/Firebase accounts for free Lifetime Founder Pro. Their Firestore records were atomically created (status=founder, source=founder, no expiration) and independently verified. New installs after the founder cutoff are eligible for 30 days of Pro, with Free local bowling retained indefinitely; Pro afterward requires one explicit $9.99 lifetime purchase. The trial implementation and test coverage are on the isolated Stripe branch only; Pro Preview remains enabled and production payment stays disabled until commercial go-live. See docs/FOUNDER-AND-30DAY-TRIAL-POLICY.md. Server-side Sync entitlement rules still need release-gated enforcement.
