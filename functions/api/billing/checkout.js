@@ -1,6 +1,6 @@
 import {
  json,checkoutEnabled,BillingError,errorResponse,authenticatedFirebaseUser,
- firestoreAccessToken,loadEntitlement,isPermanentPro,stripeRequest,
+ firestoreAccessToken,loadEntitlement,loadBillingLifetime,isPermanentPro,stripeRequest,
  validateStripePrice,allowedCheckoutOrigin,previewSandboxAccountAllowed,PRODUCT_CODE
 } from '../../_billing/core.mjs';
 
@@ -15,6 +15,10 @@ export async function onRequestPost({request,env}){
   const access=await firestoreAccessToken(env);
   const existing=await loadEntitlement(user.uid,access);
   if(isPermanentPro(existing))return json({ok:true,alreadyPro:true});
+  // A prior canonical Stripe payment must never be charged again simply because
+  // entitlement processing was delayed or a user-facing cache is stale.
+  const previous=await loadBillingLifetime(user.uid,access);
+  if(previous)return json({ok:true,alreadyPro:true});
   const price=await stripeRequest(env,'prices/'+encodeURIComponent(env.STRIPE_LIFETIME_PRICE_ID));
   if(!validateStripePrice(price,env))throw new BillingError('Unexpected Stripe price',503);
   // Retry of the same account's checkout within a UTC day reuses one Stripe Session.

@@ -23,6 +23,7 @@ const env={
  }),
  BILLING_CHECKOUT_ENABLED:'true',
  CF_PAGES_BRANCH:'stripe-lifetime-pro-preview',
+ BILLING_PREVIEW_QA_ACTIVE:'true',
 };
 const session={
  id:'cs_test_12345',client_reference_id:'popz_preview_e2e_20261114',
@@ -97,7 +98,7 @@ result=await webhook({request:req('/api/billing/webhook',{method:'POST',body:raw
 assert.equal(result.status,400,'webhook rejects unsigned events');
 
 const originalFetch=globalThis.fetch;
-let saved=null,permanent=null,commitCount=0,checkoutCount=0;
+let saved=null,permanent=null,commitCount=0,checkoutCount=0,canonicalBilling=null;
 const checkoutInputs=[];
 function mockNetwork(url,options={}){
  const uri=String(url);
@@ -112,9 +113,22 @@ function mockNetwork(url,options={}){
   }));
   return Promise.resolve(asJson({error:'NOT_FOUND'},404));
  }
+ if(uri.endsWith('/billing/stripeLifetime')){
+  if(!canonicalBilling)return Promise.resolve(asJson({error:'NOT_FOUND'},404));
+  return Promise.resolve(asJson({fields:{
+   product:{stringValue:PRODUCT_CODE},
+   checkoutSessionId:{stringValue:canonicalBilling.checkoutSessionId},
+   paymentIntentId:{stringValue:canonicalBilling.paymentIntentId},
+   stripeEventId:{stringValue:event.id},
+  },updateTime:'2026-11-14T12:00:00Z'}));
+ }
  if(uri.endsWith('/documents:commit')){
   commitCount+=1;
   saved=JSON.parse(options.body);
+  if(saved.writes.length===2)canonicalBilling={
+   checkoutSessionId:saved.writes[1].update.fields.checkoutSessionId.stringValue,
+   paymentIntentId:saved.writes[1].update.fields.paymentIntentId.stringValue,
+  };
   return Promise.resolve(asJson({writeResults:[{},{}]}));
  }
  if(uri.endsWith('/prices/price_1UbqZiBmwB4QMGDE6oIXNFL0'))
@@ -169,7 +183,12 @@ try{
  assert.equal(saved.writes[0].currentDocument.exists,false);
  assert.equal(saved.writes[0].update.fields.source.stringValue,'stripe');
  assert.equal(saved.writes[1].update.fields.checkoutSessionId.stringValue,session.id);
+ assert.equal(saved.writes[1].currentDocument.exists,false,'canonical payment document must never overwrite an existing purchase');
  assert.equal(JSON.stringify(saved).includes('bowlingHistory'),false);
+ result=await checkout({request,env});
+ assert.equal(result.status,200);
+ assert.equal((await result.json()).alreadyPro,true,'existing paid Stripe record must prevent a second purchase');
+ assert.equal(checkoutCount,2);
 
  permanent='lifetime';
  result=await webhook({request:req('/api/billing/webhook',{

@@ -7,7 +7,7 @@ export const PUBLIC_ORIGIN='https://popzbowling.com';
 export const BILLING_PREVIEW_ORIGIN='https://stripe-lifetime-pro-preview.popzbowling.pages.dev';
 export const BILLING_PREVIEW_BRANCH='stripe-lifetime-pro-preview';
 const BILLING_SANDBOX_QA_UID='popz_preview_e2e_20261114';
-export const previewSandboxAccountAllowed=(uid,env={})=>env.CF_PAGES_BRANCH!==BILLING_PREVIEW_BRANCH || uid===BILLING_SANDBOX_QA_UID;
+export const previewSandboxAccountAllowed=(uid,env={})=>env.CF_PAGES_BRANCH!==BILLING_PREVIEW_BRANCH || (env.BILLING_PREVIEW_QA_ACTIVE==='true' && uid===BILLING_SANDBOX_QA_UID);
 const STRIPE_API='https://api.stripe.com/v1';
 const stripeKeyValid=key=>/^(?:sk|rk)_(?:test|live)_/.test(key||'');
 const stripeIsLive=key=>/^(?:sk|rk)_live_/.test(key||'');
@@ -154,10 +154,61 @@ export async function loadEntitlement(uid,token){
  return {plan:readField(doc.fields,'plan'),status:readField(doc.fields,'status'),
   source:readField(doc.fields,'source'),updateTime:doc.updateTime};
 }
+export async function loadBillingLifetime(uid,token){
+ const res=await fetch(FIRESTORE_API+'/'+pathOf(uid,'billing/stripeLifetime'),{
+  headers:{authorization:'Bearer '+token},
+ });
+ if(res.status===404)return null;
+ if(!res.ok)throw new BillingError('Cannot check original payment record',503);
+ const doc=await res.json();
+ return {product:readField(doc.fields,'product'),
+  checkoutSessionId:readField(doc.fields,'checkoutSessionId'),
+  paymentIntentId:readField(doc.fields,'paymentIntentId'),
+  stripeEventId:readField(doc.fields,'stripeEventId'),
+  updateTime:doc.updateTime};
+}
+// Append-only per-event review documents: repeated webhooks cannot duplicate a review.
+export async function recordBillingReview(uid,token,eventId,{kind,status,referenceId,paymentIntentId,amountCents}){
+ if(!/^[A-Za-z0-9_-]{1,128}$/.test(uid||'')||!/^evt_[A-Za-z0-9_]+$/.test(eventId||''))
+  throw new BillingError('Invalid billing audit reference',400);
+ if(!/^[a-z_]{3,40}$/.test(kind||'')||!status||!referenceId||!paymentIntentId||
+    !Number.isSafeInteger(amountCents)||amountCents<0)
+  throw new BillingError('Invalid billing audit event',422);
+ const name=pathOf(uid,'billing/review_'+eventId);
+ const fields={
+  kind:stringField(kind),status:stringField(status),referenceId:stringField(referenceId),
+  paymentIntentId:stringField(paymentIntentId),stripeEventId:stringField(eventId),
+  amountCents:{integerValue:String(amountCents)},
+  reviewState:stringField('manual_review_required'),updatedAt:stringField(new Date().toISOString()),
+ };
+ const result=await fetch(FIRESTORE_API+'/projects/'+PROJECT_ID+'/databases/(default)/documents:commit',{
+  method:'POST',headers:{authorization:'Bearer '+token,'content-type':'application/json'},
+  body:JSON.stringify({writes:[{update:{name,fields},currentDocument:{exists:false}}]}),
+ });
+ if(result.ok)return {recorded:true};
+ if([400,409,412].includes(result.status)){
+  const prior=await fetch(FIRESTORE_API+'/'+name,{headers:{authorization:'Bearer '+token}});
+  if(prior.ok){
+   const doc=await prior.json();
+   if(readField(doc.fields,'stripeEventId')===eventId &&
+      readField(doc.fields,'referenceId')===referenceId)return {recorded:false};
+  }
+ }
+ throw new BillingError('Billing audit awaiting secure retry',503);
+}
+async function reconcilePaidReplay(uid,token,existing,session,eventId){
+ const prior=await loadBillingLifetime(uid,token);
+ const same=prior?.checkoutSessionId===session.id && prior?.paymentIntentId===session.payment_intent;
+ if(!same)await recordBillingReview(uid,token,eventId,{
+  kind:'duplicate_paid_purchase',status:'needs_review',referenceId:session.id,
+  paymentIntentId:session.payment_intent,amountCents:PRICE_CENTS,
+ });
+ return {already:true,status:existing.status,duplicate:!same};
+}
 export async function grantStripeLifetime(uid,session,eventId,env){
  const token=await firestoreAccessToken(env);
  const existing=await loadEntitlement(uid,token);
- if(isPermanentPro(existing))return {already:true,status:existing.status};
+ if(isPermanentPro(existing))return reconcilePaidReplay(uid,token,existing,session,eventId);
  const now=new Date().toISOString();
  const entitlement={
   name:pathOf(uid,'entitlements/pro'),
@@ -173,15 +224,15 @@ export async function grantStripeLifetime(uid,session,eventId,env){
  };
  const writes=[
   {update:entitlement,currentDocument:existing?{updateTime:existing.updateTime}:{exists:false}},
-  {update:billing},
+  {update:billing,currentDocument:{exists:false}},
  ];
  const res=await fetch(FIRESTORE_API+'/projects/'+PROJECT_ID+'/databases/(default)/documents:commit',{
   method:'POST',headers:{authorization:'Bearer '+token,'content-type':'application/json'},
   body:JSON.stringify({writes}),
  });
- if(res.status===400||res.status===409){
+ if([400,409,412].includes(res.status)){
   const after=await loadEntitlement(uid,token);
-  if(isPermanentPro(after))return {already:true,status:after.status};
+  if(isPermanentPro(after))return reconcilePaidReplay(uid,token,after,session,eventId);
  }
  if(!res.ok)throw new BillingError('Pro activation awaiting secure retry',503);
  return {already:false,status:'lifetime'};
