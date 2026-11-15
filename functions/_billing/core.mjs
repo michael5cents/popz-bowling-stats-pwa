@@ -6,6 +6,8 @@ export const PROJECT_ID='popz-bowling-stats';
 export const PUBLIC_ORIGIN='https://popzbowling.com';
 export const BILLING_PREVIEW_ORIGIN='https://stripe-lifetime-pro-preview.popzbowling.pages.dev';
 export const BILLING_PREVIEW_BRANCH='stripe-lifetime-pro-preview';
+const BILLING_SANDBOX_QA_UID='popz_preview_e2e_20261114';
+export const previewSandboxAccountAllowed=(uid,env={})=>env.CF_PAGES_BRANCH!==BILLING_PREVIEW_BRANCH || uid===BILLING_SANDBOX_QA_UID;
 const STRIPE_API='https://api.stripe.com/v1';
 const stripeKeyValid=key=>/^(?:sk|rk)_(?:test|live)_/.test(key||'');
 const stripeIsLive=key=>/^(?:sk|rk)_live_/.test(key||'');
@@ -90,7 +92,7 @@ export function validatePaidSession(session,env){
  if(!/^cs_(test|live)_[A-Za-z0-9_]+$/.test(session?.id||''))return null;
  const uid=session?.client_reference_id;
  if(!/^[A-Za-z0-9_-]{1,128}$/.test(uid||'')||uid!==session?.metadata?.uid)return null;
- if(session?.metadata?.product!==PRODUCT_CODE)return null;
+ if(session?.metadata?.product!==PRODUCT_CODE||!previewSandboxAccountAllowed(uid,env))return null;
  if(session?.mode!=='payment'||session?.status!=='complete'||session?.payment_status!=='paid')return null;
  if(session?.currency!==CURRENCY||session?.amount_subtotal!==PRICE_CENTS||session?.amount_total!==PRICE_CENTS)return null;
  if(session?.livemode!==stripeIsLive(env.STRIPE_SECRET_KEY))return null;

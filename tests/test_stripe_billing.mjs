@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {createHmac,generateKeyPairSync} from 'node:crypto';
 import {
  PRODUCT_CODE,PRICE_CENTS,checkoutEnabled,validateStripePrice,validatePaidSession,
- verifyStripeSignature,isPermanentPro,BILLING_PREVIEW_ORIGIN,allowedCheckoutOrigin
+ verifyStripeSignature,isPermanentPro,BILLING_PREVIEW_ORIGIN,allowedCheckoutOrigin,previewSandboxAccountAllowed
 } from '../functions/_billing/core.mjs';
 import {onRequestGet as config} from '../functions/api/billing/config.js';
 import {onRequestPost as checkout} from '../functions/api/billing/checkout.js';
@@ -25,8 +25,8 @@ const env={
  CF_PAGES_BRANCH:'stripe-lifetime-pro-preview',
 };
 const session={
- id:'cs_test_12345',client_reference_id:'firebase-user-123',
- metadata:{uid:'firebase-user-123',product:PRODUCT_CODE},mode:'payment',
+ id:'cs_test_12345',client_reference_id:'popz_preview_e2e_20261114',
+ metadata:{uid:'popz_preview_e2e_20261114',product:PRODUCT_CODE},mode:'payment',
  status:'complete',payment_status:'paid',currency:'usd',
  amount_subtotal:999,amount_total:999,livemode:false,
  line_items:{data:[{quantity:1,price:{id:'price_1UbqZiBmwB4QMGDE6oIXNFL0'}}]},
@@ -43,6 +43,8 @@ function req(path,options={}){
 let result=await config({env:{}});
 assert.equal((await result.json()).enabled,false,'default must be sale-disabled');
 assert.equal(checkoutEnabled(env),true);
+assert.equal(previewSandboxAccountAllowed('some_real_user',env),false);
+assert.equal(previewSandboxAccountAllowed('popz_preview_e2e_20261114',env),true);
 assert.equal(allowedCheckoutOrigin(req('/api/billing/checkout'),env),BILLING_PREVIEW_ORIGIN);
 assert.equal(checkoutEnabled({...env,CF_PAGES_BRANCH:'main'}),false,'live main must reject sandbox Stripe key');
 assert.equal(checkoutEnabled({...env,STRIPE_SECRET_KEY:'rk_live_invalid_on_preview'}),false,'sandbox branch must reject live Stripe key');
@@ -58,7 +60,8 @@ assert.equal(isPermanentPro({plan:'pro',status:'founder'}),true);
 assert.equal(isPermanentPro({plan:'pro',status:'complimentary'}),true);
 assert.equal(isPermanentPro({plan:'pro',status:'lifetime'}),true);
 assert.equal(isPermanentPro({plan:'free',status:'lifetime'}),false);
-assert.equal(validatePaidSession(session,env),'firebase-user-123');
+assert.equal(validatePaidSession(session,env),'popz_preview_e2e_20261114');
+assert.equal(validatePaidSession({...session,client_reference_id:'an_actual_user',metadata:{uid:'an_actual_user',product:PRODUCT_CODE}},env),null,'sandbox webhooks must not credit real users');
 const stripeObservedOpenSession={
  ...session,
  id:'cs_test_a0RQD8U3vheNvbAZDa3z93R7KLzWLdeMUCn6AM6t2oHVwuedkePhB1E1KS',
@@ -99,7 +102,7 @@ const checkoutInputs=[];
 function mockNetwork(url,options={}){
  const uri=String(url);
  if(uri.includes('identitytoolkit.googleapis.com/'))
-  return Promise.resolve(asJson({users:[{localId:'firebase-user-123',email:'buyer@example.com',emailVerified:true}]}));
+  return Promise.resolve(asJson({users:[{localId:'popz_preview_e2e_20261114',email:'buyer@example.com',emailVerified:true}]}));
  if(uri==='https://oauth2.googleapis.com/token')
   return Promise.resolve(asJson({access_token:'mock_service_account_token'}));
  if(uri.includes('/documents/users/') && uri.endsWith('/entitlements/pro')){
@@ -120,14 +123,14 @@ function mockNetwork(url,options={}){
   checkoutCount+=1;
   const fields=new URLSearchParams(options.body);
   assert.equal(fields.get('line_items[0][price]'),'price_1UbqZiBmwB4QMGDE6oIXNFL0');
-  assert.equal(fields.get('client_reference_id'),'firebase-user-123');
+  assert.equal(fields.get('client_reference_id'),'popz_preview_e2e_20261114');
   assert.equal(fields.get('metadata[product]'),PRODUCT_CODE);
   assert.equal(fields.get('mode'),'payment');
   assert.equal(fields.get('success_url'),BILLING_PREVIEW_ORIGIN+'/payment/success/');
   assert.equal(fields.get('cancel_url'),BILLING_PREVIEW_ORIGIN+'/payment/cancel/');
   assert.equal(fields.has('payment_method_types[0]'),false,'Stripe should select dynamic payment methods');
   assert.match(fields.get('integration_identifier'),/^popzbowling_[a-z]{8}$/);
-  assert.match(options.headers['idempotency-key'],/^popz_lifetime_firebase-user-123_\d+$/);
+  assert.match(options.headers['idempotency-key'],/^popz_lifetime_popz_preview_e2e_20261114_\d+$/);
   assert.equal(options.headers['stripe-version'],'2026-09-30.endive');
   checkoutInputs.push({idempotencyKey:options.headers['idempotency-key'],label:fields.get('integration_identifier')});
   return Promise.resolve(asJson({id:session.id,url:'https://checkout.stripe.com/c/pay/mock-session'}));
@@ -184,5 +187,5 @@ try{
 }finally{globalThis.fetch=originalFetch}
 const restrictedEnv={...env,STRIPE_SECRET_KEY:'rk_test_restricted_key'};
 assert.equal(checkoutEnabled(restrictedEnv),true,'restricted test keys must be supported');
-assert.equal(validatePaidSession(session,restrictedEnv),'firebase-user-123');
+assert.equal(validatePaidSession(session,restrictedEnv),'popz_preview_e2e_20261114');
 console.log('Stripe sandbox checkout/webhook auth, signatures, strict pricing, dynamic methods, lifetime grant, retries, and Founder protection passed');

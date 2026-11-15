@@ -1,7 +1,7 @@
 import {
  json,checkoutEnabled,BillingError,errorResponse,authenticatedFirebaseUser,
  firestoreAccessToken,loadEntitlement,isPermanentPro,stripeRequest,
- validateStripePrice,allowedCheckoutOrigin,PRODUCT_CODE
+ validateStripePrice,allowedCheckoutOrigin,previewSandboxAccountAllowed,PRODUCT_CODE
 } from '../../_billing/core.mjs';
 
 export async function onRequestPost({request,env}){
@@ -11,6 +11,7 @@ export async function onRequestPost({request,env}){
   // Production must run with a live key on the production branch only.
   const checkoutOrigin=allowedCheckoutOrigin(request,env);
   const user=await authenticatedFirebaseUser(request,env);
+  if(!previewSandboxAccountAllowed(user.uid,env))throw new BillingError('Sandbox checkout restricted to QA account',403);
   const access=await firestoreAccessToken(env);
   const existing=await loadEntitlement(user.uid,access);
   if(isPermanentPro(existing))return json({ok:true,alreadyPro:true});
