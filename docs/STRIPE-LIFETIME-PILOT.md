@@ -64,3 +64,11 @@ The real Stripe sandbox Price and actual unpaid Checkout Session were verified b
 - Test site: https://stripe-lifetime-pro-preview.popzbowling.pages.dev
 - Only the exact stripe-lifetime-pro-preview branch may use sandbox Stripe keys; production must use live-mode Stripe keys only after launch approval. Both are separate from the Personal Bowling app.
 - No complete test-mode Checkout payment or Firebase entitlement fulfillment has occurred. The deployed preview intentionally has checkout disabled. See the dated sandbox verification log.
+
+## Sandbox webhook endpoint and credential installer
+- Created Stripe sandbox endpoint we_1UbtmrBmwB4QMGDEUXnxKUrh delivering signed payment events to the isolated branch alias.
+- Stripe signing secret is configured in Cloudflare Preview, but restricted API key and dedicated Firebase service account are not.
+- Stripe Dashboard sandbox API keys: https://dashboard.stripe.com/apikeys . Create a restricted rk_test_ key with Checkout Sessions Read+Write and Prices Read; never copy into chat.
+- After operator copies it on the Mac, execute node scripts/configure-stripe-preview-key.mjs. It validates the exact Stripe sandbox product/price and uploads securely to Cloudflare Preview without writing to disk.
+- For a dedicated Firebase service-account JSON, execute node scripts/configure-firebase-preview-service-account.mjs /absolute/path/to/file.json after Google Cloud IAM creation with minimum permissions; do not commit the JSON.
+- Keep billing disabled until a completed sandbox purchase has confirmed a verified signed webhook and entitlement grant to the correct Google identity. Production remains unchanged.
