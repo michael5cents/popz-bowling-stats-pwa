@@ -14,9 +14,10 @@ function die(message){
 }
 try{
   const key=execFileSync('/usr/bin/pbpaste',{encoding:'utf8',timeout:5000}).trim();
-  if(!/^rk_test_[A-Za-z0-9_]+$/.test(key)){
+  if(!/^(?:rk|sk)_test_[A-Za-z0-9_]+$/.test(key)){
     die('Copy a Stripe SANDBOX restricted API key (rk_test_...) to clipboard; do not paste it in ChatGPT.');
   }else{
+    if(key.startsWith('sk_test_'))console.warn('NOTICE: Using a sandbox-only unrestricted secret for this test; replace with a restricted rk_test_ key before release.');
     const response=await fetch('https://api.stripe.com/v1/prices/'+encodeURIComponent(STRIPE_PRICE),{
       headers:{authorization:'Bearer '+key,'stripe-version':'2026-09-30.endive'}
     });
@@ -36,7 +37,7 @@ try{
         if(result.error || result.status!==0){
           die('Cloudflare preview secret upload failed. Wrangler exit '+String(result.status));
         }else{
-          console.log('SUCCESS: Verified $9.99 sandbox Price and installed restricted Stripe test key in Cloudflare Preview.');
+          console.log('SUCCESS: Verified $9.99 sandbox Price and installed Stripe SANDBOX key in Cloudflare Preview.');
           console.log('No live-mode settings were changed. The billing checkout switch remains OFF.');
           execFileSync('/usr/bin/pbcopy',{input:'',encoding:'utf8',timeout:5000});
         }
