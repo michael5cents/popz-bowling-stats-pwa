@@ -66,6 +66,9 @@ export async function onRequestPost({request,env}){
      plan:stringField('pro'),status:stringField('trial'),
      source:stringField('installation'),cohortId:stringField('post-founder-2026'),
      trialStartedAt:stringField(window.startedAt),expiresAt:stringField(window.expiresAt),
+     // Trusted server-generated native timestamp used by commercial Firestore
+     // Rules. Browser-local strings are never used for authorization.
+     expiresAtTimestamp:{timestampValue:window.expiresAt},
      updatedAt:stringField(now.toISOString())
     }
    },

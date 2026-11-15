@@ -92,6 +92,9 @@ forbidden=(
   .firebaserc
   firebase.json
   firestore.rules
+  firestore.commercial.rules
+  firebase.commercial.emulator.json
+  emulator-tests
   firestore.indexes.json
   scripts
   monitoring

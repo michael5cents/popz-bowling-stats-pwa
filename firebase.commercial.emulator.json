@@ -1,0 +1,16 @@
+{
+  "firestore": {
+    "database": "(default)",
+    "rules": "firestore.commercial.rules"
+  },
+  "emulators": {
+    "firestore": {
+      "host": "127.0.0.1",
+      "port": 9195
+    },
+    "ui": {
+      "enabled": false
+    },
+    "singleProjectMode": true
+  }
+}

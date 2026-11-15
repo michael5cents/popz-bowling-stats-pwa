@@ -54,6 +54,12 @@ function fakeFetch(url,options={}){
   assert.equal(item.update.fields.status.stringValue,'trial');
   assert.equal(item.update.fields.source.stringValue,'installation');
   assert.equal(item.update.fields.cohortId.stringValue,'post-founder-2026');
+  assert.equal(item.update.fields.expiresAtTimestamp.timestampValue,
+   item.update.fields.expiresAt.stringValue,
+   'Rules must use the server-authored native Firestore expiry');
+  assert.equal(item.update.fields.expiresAtTimestamp.timestampValue,
+   item.update.fields.expiresAt.stringValue,
+   'security rules must use the server-authored native Firestore expiry');
   if(current||forcedConflict)return Promise.resolve(json({error:'CONFLICT'},409));
   writeCount++;
   current=Object.fromEntries(Object.entries(item.update.fields).map(
