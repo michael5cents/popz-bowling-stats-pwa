@@ -33,3 +33,11 @@ Expected: 3 verified Google users, 3 Founder entitlements, 0 proposed writes, ca
 Relevant test files: tests/test_founder_migration.mjs; tests/test_30day_trial_policy.mjs; tests/test_stripe_30day_trial.mjs; tests/test_trial_upgrade_lifetime.mjs; tests/test_entitlements.mjs; tests/test_dist_allowlist.mjs; tests/test_service_worker_cache.mjs.
 
 Trial implementation: trial-policy.mjs and functions/api/billing/trial.js. Trial activation remains gated by BILLING_TRIAL_ENABLED=true, correct Stripe sandbox/live branch isolation, and the Preview QA allowlist. The owner must approve the actual public rollout separately.
+
+
+## November 15 - Test preview deployment verified with enrollment OFF
+- Owner-approved Founder migration: three existing verified Firebase/Google accounts received permanent nonexpiring Founder Pro, atomic create-only, verified 3/3. The cutoff is 2026-11-15T18:12:36Z; cap 3, enrollment closed.
+- Post-cutoff 30-day Pro trial and account-bound create-once entitlement path added in Stripe development branch, with offline first-launch clock and $9.99 one-time Lifetime Pro unlock after expiration. Verified 86/86 automated tests, build-dist static allowlist and Wrangler Pages Functions build.
+- Deployed new development code ONLY to the isolated Cloudflare Pages Preview: https://95374aa5.popzbowling.pages.dev (alias https://stripe-lifetime-pro-preview.popzbowling.pages.dev). GET /api/billing/trial returned enabled=false, trialDays=30, Founder cutoff=2026-11-15T18:12:36.000Z. POST trial enrollment returned HTTP 503. GET billing config enabled=false, POST Checkout returned HTTP 503.
+- Production https://popzbowling.com remained public-v39.013 with Pro Preview still on. No live payments, subscriptions, trial enrollments or customer bowling-history changes. Only the three explicitly approved permanent Founder entitlement documents were changed in live Firebase.
+- Live rollout prerequisites remain: actual payment account and separate production reviews, Google Sync server security-rule gating, offline phone/tablet QA, tax/legal refund/chargeback policy, and owner's explicit commercial launch approval. The client-local anonymous reinstall limitation remains documented.
