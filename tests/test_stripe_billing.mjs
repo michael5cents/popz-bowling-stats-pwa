@@ -24,6 +24,7 @@ const env={
  BILLING_CHECKOUT_ENABLED:'true',
  CF_PAGES_BRANCH:'stripe-lifetime-pro-preview',
  BILLING_PREVIEW_QA_ACTIVE:'true',
+ BILLING_PREVIEW_QA_UID:'popz_preview_e2e_20261114',
 };
 const session={
  id:'cs_test_12345',client_reference_id:'popz_preview_e2e_20261114',
@@ -45,6 +46,8 @@ let result=await config({env:{}});
 assert.equal((await result.json()).enabled,false,'default must be sale-disabled');
 assert.equal(checkoutEnabled(env),true);
 assert.equal(previewSandboxAccountAllowed('some_real_user',env),false);
+assert.equal(previewSandboxAccountAllowed('popz_preview_e2e_20261114',{...env,BILLING_PREVIEW_QA_UID:''}),false,'missing QA UID must fail closed');
+assert.equal(previewSandboxAccountAllowed('popz_preview_e2e_20261114',{...env,BILLING_PREVIEW_QA_UID:'another_test_uid'}),false,'old QA identities may never be reused');
 assert.equal(previewSandboxAccountAllowed('popz_preview_e2e_20261114',env),true);
 assert.equal(allowedCheckoutOrigin(req('/api/billing/checkout'),env),BILLING_PREVIEW_ORIGIN);
 assert.equal(checkoutEnabled({...env,CF_PAGES_BRANCH:'main'}),false,'live main must reject sandbox Stripe key');

@@ -13,6 +13,7 @@ const env={
  BILLING_REVIEW_DB:reviewDB,
  CF_PAGES_BRANCH:'stripe-lifetime-pro-preview',
  BILLING_PREVIEW_QA_ACTIVE:'true',
+ BILLING_PREVIEW_QA_UID:'popz_preview_e2e_20261114',
  STRIPE_SECRET_KEY:'rk_test_mock_review',
  STRIPE_WEBHOOK_SECRET:'whsec_review_fixture',
  STRIPE_LIFETIME_PRICE_ID:'price_1UbqZiBmwB4QMGDE6oIXNFL0',
