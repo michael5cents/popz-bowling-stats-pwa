@@ -1,16 +1,15 @@
 import {
  json,checkoutEnabled,BillingError,errorResponse,authenticatedFirebaseUser,
  firestoreAccessToken,loadEntitlement,isPermanentPro,stripeRequest,
- validateStripePrice,PUBLIC_ORIGIN,PRODUCT_CODE
+ validateStripePrice,allowedCheckoutOrigin,PRODUCT_CODE
 } from '../../_billing/core.mjs';
 
 export async function onRequestPost({request,env}){
  try{
   if(!checkoutEnabled(env))throw new BillingError('Billing disabled',503);
-  const url=new URL(request.url);
-  // Never charge from a preview deployment or untrusted origin.
-  if(url.origin!==PUBLIC_ORIGIN || (request.headers.get('origin') && request.headers.get('origin')!==PUBLIC_ORIGIN))
-   throw new BillingError('Unsupported purchase origin',403);
+  // Only the specific sandbox branch may use test Stripe keys.
+  // Production must run with a live key on the production branch only.
+  const checkoutOrigin=allowedCheckoutOrigin(request,env);
   const user=await authenticatedFirebaseUser(request,env);
   const access=await firestoreAccessToken(env);
   const existing=await loadEntitlement(user.uid,access);
@@ -35,8 +34,8 @@ export async function onRequestPost({request,env}){
     'metadata[product]':PRODUCT_CODE,
     'payment_intent_data[metadata][uid]':user.uid,
     'payment_intent_data[metadata][product]':PRODUCT_CODE,
-    success_url:PUBLIC_ORIGIN+'/payment/success/',
-    cancel_url:PUBLIC_ORIGIN+'/payment/cancel/',
+    success_url:checkoutOrigin+'/payment/success/',
+    cancel_url:checkoutOrigin+'/payment/cancel/',
    }
   });
   if(!checkout?.id?.startsWith('cs_')||!checkout?.url?.startsWith('https://checkout.stripe.com/'))

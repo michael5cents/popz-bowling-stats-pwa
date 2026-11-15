@@ -59,3 +59,8 @@ Stripe webhook destination when ready: https://popzbowling.com/api/billing/webho
 
 ## Sandbox Checkout verification (continued November 14)
 The real Stripe sandbox Price and actual unpaid Checkout Session were verified by Stripe API, and Wrangler local Pages endpoints were smoke-tested with checkout disabled. See docs/STRIPE-SANDBOX-VERIFICATION-2026-11-14.md for the exact product/price IDs, test session details, integration refinements, and remaining secure preview credentials. Nothing was deployed or charged.
+
+## Secure sandbox preview
+- Test site: https://stripe-lifetime-pro-preview.popzbowling.pages.dev
+- Only the exact stripe-lifetime-pro-preview branch may use sandbox Stripe keys; production must use live-mode Stripe keys only after launch approval. Both are separate from the Personal Bowling app.
+- No complete test-mode Checkout payment or Firebase entitlement fulfillment has occurred. The deployed preview intentionally has checkout disabled. See the dated sandbox verification log.

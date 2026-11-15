@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {createHmac,generateKeyPairSync} from 'node:crypto';
 import {
  PRODUCT_CODE,PRICE_CENTS,checkoutEnabled,validateStripePrice,validatePaidSession,
- verifyStripeSignature,isPermanentPro
+ verifyStripeSignature,isPermanentPro,BILLING_PREVIEW_ORIGIN,allowedCheckoutOrigin
 } from '../functions/_billing/core.mjs';
 import {onRequestGet as config} from '../functions/api/billing/config.js';
 import {onRequestPost as checkout} from '../functions/api/billing/checkout.js';
@@ -22,6 +22,7 @@ const env={
   token_uri:'https://oauth2.googleapis.com/token',
  }),
  BILLING_CHECKOUT_ENABLED:'true',
+ CF_PAGES_BRANCH:'stripe-lifetime-pro-preview',
 };
 const session={
  id:'cs_test_12345',client_reference_id:'firebase-user-123',
@@ -37,11 +38,17 @@ function sign(raw,timestamp=Math.floor(Date.now()/1000),secret=env.STRIPE_WEBHOO
  return 't='+timestamp+',v1='+createHmac('sha256',secret).update(timestamp+'.'+raw).digest('hex');
 }
 function req(path,options={}){
- return new Request('https://popzbowling.com'+path,options);
+ return new Request(BILLING_PREVIEW_ORIGIN+path,options);
 }
 let result=await config({env:{}});
 assert.equal((await result.json()).enabled,false,'default must be sale-disabled');
 assert.equal(checkoutEnabled(env),true);
+assert.equal(allowedCheckoutOrigin(req('/api/billing/checkout'),env),BILLING_PREVIEW_ORIGIN);
+assert.equal(checkoutEnabled({...env,CF_PAGES_BRANCH:'main'}),false,'live main must reject sandbox Stripe key');
+assert.equal(checkoutEnabled({...env,STRIPE_SECRET_KEY:'rk_live_invalid_on_preview'}),false,'sandbox branch must reject live Stripe key');
+assert.equal(checkoutEnabled({...env,CF_PAGES_BRANCH:'unknown-branch'}),false);
+assert.throws(()=>allowedCheckoutOrigin(new Request('https://popzbowling.com/api/billing/checkout'),env),/Unsupported purchase origin/);
+assert.throws(()=>allowedCheckoutOrigin(req('/api/billing/checkout',{headers:{origin:'https://malicious.example'}}),env),/Unsupported purchase origin/);
 assert.equal(PRICE_CENTS,999);
 assert.equal(validateStripePrice({id:'price_1UbqZiBmwB4QMGDE6oIXNFL0',active:true,type:'one_time',currency:'usd',unit_amount:999,livemode:false,product:'prod_Vd6n0W8JakrQl9'},env),true);
 assert.equal(validateStripePrice({id:'price_1UbqZiBmwB4QMGDE6oIXNFL0',active:true,type:'one_time',currency:'usd',unit_amount:9990,livemode:false,product:'prod_Vd6n0W8JakrQl9'},env),false);
@@ -116,6 +123,8 @@ function mockNetwork(url,options={}){
   assert.equal(fields.get('client_reference_id'),'firebase-user-123');
   assert.equal(fields.get('metadata[product]'),PRODUCT_CODE);
   assert.equal(fields.get('mode'),'payment');
+  assert.equal(fields.get('success_url'),BILLING_PREVIEW_ORIGIN+'/payment/success/');
+  assert.equal(fields.get('cancel_url'),BILLING_PREVIEW_ORIGIN+'/payment/cancel/');
   assert.equal(fields.has('payment_method_types[0]'),false,'Stripe should select dynamic payment methods');
   assert.match(fields.get('integration_identifier'),/^popzbowling_[a-z]{8}$/);
   assert.match(options.headers['idempotency-key'],/^popz_lifetime_firebase-user-123_\d+$/);
@@ -130,7 +139,7 @@ function mockNetwork(url,options={}){
 globalThis.fetch=mockNetwork;
 try{
  const request=req('/api/billing/checkout',{
-  method:'POST',headers:{authorization:'Bearer valid.jwt','origin':'https://popzbowling.com'},body:'{}'
+  method:'POST',headers:{authorization:'Bearer valid.jwt','origin':BILLING_PREVIEW_ORIGIN},body:'{}'
  });
  result=await checkout({request,env});
  assert.equal(result.status,200);

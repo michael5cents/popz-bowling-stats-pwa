@@ -4,6 +4,8 @@ export const PRICE_CENTS=999;
 export const CURRENCY='usd';
 export const PROJECT_ID='popz-bowling-stats';
 export const PUBLIC_ORIGIN='https://popzbowling.com';
+export const BILLING_PREVIEW_ORIGIN='https://stripe-lifetime-pro-preview.popzbowling.pages.dev';
+export const BILLING_PREVIEW_BRANCH='stripe-lifetime-pro-preview';
 const STRIPE_API='https://api.stripe.com/v1';
 const stripeKeyValid=key=>/^(?:sk|rk)_(?:test|live)_/.test(key||'');
 const stripeIsLive=key=>/^(?:sk|rk)_live_/.test(key||'');
@@ -18,8 +20,23 @@ export function json(body,status=200){
 export class BillingError extends Error{
  constructor(message,status=500){super(message);this.status=status}
 }
+export function billingEnvironmentSafe(env={}){
+ if(env.CF_PAGES_BRANCH===BILLING_PREVIEW_BRANCH)return /^(?:sk|rk)_test_/.test(env.STRIPE_SECRET_KEY||'');
+ if(env.CF_PAGES_BRANCH==='main')return /^(?:sk|rk)_live_/.test(env.STRIPE_SECRET_KEY||'');
+ return false;
+}
+export function allowedCheckoutOrigin(request,env={}){
+ const origin=new URL(request.url).origin;
+ const requestOrigin=request.headers.get('origin');
+ if(requestOrigin && requestOrigin!==origin)throw new BillingError('Unsupported purchase origin',403);
+ if(origin===BILLING_PREVIEW_ORIGIN && env.CF_PAGES_BRANCH===BILLING_PREVIEW_BRANCH && billingEnvironmentSafe(env))
+  return BILLING_PREVIEW_ORIGIN;
+ if(origin===PUBLIC_ORIGIN && env.CF_PAGES_BRANCH==='main' && billingEnvironmentSafe(env))
+  return PUBLIC_ORIGIN;
+ throw new BillingError('Unsupported purchase origin',403);
+}
 export function webhookConfigured(env={}){
- return stripeKeyValid(env.STRIPE_SECRET_KEY)
+ return billingEnvironmentSafe(env)
   && /^whsec_/.test(env.STRIPE_WEBHOOK_SECRET||'')
   && /^price_[A-Za-z0-9]+$/.test(env.STRIPE_LIFETIME_PRICE_ID||'')
   && !!env.FIREBASE_SERVICE_ACCOUNT_JSON;
