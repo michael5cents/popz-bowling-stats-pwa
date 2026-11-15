@@ -24,13 +24,13 @@ The alternative ruleset, firestore.commercial.rules, is a release candidate to e
 
 Executed the **real Firebase Local Firestore Emulator**, not just text-pattern or mock checks. The isolated demo project was demo-popz-bowling-commercial-qa, localhost 127.0.0.1:9195. It used the Mac's existing Homebrew OpenJDK 26 and a temporary npm cache under ~/.cache/popz-firestore-rules-qa containing firebase-tools 15.36.0, firebase 12.19.0 and @firebase/rules-unit-testing 5.0.0. These dev dependencies were NOT installed in the website repository or published.
 
-Result: **153 allow/deny emulator assertions passed**, covering:
+Result: **154 allow/deny emulator assertions passed**, covering:
 - permanent Founder, complimentary, and paid Lifetime Pro owner access;
 - active trial and active bounded paid Pro access;
 - expired trial/active, missing entitlement, free status, malformed expiry types, and missing expiry all denied cloud access;
 - unauthenticated and other-account access denied;
 - direct client escalation to Founder, trial extension, and changes to billing audit records denied;
-- ordinary profile, session, tombstone operations and a six-session write batch still work for authorized accounts;
+- ordinary profile, session, tombstone operations and a six-session batch and an app-sized 400-session write batch still work for authorized accounts;
 - an expired user's older bowling history remains stored and readable by an isolated admin-only test fixture, not deleted by entitlement expiry.
 
 Firebase denied-operation messages in the test log are expected because a negative access test must produce PERMISSION_DENIED. The final emulator exited successfully.

@@ -89,6 +89,13 @@ try{
   for(let i=0;i<6;i++)
    batch.set(doc(db,'users',uid,'sessions','bulk'+i),{data:{game:i}});
   await pass(batch.commit());
+  if(uid==='founder'){
+   // App chunks large history uploads into 400 operations.
+   const big=writeBatch(db);
+   for(let i=0;i<400;i++)
+    big.set(doc(db,'users',uid,'sessions','history'+i),{data:{games:[]}});
+   await pass(big.commit());
+  }
  }
  for(const uid of [
   'trial_expired','active_expired','trial_no_native_expiry','trial_wrong_type',
