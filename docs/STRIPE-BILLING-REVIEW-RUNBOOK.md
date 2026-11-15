@@ -40,3 +40,27 @@ Database migration is billing-migrations/0001-review-queue.sql. It was applied d
 Before real sales: provision a **separate production review database and distinct production-only owner/monitor tokens**, restrict production admin access, test delivery/incident lifecycle with a fresh disposable Firebase QA identity, verify real signed Stripe refund/dispute events write both private Firestore and operator D1, and define a reliable manual stale-reservation reconciliation procedure. Do not enable live billing, merge the Stripe branch, or change Founder entitlements without user approval.
 
 Test source: tests/test_stripe_review_inbox.mjs and the expanded tests/test_stripe_billing_reconciliation.mjs / tests/test_stripe_checkout_reservation.mjs; they exercise actual SQLite schema and authentication/role boundaries.
+
+
+## Verified PopzVPS timer and actual Telegram smoke test — November 15
+
+The MacBook deployed the new monitor files on PopzVPS without altering the established production health monitor. The PopzVPS account could not edit its crontab because the cron spool rejects user writes, so the monitoring service uses a supported user-level systemd timer with lingering already enabled.
+
+Unit source (checked into this branch):
+- monitoring/systemd/popz-billing-alerts.service
+- monitoring/systemd/popz-billing-alerts.timer
+
+Installed unit links under the existing PopzVPS user systemd manager:
+- popz-billing-alerts.timer is enabled and active, running once per minute
+- popz-billing-alerts.service is a restricted oneshot service; its latest manual run returned success
+- original popz-monitor.timer remains active and was not altered
+
+Safe VPS status commands:
+
+    systemctl --user status popz-billing-alerts.timer --no-pager
+    systemctl --user list-timers --all --no-pager
+    journalctl --user -u popz-billing-alerts.service -n 25 --no-pager
+
+Real isolated sandbox alert smoke test: inserted one synthetic, non-customer checkout_uncertain incident with ID checkout_2a86b9c563b2f06b5c33b404db96fb94 into the separate preview-only billing review database. PopzVPS read that one pending item and sent one Telegram bot message accepted by the Telegram API. The monitor then acknowledged the item, and the owner CLI independently verified the alert was marked notified and removed from pending. The owner CLI acknowledged and resolved the synthetic incident with a note; it remains in the audit history with review_state=resolved, the open queue is empty, and repeated resolution is idempotent. There was no Stripe payment, no real Firebase identity and no change to scoring.
+
+No real Stripe risk-event-to-Telegram test has occurred with an active disposable Firebase account, and no production alert service has been enabled. The sandbox unit must not be treated as the live production delivery channel until production D1, distinct tokens and approval are configured.

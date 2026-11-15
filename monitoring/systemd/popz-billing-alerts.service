@@ -1,0 +1,14 @@
+[Unit]
+Description=Popz Bowling Stripe Sandbox Billing Telegram Alerts
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/michael5cents/.local/lib/popz-bowling-monitor
+ExecStart=/home/michael5cents/.local/lib/popz-bowling-monitor/run-billing-telegram.sh
+TimeoutStartSec=75
+UMask=0077
+NoNewPrivileges=true
+StandardOutput=journal
+StandardError=journal

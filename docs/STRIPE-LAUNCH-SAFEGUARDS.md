@@ -64,3 +64,7 @@ Do not merge, deploy to production, enable real Stripe payments, issue customer 
 - PopzVPS reuses the existing Telegram bot but receives only a scoped monitor token and nonidentifying incident summary. Every alert remains pending until the Telegram API confirms delivery, then the VPS marks it notified. The owner can use the protected Mac CLI to list open/all reviews and acknowledge or resolve with a note.
 - The preview-only D1 binding and IAM roles are separate from the production app and scoring databases. The route is available only on the exact preview alias with a cryptographically random bearer token; the monitor cannot access customer UIDs or resolve cases, and the owner role cannot impersonate notification delivery.
 - Neither the alerting system nor the owner API can issue refunds, change Pro or Founder grants, or edit bowling records. See docs/STRIPE-BILLING-REVIEW-RUNBOOK.md.
+
+
+## Live sandbox notification smoke test
+On November 15, the isolated preview D1 review endpoint was verified with both owner and monitor credentials, then a single synthetic checkout_uncertain incident was delivered to the existing PopzVPS Telegram bot and marked notified. The owner CLI acknowledged/resolved it and retained the audit record. A separate user-level systemd timer now runs the sandbox monitor once per minute without modifying the existing health monitor. All 82 automated tests passed before this deployment. See docs/STRIPE-BILLING-REVIEW-RUNBOOK.md for exact commands and still-open production readiness work.

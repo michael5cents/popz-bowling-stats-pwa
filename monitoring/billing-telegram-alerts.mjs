@@ -67,4 +67,4 @@ for(const incident of await get()){
  await mark(incident.id);
  n++;
 }
-console.log('Popz Bowling billing review notifications delivered: '+n);
+if(n>0)console.log('Popz Bowling billing review notifications delivered: '+n);

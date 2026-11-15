@@ -1,0 +1,11 @@
+[Unit]
+Description=Check Popz Bowling Stripe Sandbox Billing Reviews Every Minute
+
+[Timer]
+OnCalendar=*-*-* *:*:00
+AccuracySec=15s
+Persistent=true
+Unit=popz-billing-alerts.service
+
+[Install]
+WantedBy=timers.target
