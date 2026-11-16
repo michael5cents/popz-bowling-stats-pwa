@@ -27,6 +27,7 @@ migrations_dir = "runtime-migrations"
 
 [env.production.vars]
 LIVE_SHARE_PREVIEW = "true"
+FIREBASE_WEB_API_KEY = "AIzaSyAtCTfQHIBy_YdKFWh9qa3UFYgjh9KFz6c" # gitleaks:allow -- public Firebase web client API key
 BILLING_CHECKOUT_ENABLED = "false"
 BILLING_TRIAL_ENABLED = "false"
 BILLING_REVIEW_PRODUCTION_ENABLED = "false"
