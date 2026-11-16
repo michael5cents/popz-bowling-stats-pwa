@@ -7,10 +7,12 @@ export function addRoll(g,pins){if(gameComplete(g))throw Error('Game is complete
 const cleanSetupText=v=>String(v??'').trim().replace(/\s+/g,' ');
 const cleanBoard=v=>{if(v===null||v===undefined||v==='')return null;const n=Number(v);return Number.isFinite(n)&&n>=0&&n<=60?Math.round(n*2)/2:null};
 export function normalizeFirstBallSetup(setup={}){return{ballUsed:cleanSetupText(setup.ballUsed),standBoard:cleanBoard(setup.standBoard),targetBoard:cleanBoard(setup.targetBoard)}}
+export function laneNumbers(value=''){const text=String(value??'').trim(),match=text.match(/^(\d{1,3})(?:\s*[-–—\/,]\s*(\d{1,3}))?$/);return match?[...new Set([match[1],match[2]].filter(Boolean))]:[]}
+export function frameLane(g,index=activeFrameIndex(g)){const lanes=laneNumbers(g?.lane);if(!lanes.length)return'';const start=lanes.includes(String(g?.startingLane??''))?String(g.startingLane):lanes[0];return lanes[(lanes.indexOf(start)+Math.max(0,Number(index)||0))%lanes.length]}
 export function getCurrentFirstBallSetup(g,fallbackBall=''){const current=g?.currentFirstBallSetup;if(current)return normalizeFirstBallSetup(current);for(let i=(g?.frames?.length||0)-1;i>=0;i--){const saved=g.frames[i]?.firstBallSetup;if(saved)return normalizeFirstBallSetup(saved)}return normalizeFirstBallSetup({ballUsed:g?.ballUsed??fallbackBall})}
 export function setCurrentFirstBallSetup(g,setup={}){if(!g)return normalizeFirstBallSetup(setup);g.currentFirstBallSetup=normalizeFirstBallSetup(setup);return g.currentFirstBallSetup}
 export function captureFirstBallSetup(g,index=activeFrameIndex(g),fallbackBall=''){const f=g?.frames?.[index];if(!f||f.rolls?.length)return f?.firstBallSetup||null;const setup=getCurrentFirstBallSetup(g,fallbackBall);if(setup.ballUsed||setup.standBoard!=null||setup.targetBoard!=null)f.firstBallSetup={...setup};return f.firstBallSetup||null}
-export function undoRoll(g){for(let i=9;i>=0;i--){if(g.frames[i].rolls.length){g.frames[i].rolls.pop();if(g.frames[i].rolls.length===0){delete g.frames[i].leave;delete g.frames[i].split;delete g.frames[i].firstBallSetup;}return true;}}return false;}
+export function undoRoll(g){for(let i=9;i>=0;i--){if(g.frames[i].rolls.length){g.frames[i].rolls.pop();if(g.frames[i].rolls.length===0){delete g.frames[i].leave;delete g.frames[i].split;delete g.frames[i].firstBallSetup;delete g.frames[i].firstBallLane;}return true;}}return false;}
 export function rollMark(frame,index,j){const r=frame.rolls,n=r[j];if(n==null)return'';if(index<9){if(j===0&&n===10)return'X';if(j===1&&r[0]+n===10)return'/';return n===0?'-':String(n);}if(n===0)return'-';if(j===0&&n===10)return'X';if(j===1){if(r[0]!==10&&r[0]+n===10)return'/';if(n===10)return'X';}if(j===2){if(n===10)return'X';if(r[0]===10&&r[1]!==10&&r[1]+n===10)return'/';}return String(n);}
 function flatData(g){const flat=[],starts=[];g.frames.forEach(f=>{starts.push(flat.length);flat.push(...f.rolls)});return{flat,starts};}
 export function scoreGame(g){const{flat,starts}=flatData(g),cum=Array(10).fill(null);let total=0;for(let i=0;i<10;i++){const r=g.frames[i].rolls,start=starts[i];let fs=null;if(i<9){if(r[0]===10){if(flat[start+1]!=null&&flat[start+2]!=null)fs=10+flat[start+1]+flat[start+2];}else if(r.length>=2){if(r[0]+r[1]===10){if(flat[start+2]!=null)fs=10+flat[start+2];}else fs=r[0]+r[1];}}else if(frameComplete(g.frames[9],9))fs=r.reduce((a,b)=>a+b,0);if(fs==null)break;total+=fs;cum[i]=total;}return{total,cumulative:cum,final:gameComplete(g)?total:null};}
@@ -22,10 +24,68 @@ export function isSplitLeave(pins=[]){const a=[...new Set(pins.map(Number))].fil
 export function leaveLabel(pins=[]){return pins?.length?[...pins].sort((a,b)=>a-b).join('-'):'—';}
 const metaText=v=>String(v??'').trim().replace(/\s+/g,' ');
 const metaKey=v=>metaText(v).toLocaleLowerCase();
-function metaValue(s,g,kind){if(kind==='center')return metaText(s.center);if(kind==='oil')return metaText(s.oilPattern);if(kind==='lane')return metaText(g?.lane);if(kind==='ball')return metaText(g?.ballUsed??s.ballUsed);return'';}
-export function filterSessionsByMeta(sessions=[],filters={}){return sessions.filter(s=>!filters.center||metaKey(metaValue(s,null,'center'))===metaKey(filters.center)).filter(s=>!filters.oil||metaKey(metaValue(s,null,'oil'))===metaKey(filters.oil)).map(s=>({...s,games:(s.games||[]).filter(g=>(!filters.lane||metaKey(metaValue(s,g,'lane'))===metaKey(filters.lane))&&(!filters.ball||metaKey(metaValue(s,g,'ball'))===metaKey(filters.ball)))})).filter(s=>s.games.length);}
-export function metadataValues(sessions=[],kind){const vals=new Map();for(const s of sessions){if(kind==='center'||kind==='oil'){const v=metaValue(s,null,kind),k=metaKey(v);if(k)vals.set(k,v);continue}for(const g of(s.games||[])){if(!gameComplete(g))continue;const v=metaValue(s,g,kind),k=metaKey(v);if(k)vals.set(k,v)}}return[...vals.values()].sort((a,b)=>a.localeCompare(b));}
-export function summarizeBreakdown(sessions=[],kind){return metadataValues(sessions,kind).map(label=>{const subset=(kind==='center'||kind==='oil')?sessions.filter(s=>metaKey(metaValue(s,null,kind))===metaKey(label)):sessions.map(s=>({...s,games:(s.games||[]).filter(g=>metaKey(metaValue(s,g,kind))===metaKey(label))})).filter(s=>s.games.length),st=summarizeSessions(subset);return{label,...st}}).filter(x=>x.games).sort((a,b)=>b.games-a.games||(b.average??0)-(a.average??0)||a.label.localeCompare(b.label));}
+function metaValue(s,g,kind){if(kind==='center')return metaText(s?.center);if(kind==='oil')return metaText(s?.oilPattern);if(kind==='lane')return metaText(g?.lane);if(kind==='ball')return metaText(g?.ballUsed??s?.ballUsed);return'';}
+function hasTrackedFirstBallSetups(g){return(g?.frames||[]).slice(0,10).some(f=>!!f?.firstBallSetup);}
+export function wholeGameBall(s,g){
+ if(!gameComplete(g))return'';
+ const frames=(g?.frames||[]).slice(0,10),tracked=hasTrackedFirstBallSetups(g);
+ if(!tracked)return metaValue(s,g,'ball');
+ if(frames.length<10||frames.some(f=>!f?.rolls?.length||!f?.firstBallSetup))return'';
+ const balls=frames.map(f=>metaText(normalizeFirstBallSetup(f.firstBallSetup).ballUsed));
+ if(balls.some(v=>!v))return'';
+ return balls.every(v=>metaKey(v)===metaKey(balls[0]))?balls[0]:'';
+}
+export function firstBallFrameRows(sessions=[]){
+ const rows=[];
+ for(const s of sessions)for(const g of(s.games||[])){
+  if(!gameComplete(g))continue;
+  for(const [i,f] of(g.frames||[]).slice(0,10).entries()){
+   if(!f?.rolls?.length||!f.firstBallSetup)continue;
+   const setup=normalizeFirstBallSetup(f.firstBallSetup),leave=(f.leave||[]).map(Number).filter(n=>n>=1&&n<=10).sort((a,b)=>a-b),firstPins=Number(f.rolls[0]);
+   rows.push({sessionId:s.id,gameId:g.id,frameNumber:i+1,ballUsed:setup.ballUsed,standBoard:setup.standBoard,targetBoard:setup.targetBoard,lane:metaValue(s,g,'lane'),actualLane:String(f.firstBallLane||''),center:metaValue(s,g,'center'),oil:metaValue(s,g,'oil'),firstPins,strike:firstPins===10,tenPinLeave:leave.length===1&&leave[0]===10,leave,spareOpportunity:firstPins!==10&&f.rolls.length>=2,spareMade:firstPins!==10&&f.rolls.length>=2&&firstPins+Number(f.rolls[1])===10});
+  }
+ }
+ return rows;
+}
+export function filterFirstBallRows(rows=[],filters={}){
+ return rows.filter(r=>!filters.center||metaKey(r.center)===metaKey(filters.center))
+  .filter(r=>!filters.oil||metaKey(r.oil)===metaKey(filters.oil))
+  .filter(r=>!filters.lane||metaKey(r.lane)===metaKey(filters.lane))
+  .filter(r=>!filters.ball||metaKey(r.ballUsed)===metaKey(filters.ball));
+}
+function summarizeTrackedRows(rows=[]){
+ const frames=rows.length,strikes=rows.filter(r=>r.strike).length,firstPins=rows.reduce((a,r)=>a+(Number.isFinite(r.firstPins)?r.firstPins:0),0),tenPinLeaves=rows.filter(r=>r.tenPinLeave).length,spareRows=rows.filter(r=>r.spareOpportunity),spareMade=spareRows.filter(r=>r.spareMade).length;
+ return{frames,strikes,strikePct:frames?strikes/frames*100:null,avgFirstPins:frames?firstPins/frames:null,tenPinLeaves,spareOpps:spareRows.length,spareMade,sparePct:spareRows.length?spareMade/spareRows.length*100:null};
+}
+export function summarizeBallPerformance(sessions=[],filters={}){
+ const context=filterSessionsByMeta(sessions,{center:filters.center||'',lane:filters.lane||'',oil:filters.oil||''}),by=new Map(),ensure=label=>{const key=metaKey(label);if(!key)return null;if(!by.has(key))by.set(key,{label,rows:[],scores:[],legacyGames:0,trackedFullGames:0});return by.get(key)};
+ const rows=filterFirstBallRows(firstBallFrameRows(context),{ball:filters.ball||''});
+ for(const r of rows){const item=ensure(r.ballUsed);if(item)item.rows.push(r)}
+ for(const s of context)for(const g of(s.games||[])){if(!gameComplete(g))continue;const ball=wholeGameBall(s,g);if(!ball||filters.ball&&metaKey(ball)!==metaKey(filters.ball))continue;const item=ensure(ball);if(!item)continue;item.scores.push(scoreGame(g).final);hasTrackedFirstBallSetups(g)?item.trackedFullGames++:item.legacyGames++}
+ return[...by.values()].map(item=>{const f=summarizeTrackedRows(item.rows),sum=item.scores.reduce((a,b)=>a+b,0);return{label:item.label,trackedFrames:f.frames,fullGames:item.scores.length,fullGameAverage:item.scores.length?sum/item.scores.length:null,highGame:item.scores.length?Math.max(...item.scores):null,legacyGames:item.legacyGames,trackedFullGames:item.trackedFullGames,strikes:f.strikes,strikePct:f.strikePct,avgFirstPins:f.avgFirstPins,tenPinLeaves:f.tenPinLeaves}}).sort((a,b)=>b.trackedFrames-a.trackedFrames||b.fullGames-a.fullGames||a.label.localeCompare(b.label));
+}
+export function summarizeLinePerformance(sessions=[],filters={}){
+ const context=filterSessionsByMeta(sessions,{center:filters.center||'',lane:filters.lane||'',oil:filters.oil||''}),rows=filterFirstBallRows(firstBallFrameRows(context),{ball:filters.ball||''}),by=new Map();
+ for(const r of rows){if(!r.ballUsed||r.standBoard==null&&r.targetBoard==null)continue;const key=[r.ballUsed,r.standBoard??'',r.targetBoard??'',r.lane,r.actualLane||'',r.center,r.oil].map(metaKey).join('|');if(!by.has(key))by.set(key,{label:r.ballUsed,standBoard:r.standBoard,targetBoard:r.targetBoard,lane:r.lane,actualLane:r.actualLane||'',center:r.center,oil:r.oil,rows:[]});by.get(key).rows.push(r)}
+ return[...by.values()].map(item=>({...item,...summarizeTrackedRows(item.rows)})).sort((a,b)=>b.frames-a.frames||a.label.localeCompare(b.label)||(a.standBoard??0)-(b.standBoard??0)||(a.targetBoard??0)-(b.targetBoard??0));
+}
+export function filterSessionsByMeta(sessions=[],filters={}){
+ return sessions.filter(s=>!filters.center||metaKey(metaValue(s,null,'center'))===metaKey(filters.center))
+  .filter(s=>!filters.oil||metaKey(metaValue(s,null,'oil'))===metaKey(filters.oil))
+  .map(s=>({...s,games:(s.games||[]).filter(g=>(!filters.lane||metaKey(metaValue(s,g,'lane'))===metaKey(filters.lane))&&(!filters.ball||metaKey(wholeGameBall(s,g))===metaKey(filters.ball)))})).filter(s=>s.games.length);
+}
+export function metadataValues(sessions=[],kind){
+ const vals=new Map(),add=v=>{const x=metaText(v),k=metaKey(x);if(k)vals.set(k,x)};
+ for(const s of sessions){
+  if(kind==='center'||kind==='oil'){add(metaValue(s,null,kind));continue}
+  for(const g of(s.games||[])){if(!gameComplete(g))continue;if(kind==='ball'&&hasTrackedFirstBallSetups(g)){for(const f of(g.frames||[]).slice(0,10))if(f?.firstBallSetup)add(normalizeFirstBallSetup(f.firstBallSetup).ballUsed)}else add(metaValue(s,g,kind))}
+ }
+ return[...vals.values()].sort((a,b)=>a.localeCompare(b));
+}
+export function summarizeBreakdown(sessions=[],kind){
+ if(kind==='ball')return summarizeBallPerformance(sessions).filter(r=>r.fullGames>0).map(r=>({label:r.label,games:r.fullGames,average:r.fullGameAverage,highGame:r.highGame,strikePct:r.strikePct,sparePct:null}));
+ return metadataValues(sessions,kind).map(label=>{const subset=(kind==='center'||kind==='oil')?sessions.filter(s=>metaKey(metaValue(s,null,kind))===metaKey(label)):sessions.map(s=>({...s,games:(s.games||[]).filter(g=>metaKey(metaValue(s,g,kind))===metaKey(label))})).filter(s=>s.games.length),st=summarizeSessions(subset);return{label,...st}}).filter(x=>x.games).sort((a,b)=>b.games-a.games||(b.average??0)-(a.average??0)||a.label.localeCompare(b.label));
+}
 export function summarizeSessions(sessions=[]){
  const scores=[],leaveStats={};
  let strikes=0,strikeOpps=0,spares=0,spareOpps=0,highSeries=null,splitOpps=0,splitMade=0,singleOpps=0,singleMade=0,tenOpps=0,tenMade=0;

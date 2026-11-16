@@ -1,5 +1,10 @@
 # Popz Bowling Free + Pro Plan
 
+## CURRENT commercial state and analytics enhancement — November 15, 2026
+
+**Supersedes the dated beta planning sections below:** Commercial public-v39.015 has Pro Preview OFF and live Stripe **$9.99 one-time Lifetime Pro** checkout with 30-day full-Pro installed-app trial, permanent manual Founder grants, and server-verified Google Sync. The owner has approved public-v39.016 development to extend the existing Pro Advanced Shot Tracking into lane-specific setup and evidence-based ball/line/lane analytics. This is a new Pro capability, not an extra purchase: existing lifetime/Founder grants and active trial users receive it automatically. Free continues to include fundamental scoring, local history, filtered game-level stats, handicap, Quick/Detailed scoring and manual backup/import. The trial expiry must hide Pro analytics without deleting tracked data or bowling history. Features remain gated by effective Pro entitlement. Historical references to Pro Preview ON, undecided prices or production billing OFF below are superseded and retained as a timeline. See `docs/PUBLIC-ADVANCED-BOWLING-ANALYTICS-v39.016.md`.
+
+
 ## November 14, 2026 — new commercial policy (supersedes October pricing discussion)
 The proposed product is **free installation plus $9.99 one-time Lifetime Pro**, with no recurring subscription. Existing qualifying Founder Pro remains free for life; the newly approved trial is 30 days for new installs. A server-verified Stripe integration has been staged in branch feature/stripe-lifetime-pro, **deployed to an isolated Cloudflare preview, not production**, and production purchases remain disabled until Stripe/Firebase credentials, refund/tax/legal policies and live tests are complete. Pro Preview is still enabled. The earlier monthly/annual subscription checklist is retained below for historical reference, not the current product decision. See docs/STRIPE-LIFETIME-PILOT.md and docs/STRIPE-LAUNCH-SAFEGUARDS.md.
 

@@ -40,6 +40,8 @@ runtime_files=(
   latest-version.json
 
   scoring.mjs
+  transition-analytics.mjs
+  stats-evaluation.mjs
   history.mjs
   transfer.mjs
   backup-validation.mjs

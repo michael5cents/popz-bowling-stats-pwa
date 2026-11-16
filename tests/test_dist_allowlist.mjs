@@ -49,6 +49,8 @@ const required=[
   'roll-undo.mjs',
   'runtime-monitor.js',
   'scoring.mjs',
+  'transition-analytics.mjs',
+  'stats-evaluation.mjs',
   'service-worker.js',
   'style.css',
   'telemetry-client.mjs',

@@ -1,8 +1,8 @@
-const SW_VERSION='public-v39.015';
-const CACHE='popz-bowling-public-v39.015';
-const ASSETS=['./','./index.html','./style.css?v=39.015','./entry.js?v=39.015','./app.js?v=39.015','./scoring.mjs?v=39.015','./history.mjs?v=39.015','./transfer.mjs?v=39.015','./backup-validation.mjs?v=39.015','./roll-undo.mjs?v=39.015','./update.mjs?v=39.015','./telemetry.mjs?v=39.015','./telemetry-client.mjs?v=39.015','./telemetry-milestones.mjs?v=39.015','./cloud-sync-core.mjs?v=39.015','./cloud-sync.mjs?v=39.015','./billing-client.mjs?v=39.015','./entitlements.mjs?v=39.015','./trial-policy.mjs?v=39.015','./multiplayer.mjs?v=39.015','./layout-mode.mjs?v=39.015','./runtime-monitor.js?v=39.015','./manifest.webmanifest','./icon-192.png?v=39.015','./icon-512.png?v=39.015','./apple-touch-icon.png?v=39.015'];
+const SW_VERSION='public-v39.016';
+const CACHE='popz-bowling-public-v39.016';
+const ASSETS=['./','./index.html','./style.css?v=39.016','./entry.js?v=39.016','./app.js?v=39.016','./scoring.mjs?v=39.016','./transition-analytics.mjs?v=39.016','./stats-evaluation.mjs?v=39.016','./history.mjs?v=39.016','./transfer.mjs?v=39.016','./backup-validation.mjs?v=39.016','./roll-undo.mjs?v=39.016','./update.mjs?v=39.016','./telemetry.mjs?v=39.016','./telemetry-client.mjs?v=39.016','./telemetry-milestones.mjs?v=39.016','./cloud-sync-core.mjs?v=39.016','./cloud-sync.mjs?v=39.016','./billing-client.mjs?v=39.016','./entitlements.mjs?v=39.016','./trial-policy.mjs?v=39.016','./multiplayer.mjs?v=39.016','./layout-mode.mjs?v=39.016','./runtime-monitor.js?v=39.016','./manifest.webmanifest','./icon-192.png?v=39.016','./icon-512.png?v=39.016','./apple-touch-icon.png?v=39.016'];
 
-const PRECACHE_ASSETS=[...ASSETS,'./live-share.mjs?v=39.015','./live-share-client.mjs?v=39.015','./live-share-ui.mjs?v=39.015'];
+const PRECACHE_ASSETS=[...ASSETS,'./live-share.mjs?v=39.016','./live-share-client.mjs?v=39.016','./live-share-ui.mjs?v=39.016'];
 const ASSET_URLS=new Set(PRECACHE_ASSETS.map(asset=>new URL(asset,self.location.href).href));
 const MODULE_VERSION=SW_VERSION.replace('public-v','');
 const shellURL=url=>url.origin===self.location.origin&&(url.pathname==='/'||url.pathname==='/index.html');

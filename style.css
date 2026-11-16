@@ -269,3 +269,41 @@ main{width:min(1100px,100%);margin:0 auto;padding:18px;flex:1 1 auto;min-height:
   .phone-layout.phone-scoring .phone-finish-series{grid-column:1/-1;grid-row:11;margin:0}
 }
 \n/* Lifetime Pro purchase follows the existing responsive Settings layout. */\n.billing-row{align-items:center}\n.billing-row .setting-actions,.billing-row button{flex-shrink:0}\n@media(max-width:560px){.billing-row{align-items:stretch}.billing-row button{width:100%}}\n
+
+/* public-v39.016: premium evidence-based ball, line, lane & transition analytics */
+.analytics-note{margin:0 0 18px;padding:11px 13px;border-radius:12px;background:#0b1324;border:1px solid var(--line);color:#cbd5e1;font-size:12px;line-height:1.45}
+.breakdown-row .breakdown-label{flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;text-align:left}
+.breakdown-label span{display:block;color:#f8fafc;background:transparent;padding:0;min-height:0;text-align:left;font-size:inherit}
+.breakdown-label small{display:block;color:var(--muted);font-size:10px;font-weight:600;line-height:1.35}
+.line-breakdown-row .breakdown-label small{max-width:260px}
+.transition-subhead{margin:20px 0 10px;color:#dbeafe}.transition-list{display:grid;gap:12px}.transition-card,.transition-event{background:#0f172a;border:1px solid var(--line);border-radius:14px;padding:14px}.transition-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.transition-card-head strong,.transition-event strong{display:block;font-size:15px;overflow-wrap:anywhere}.transition-card-head small,.transition-event small{display:block;color:var(--muted);margin-top:4px;line-height:1.35}.evidence-badge{display:inline-flex;align-items:center;justify-content:center;min-width:70px;padding:6px 9px;border-radius:999px;border:1px solid var(--line);font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.05em}.evidence-early{background:#221b12;color:#fcd34d}.evidence-building{background:#122036;color:#93c5fd}.evidence-useful{background:#10251d;color:#86efac}.evidence-strong{background:#13281d;color:#bbf7d0;border-color:#166534}.transition-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:12px}.transition-metrics span,.transition-event>span{display:flex;flex-direction:column;gap:4px;background:#0b1324;border-radius:10px;padding:10px}.transition-metrics small,.transition-event>span small{color:var(--muted);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}.transition-metrics b,.transition-event>span b{font-size:15px}.transition-metrics em{font-style:normal;color:#93c5fd;font-size:11px;font-weight:800}.transition-sample{margin-top:9px;color:var(--muted);font-size:11px}.transition-event{display:grid;grid-template-columns:minmax(220px,2fr) repeat(3,minmax(105px,1fr));gap:10px;align-items:stretch}.transition-list.compact{gap:9px}
+@media(max-width:760px){.transition-metrics{grid-template-columns:1fr}.transition-event{grid-template-columns:1fr 1fr}.transition-event>div{grid-column:1/-1}.transition-card-head{align-items:flex-start}.evidence-badge{flex:0 0 auto}}
+.transition-details{margin-top:14px;border-top:1px solid var(--line);padding-top:10px}.transition-details>summary{cursor:pointer;color:#dbeafe;font-weight:800;padding:8px 2px;list-style:none}.transition-details>summary::-webkit-details-marker{display:none}.transition-details>summary:after{content:' ▸';color:var(--muted)}.transition-details[open]>summary:after{content:' ▾'}.transition-details .transition-list{margin-top:8px}.transition-more-note{padding:10px 12px;border:1px dashed var(--line);border-radius:11px;color:var(--muted);font-size:11px;line-height:1.4;background:#0b1324}
+.evaluation-card{margin:14px 0 18px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:#0b1324}
+.evaluation-overall{margin-top:4px;margin-bottom:20px;background:#101a2e}
+.evaluation-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.evaluation-head>strong{font-size:14px;letter-spacing:.02em}
+.evaluation-card p{margin:0;color:#d7e0ec;font-size:13px;line-height:1.55}
+.evidence-none{background:#1f2937;color:#cbd5e1}
+@media(max-width:600px){.evaluation-card{padding:12px 13px}.evaluation-head{align-items:flex-start}.evaluation-card p{font-size:12px}}
+.setup-ball{max-width:390px;margin-bottom:10px}.lane-setup-rows{display:grid;gap:10px}.lane-setup-row{display:grid;grid-template-columns:minmax(95px,.8fr) repeat(2,minmax(0,1fr));gap:10px;align-items:end;padding:11px;border-radius:12px;border:1px solid var(--line);background:#0c1426}.lane-setup-active{border-color:#38bdf8;background:#0e2134}.lane-setup-label{align-self:center}.lane-setup-label strong{display:block;color:#e0f2fe}.lane-setup-label small{color:#7dd3fc;font-size:11px;font-weight:800}.frame-lane{font-size:9px;font-weight:800;text-align:center;color:#7dd3fc;padding:2px 0}@media(max-width:600px){.setup-ball{max-width:none}.lane-setup-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.lane-setup-label{grid-column:1/-1}}
+
+/* Only adds content to the public Stats page; the existing phone/tablet layout remains unchanged. */
+#proAnalyticsSection{display:grid;gap:16px}
+#proAnalyticsSection .analytics-breakdowns{gap:14px}
+#proAnalyticsLock .pro-lock{margin-top:14px}
+.lane-start-select{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.lane-start-select label{min-width:180px;max-width:260px}
+.lane-start-select select{width:100%}
+.lane-start-select .fineprint{flex:1;min-width:190px}
+.lane-setup-rows.hidden,#singleLaneSetup.hidden{display:none!important}
+@media(max-width:600px){
+ #proAnalyticsSection{gap:12px}
+ #proAnalyticsSection .panel{padding:14px}
+ .lane-start-select{display:grid;grid-template-columns:1fr}
+ .lane-start-select label{max-width:none}
+ .lane-setup-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .lane-setup-label{grid-column:1/-1}
+}
+
+#proAnalyticsSection .panel[data-stats-collapse="1"].stats-collapsed>:not(.panel-title){display:none!important}

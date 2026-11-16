@@ -3,10 +3,10 @@ import{readFileSync}from'node:fs';
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const html=read('index.html'),app=read('app.js'),css=read('style.css');
 
-for(const id of['leagueStatsPanel','leagueAveragePanel','performancePanel','leaveStatsPanel','recentSeriesPanel']){
+for(const id of['leagueStatsPanel','leagueAveragePanel','performancePanel','advancedStatsPanel','transitionPanel','evaluationPanel','advancedStatsPanel','transitionPanel','evaluationPanel','leaveStatsPanel','recentSeriesPanel']){
   assert.match(html,new RegExp('id="'+id+'"'));
 }
-assert.match(app,/const STATS_PANEL_IDS=\['leagueStatsPanel','leagueAveragePanel','performancePanel','leaveStatsPanel','recentSeriesPanel'\]/);
+assert.match(app,/const STATS_PANEL_IDS=\['leagueStatsPanel','leagueAveragePanel','performancePanel','advancedStatsPanel','transitionPanel','evaluationPanel','leaveStatsPanel','recentSeriesPanel'\]/);
 assert.match(app,/function initStatsPanels\(\)/);
 assert.match(app,/popz-public-stats-panel-/);
 assert.match(app,/initStatsPanels\(\);renderAll\(\)/);

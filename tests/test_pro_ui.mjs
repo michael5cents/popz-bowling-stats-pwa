@@ -9,7 +9,9 @@ for(const id of ['planTopBadge','planBadge','planStatus','firstBallSetup','shotT
   assert.match(html,new RegExp(`id=["']${id}["']`),`missing ${id}`);
 }
 assert.match(html,/data-pro-badge/);
-assert.match(html,/PRO PREVIEW/);
+assert.doesNotMatch(html,/During <strong>PRO PREVIEW<\/strong>/,'commercial Help must not tell customers preview is still active');
+assert.match(html,/30-day Pro trial|Lifetime Pro/);
+assert.match(app,/label=proAccess.preview\?'PRO PREVIEW'/,'legacy preview cases still dynamically labeled, but Preview is disabled commercially');
 assert.match(app,/PRO_FEATURES\.ADVANCED_SHOT_TRACKING/);
 assert.match(app,/PRO_FEATURES\.GOOGLE_SYNC/);
 assert.match(app,/PRO_FEATURES\.MULTI_PLAYER_SCORING/);
@@ -19,4 +21,4 @@ assert.match(app,/onEntitlement:setProAccess/);
 const release=app.match(/APP_VERSION='public-v([^']+)'/)[1];
 assert.ok(sw.includes(`entitlements.mjs?v=${release}`));
 assert.ok(sw.includes(`scoring.mjs?v=${release}`));
-console.log('Pro Preview UI and gate wiring tests passed');
+console.log('Commercial Pro/Trial/Founder UI and gate wiring tests passed');

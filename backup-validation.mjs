@@ -38,6 +38,7 @@ function validateFrame(frame,index,path){
  }
  optionalBoolean(frame.split,path+' split flag');
  validateSetup(frame.firstBallSetup,path+' first-ball setup');
+ optionalText(frame.firstBallLane,path+' physical lane');
 }
 function validateGame(game,path){
  record(game,path);id(game.id,path+' ID');
@@ -46,6 +47,15 @@ function validateGame(game,path){
  for(const key of ['ballUsed','lane'])optionalText(game[key],path+' '+key);
  for(const key of ['createdAt','updatedAt','_telemetryCompletedAt'])optionalTime(game[key],path+' '+key);
  validateSetup(game.currentFirstBallSetup,path+' current setup');
+ optionalText(game.startingLane,path+' game starting lane');
+ if(game.laneSetups!=null){
+  const profiles=record(game.laneSetups,path+' per-lane setup profiles');
+  for(const [lane,setup] of Object.entries(profiles)){
+   if(!/^[0-9]{0,3}$/.test(lane))fail(path+' lane setup','has an invalid lane key');
+   validateSetup(setup,path+' lane '+lane+' setup');
+  }
+ }
+
 }
 function validateSession(session,path){
  record(session,path);id(session.id,path+' ID');

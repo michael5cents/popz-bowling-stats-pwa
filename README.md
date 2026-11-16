@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Current production release: **public-v39.013**, deployed and verified November 1, 2026 and reverified November 11. Original runtime release commit: 3cbcf96; November 4 source/build-hardening baseline: 2f4501d. Later documentation-only commits do not change the installed version.
+Release candidate **public-v39.016** (November 15, 2026), built from verified production baseline **public-v39.015**. The new runtime provides per-lane Advanced Shot Tracking and Pro insights without changing Free scoring or customer billing. Verify actual deployment at `https://popzbowling.com/latest-version.json` before declaring the candidate live.
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 
@@ -27,7 +27,7 @@ Open **https://popzbowling.com** in a modern browser.
 - iPhone/iPad: open the site in Safari, tap **Install App**, then follow **Share → Add to Home Screen → Add**.
 - The Install App button hides when the app is already running in standalone installed mode.
 
-## Current public-v39.013 behavior
+## Core public behavior (historical evolution through public-v39.016)
 - Default handicap for new series: **90% of 220**.
 - Bowling-center filtering also limits the lane list and lane breakdown to that center.
 - **Finish Series** first shows statistics for only the just-completed series, then offers **Continue to Overall Stats** for cumulative stats.
@@ -116,7 +116,7 @@ Then open `http://localhost:8080`.
 - **History is grouped by League / Category first, then by Date** so all series from the same league stay together while each bowling date remains easy to scan.
 
 ## Commercialization note
-public-v26 introduced **Pro Preview**. The header and Settings show the effective plan (`Free`, `Pro Preview`, or `Pro`), and premium features use the same entitlement system. The current Pro family includes Google Sync, Advanced Shot Tracking, Team / Multi-Bowler scoring, and Share Live Scores. Pro Preview remains enabled, so current testers lose nothing. Pricing and checkout are still undecided. See `PRO-PLAN.md`.
+public-v26 introduced the early **Pro Preview** (historical). As of public-v39.015, the live commercial system has Pro Preview OFF and offers a **30-day full-Pro trial** for new installs followed by optional **$9.99 one-time Lifetime Pro** via Stripe. Founder Pro remains free and permanent for accounts individually approved by the owner. The current paid family includes Google Sync, Advanced Shot Tracking, Team / Multi-Bowler scoring, Share Live Scores, and public-v39.016 advanced Ball & Line Results, same-physical-lane transitions and deterministic evaluations. See `PRO-PLAN.md` and `docs/PUBLIC-ADVANCED-BOWLING-ANALYTICS-v39.016.md`.
 
 ## public-v36 — Share Live Scores clarity + runtime diagnostics operator fix
 - User-facing **Share My Scores** wording is renamed to **Share Live Scores**. The Bowl panel, Help, spectator page, User Guide, and Pro documentation state that it follows only the selected bowler's current live series; it cannot browse/share the Stats screen, History, past series, backups, or other bowlers. The final summary remains available because it is calculated only from that same live session.
