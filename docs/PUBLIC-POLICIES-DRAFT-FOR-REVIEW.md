@@ -19,7 +19,7 @@ Lifetime Pro is a one-time unlock for supported Popz Bowling Pro functionality, 
 
 **Refunds and billing questions**
 
-If you have a billing problem, duplicate charge, or want to request a refund for a Lifetime Pro purchase, contact **[APPROVED SUPPORT EMAIL OR CONTACT PAGE]**. Include the purchase date and Stripe receipt or purchase reference; **do not send a full card number, CVV, or passwords**.
+If you have a billing problem, duplicate charge, or want to request a refund for a Lifetime Pro purchase, contact **feedback@popzbowling.com**. Include the purchase date and Stripe receipt or purchase reference; **do not send a full card number, CVV, or passwords**.
 
 **Refund eligibility period:** [OWNER APPROVAL REQUIRED — refund period, conditions, and legally required exceptions are not yet chosen]. The 30-day free Pro trial is **not** a 30-day post-purchase money-back guarantee. Nothing in this policy limits mandatory consumer rights applicable to your purchase.
 
@@ -43,7 +43,7 @@ This policy must be finalized with a qualified advisor and published before acce
 
 **Refunds.** The separate published Refund Policy applies. [LEGAL REVIEW REQUIRED: termination of access following a refund, chargeback/dispute response, mandatory warranties, liability, cancellation, account/data deletion, governing law, and service discontinuation terms].
 
-**Business identification and support.** Seller: [LEGAL ENTITY NAME, BUSINESS ADDRESS OR LEGALLY REQUIRED DISCLOSURE]; contact: [APPROVED SUPPORT EMAIL]; effective date: [PUBLICATION DATE].
+**Business identification and support.** Seller: [LEGAL ENTITY NAME, BUSINESS ADDRESS OR LEGALLY REQUIRED DISCLOSURE]; contact: feedback@popzbowling.com; effective date: [PUBLICATION DATE].
 
 ## Draft Privacy Policy — data mapping checklist and wording
 
@@ -61,7 +61,7 @@ The app needs a transparent Privacy Policy describing precisely what data is col
 
 **Required privacy decisions BEFORE publication:**
 
-1. Actual legal seller/operator name, business address or required business contact, and privacy/support email.
+1. Actual legal seller/operator name and business address or required business contact. Contact email is feedback@popzbowling.com, matching the existing in-app Email Feedback feature; verify that the mailbox receives customer mail.
 2. Confirm cloud retention, automatic deletion policy, and how a user can request full Google-account-linked data deletion/export and opt out of telemetry where applicable.
 3. Verify all third-party processors and privacy links: Google/Firebase, Stripe, Cloudflare, Telegram incident monitoring, hosting/proxy infrastructure, and other configured analytics.
 4. Confirm local browser storage, cookies, service worker caching, crash/telemetry logs, and cross-device behavior.

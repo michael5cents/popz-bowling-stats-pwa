@@ -20,6 +20,7 @@ Status: credentials installed, billing launch flags OFF. This is a verification 
 ## Go-live hold points
 - Commercial Firestore rules are staged only; current production Pro Preview is ON and LIVE_SHARE_PREVIEW is true. Coordinate both flags, billing and trial flags, security rules, version update and recovery plan as one cutover.
 - Live production billing-review operator/monitor token and Telegram alert delivery are not yet activated; live D1 binding exists.
-- Customer-facing Privacy Policy, Terms, refund conditions, support contact and legal seller details remain drafts, not approved/published.
+- Owner selected the app's existing feedback@popzbowling.com address for billing/refund support (confirmed in app.js, index.html and USER-GUIDE.md). Draft customer policies now include it. Confirm mailbox delivery and independently configure Stripe Dashboard public support email; Stripe account API previously reported support_email=null.
+- Customer-facing Privacy Policy, Terms, refund conditions and legal seller details remain drafts, not approved/published.
 - Confirm tax obligations/registration as applicable before enabling automatic tax. Stripe's identity-verification document is still due.
 - No live charge, real customer checkout or signed live webhook E2E has been performed in this verification. Keep the existing three Founder entitlements and bowling data intact.
