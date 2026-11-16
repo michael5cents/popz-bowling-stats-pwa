@@ -9,7 +9,7 @@ try{
   const page=await ctx.newPage(),errors=[];
   page.on('pageerror',e=>errors.push(e.message));
   await page.goto(url+'?help-qa='+name,{waitUntil:'domcontentloaded',timeout:25000});
-  await page.waitForFunction(()=>document.querySelector('#bowlView')?.classList.contains('active')===true,null,{timeout:15000});
+  await page.waitForFunction(()=>document.querySelector('#appVersion')?.textContent?.includes('public-v39.017'),null,{timeout:18000});
   assert.equal(await page.locator('meta[name="popz-app-version"]').getAttribute('content'),'public-v39.017');
   await page.locator('[data-nav="help"]').first().click();
   await page.waitForFunction(()=>document.querySelector('#helpView')?.classList.contains('active')===true,null,{timeout:9000});

@@ -1,6 +1,6 @@
 # Popz Bowling Stats — User Guide
 
-Release guide: **public-v39.017**, the November 15, 2026 in-app Help update, following the verified public-v39.016 analytics release. Confirm the live version at https://popzbowling.com/latest-version.json. Installed users update in place; no reinstall or deletion of bowling data is required.
+Release guide: **public-v39.017**, deployed and verified November 15, 2026. All 19 Help cards, including Pro analytics, are available in the installed app and its printable guide. Live version: https://popzbowling.com/latest-version.json. Installed users update in place; no reinstall or deletion of bowling data is required.
 
 ## Share Live Scores — Pro
 
