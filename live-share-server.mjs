@@ -40,8 +40,9 @@ export function sanitizeLiveSnapshot(raw) {
 export async function authorizeLiveCreate(request,env,fetcher=fetch) {
   if(PRO_PREVIEW_ENABLED && env.LIVE_SHARE_PREVIEW==='true')return true;
   const idToken=request.headers.get('X-Firebase-Token');
-  if(!idToken||!env.LIVE_FIREBASE_WEB_API_KEY)return false;
-  const auth=await fetcher('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key='+encodeURIComponent(env.LIVE_FIREBASE_WEB_API_KEY),{
+  const firebaseKey=env.LIVE_FIREBASE_WEB_API_KEY||env.FIREBASE_WEB_API_KEY;
+  if(!idToken||!firebaseKey)return false;
+  const auth=await fetcher('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key='+encodeURIComponent(firebaseKey),{
     method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({idToken}),signal:AbortSignal.timeout(5000)});
   if(!auth.ok)return false;
   const uid=(await auth.json()).users?.[0]?.localId;if(!uid)return false;

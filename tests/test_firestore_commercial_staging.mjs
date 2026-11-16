@@ -10,7 +10,7 @@ const serverTrial=read('functions/api/billing/trial.js');
 const testRunner=read('scripts/test-commercial-firestore-rules.sh');
 
 assert.equal(prod.firestore.rules,'firestore.rules',
- 'commercial rules must NEVER be selected in deployed firebase.json before approval');
+ 'production deploy must target the reviewed commercial firestore.rules');
 assert.equal(emulator.firestore.rules,'firestore.commercial.rules');
 assert.equal(emulator.emulators.firestore.host,'127.0.0.1');
 assert.equal(emulator.emulators.ui.enabled,false);
@@ -18,8 +18,8 @@ assert.match(testRunner,/demo-popz-bowling-commercial-qa/,
  'the emulator must use a nonproduction demo project ID');
 assert.doesNotMatch(testRunner,/firebase deploy|--project popz-bowling-stats/,
  'no production action in the isolated test runner');
-assert.match(current,/allow read, create, update, delete: if isOwner\(userId\)/,
- 'existing live rules must retain current Pro Preview access until safe cutover');
+assert.match(current,/hasCurrentPro\(userId\)/,
+ 'commercial release must enforce server-owned Pro access to Google Sync');
 assert.match(commercial,/hasCurrentPro\(userId\)/);
 assert.match(commercial,/get\(proPath\(userId\)\)/);
 assert.match(commercial,/entitlement\.get\('expiresAtTimestamp', null\) is timestamp/);
@@ -29,4 +29,4 @@ assert.match(commercial,/allow create, update, delete: if false/,
  'direct client entitlement writes must never be allowed');
 assert.match(serverTrial,/expiresAtTimestamp:\{timestampValue:window\.expiresAt\}/,
  'Firestore Rules rely on server-authored native expiry');
-console.log('PASS: commercial Firestore rules staged for emulator only; existing production rule path remains unchanged and native trial expiry is server-authored');
+console.log('PASS: commercial Firestore rules prepared for approved live rollout; native trial expiry server-authored');

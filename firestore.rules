@@ -1,35 +1,70 @@
+// Popz Bowling commercial rules - owner-approved 2026-11-15 production release.
+// Google Sync requires server-owned Founder, active trial or paid Pro.
+// Rules change access; they NEVER delete stored bowling scores or history.
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+
     function isOwner(userId) {
       return request.auth != null && request.auth.uid == userId;
     }
 
+    function proPath(userId) {
+      return /databases/$(database)/documents/users/$(userId)/entitlements/pro;
+    }
+
+    function hasCurrentPro(userId) {
+      return exists(proPath(userId)) && entitlementAllowsSync(userId);
+    }
+
+    function entitlementAllowsSync(userId) {
+      let entitlement = get(proPath(userId)).data;
+      return entitlement.get('plan', '') == 'pro' && (
+        // Permanent Founder and paid/complimentary grants never expire.
+        entitlement.get('status', '') in ['founder', 'complimentary', 'lifetime'] ||
+        // An active or trial subscription MUST have a trusted Firestore
+        // timestamp, not a client-provided text date or missing expiration.
+        (
+          entitlement.get('status', '') in ['trial', 'active'] &&
+          entitlement.get('expiresAtTimestamp', null) is timestamp &&
+          entitlement.get('expiresAtTimestamp', null) > request.time
+        )
+      );
+    }
+
+    // Google Sync / backup metadata and bowling history are paid Pro features.
+    // Old documents are NEVER deleted by these rules; when the 30-day trial
+    // expires, a user keeps local history and can restore cloud sync after Pro.
     match /users/{userId} {
-      allow read, create, update, delete: if isOwner(userId);
+      allow get, list, create, update, delete: if
+        isOwner(userId) && hasCurrentPro(userId);
     }
 
     match /users/{userId}/sessions/{sessionId} {
-      allow read, create, update, delete: if isOwner(userId);
+      allow get, list, create, update, delete: if
+        isOwner(userId) && hasCurrentPro(userId);
     }
 
     match /users/{userId}/deletedSessions/{sessionId} {
-      allow read, create, update, delete: if isOwner(userId);
+      allow get, list, create, update, delete: if
+        isOwner(userId) && hasCurrentPro(userId);
     }
 
+    // Users can inspect their own Pro status and payment audit but NEVER
+    // grant Founder, renew a trial, extend expiration, or edit billing docs.
     match /users/{userId}/entitlements/{entitlementId} {
-      allow read: if isOwner(userId);
-      allow write: if false;
+      allow get, list: if isOwner(userId);
+      allow create, update, delete: if false;
     }
 
     match /users/{userId}/billing/{document=**} {
-      allow read: if isOwner(userId);
-      allow write: if false;
+      allow get, list: if isOwner(userId);
+      allow create, update, delete: if false;
     }
 
     match /{document=**} {
-      allow read, write: if false;
+      allow get, list, create, update, delete: if false;
     }
   }
 }

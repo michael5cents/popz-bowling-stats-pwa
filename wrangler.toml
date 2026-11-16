@@ -4,7 +4,7 @@ compatibility_date = "2026-09-05"
 pages_build_output_dir = "dist"
 
 [vars]
-LIVE_SHARE_PREVIEW = "true"
+LIVE_SHARE_PREVIEW = "false"
 
 [[d1_databases]]
 binding = "TELEMETRY_DB"
@@ -26,11 +26,12 @@ migrations_dir = "runtime-migrations"
 [env.production]
 
 [env.production.vars]
-LIVE_SHARE_PREVIEW = "true"
+LIVE_SHARE_PREVIEW = "false"
 FIREBASE_WEB_API_KEY = "AIzaSyAtCTfQHIBy_YdKFWh9qa3UFYgjh9KFz6c" # gitleaks:allow -- public Firebase web client API key
-BILLING_CHECKOUT_ENABLED = "false"
-BILLING_TRIAL_ENABLED = "false"
-BILLING_REVIEW_PRODUCTION_ENABLED = "false"
+LIVE_FIREBASE_WEB_API_KEY = "AIzaSyAtCTfQHIBy_YdKFWh9qa3UFYgjh9KFz6c" # gitleaks:allow -- same public Firebase web key for live sharing
+BILLING_CHECKOUT_ENABLED = "true"
+BILLING_TRIAL_ENABLED = "true"
+BILLING_REVIEW_PRODUCTION_ENABLED = "true"
 STRIPE_LIFETIME_PRODUCT_ID = "prod_VdUdkV2ijsyKCv"
 STRIPE_LIFETIME_PRICE_ID = "price_1UcDf2PWlfgsVLEISDJ6MZaL"
 BILLING_TAX_BEHAVIOR = "inclusive"

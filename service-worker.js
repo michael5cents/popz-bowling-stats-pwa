@@ -1,8 +1,8 @@
-const SW_VERSION='public-v39.014';
-const CACHE='popz-bowling-public-v39.014';
-const ASSETS=['./','./index.html','./style.css?v=39.014','./entry.js?v=39.014','./app.js?v=39.014','./scoring.mjs?v=39.014','./history.mjs?v=39.014','./transfer.mjs?v=39.014','./backup-validation.mjs?v=39.014','./roll-undo.mjs?v=39.014','./update.mjs?v=39.014','./telemetry.mjs?v=39.014','./telemetry-client.mjs?v=39.014','./telemetry-milestones.mjs?v=39.014','./cloud-sync-core.mjs?v=39.014','./cloud-sync.mjs?v=39.014','./billing-client.mjs?v=39.014','./entitlements.mjs?v=39.014','./trial-policy.mjs?v=39.014','./multiplayer.mjs?v=39.014','./layout-mode.mjs?v=39.014','./runtime-monitor.js?v=39.014','./manifest.webmanifest','./icon-192.png?v=39.014','./icon-512.png?v=39.014','./apple-touch-icon.png?v=39.014'];
+const SW_VERSION='public-v39.015';
+const CACHE='popz-bowling-public-v39.015';
+const ASSETS=['./','./index.html','./style.css?v=39.015','./entry.js?v=39.015','./app.js?v=39.015','./scoring.mjs?v=39.015','./history.mjs?v=39.015','./transfer.mjs?v=39.015','./backup-validation.mjs?v=39.015','./roll-undo.mjs?v=39.015','./update.mjs?v=39.015','./telemetry.mjs?v=39.015','./telemetry-client.mjs?v=39.015','./telemetry-milestones.mjs?v=39.015','./cloud-sync-core.mjs?v=39.015','./cloud-sync.mjs?v=39.015','./billing-client.mjs?v=39.015','./entitlements.mjs?v=39.015','./trial-policy.mjs?v=39.015','./multiplayer.mjs?v=39.015','./layout-mode.mjs?v=39.015','./runtime-monitor.js?v=39.015','./manifest.webmanifest','./icon-192.png?v=39.015','./icon-512.png?v=39.015','./apple-touch-icon.png?v=39.015'];
 
-const PRECACHE_ASSETS=[...ASSETS,'./live-share.mjs?v=39.014','./live-share-client.mjs?v=39.014','./live-share-ui.mjs?v=39.014'];
+const PRECACHE_ASSETS=[...ASSETS,'./live-share.mjs?v=39.015','./live-share-client.mjs?v=39.015','./live-share-ui.mjs?v=39.015'];
 const ASSET_URLS=new Set(PRECACHE_ASSETS.map(asset=>new URL(asset,self.location.href).href));
 const MODULE_VERSION=SW_VERSION.replace('public-v','');
 const shellURL=url=>url.origin===self.location.origin&&(url.pathname==='/'||url.pathname==='/index.html');

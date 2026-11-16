@@ -25,7 +25,7 @@ const approved={schemaVersion:1,projectId:'popz-bowling-stats',
  founderCap:3,cutoffUtc:cutoff,
  approvalReference:'owner_approved_2026_11_15_three_existing_google_accounts',
  members:[entry(owner),entry(tester),entry(third)]};
-assert.equal(PRO_PREVIEW_ENABLED,true,'production Preview must not be switched off before live checkout');
+assert.equal(PRO_PREVIEW_ENABLED,false,'commercial launch must end public Pro Preview');
 assert.equal(validateFounderManifest(approved).policyReady,true);
 const done=planFounderMigration(approved,accounts,entitlements);
 assert.equal(done.ready,true);

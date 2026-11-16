@@ -28,6 +28,9 @@ copy_optional() {
 # Explicit browser/PWA runtime allowlist. Do not replace this with broad globs.
 runtime_files=(
   index.html
+  terms.html
+  privacy.html
+  refund-policy.html
   entry.js
   app.js
   runtime-monitor.js

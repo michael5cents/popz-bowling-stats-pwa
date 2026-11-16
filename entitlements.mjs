@@ -8,7 +8,7 @@ export const PRO_FEATURES=Object.freeze({
   CLOUD_BACKUP:'cloud_backup'
 });
 
-export const PRO_PREVIEW_ENABLED=true;
+export const PRO_PREVIEW_ENABLED=false;
 
 const ACTIVE_STATUSES=new Set(['active','trial','lifetime','complimentary','founder']);
 

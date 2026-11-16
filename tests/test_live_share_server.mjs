@@ -55,7 +55,8 @@ test('input limits and rate limits',async()=>{
 });
 test('server Pro preview and verified paid entitlements, never caller plan',async()=>{
   const req=new Request('https://popzbowling.com',{headers:{'X-Firebase-Token':'id-token'}});
-  assert.equal(await authorizeLiveCreate(req,{LIVE_SHARE_PREVIEW:'true'}),true);
+  assert.equal(await authorizeLiveCreate(req,{LIVE_SHARE_PREVIEW:'true'}),false);
+  // Preview flag cannot bypass an authenticated Pro entitlement after launch.
   assert.equal(await authorizeLiveCreate(req,{}),false);
   const env={LIVE_FIREBASE_WEB_API_KEY:'public-config'};
   let calls=0;
