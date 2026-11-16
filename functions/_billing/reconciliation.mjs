@@ -6,6 +6,7 @@ import {
  previewSandboxAccountAllowed,firestoreAccessToken,loadBillingLifetime,
  recordBillingReview,stripeRequest
 } from './core.mjs';
+import {MAX_GROSS_CENTS,taxMode} from './amounts.mjs';
 
 export const REVIEW_EVENT_TYPES=new Set([
  'refund.created','refund.updated','refund.failed','charge.refunded',
@@ -31,7 +32,7 @@ export async function reconcileStripeRiskEvent(event,env){
  if(resource.id!==referenceId || !optionalLivemodeMatches(resource,env) ||
     !Number.isSafeInteger(resource.amount) || resource.amount<0)
   throw new BillingError('Stripe audit verification failed',422);
- if(resource.currency!==CURRENCY || (refund&&resource.amount>PRICE_CENTS))
+ if(resource.currency!==CURRENCY || (refund&&resource.amount>MAX_GROSS_CENTS))
   return {ignored:true}; // Unrelated merchant payment; do not retry its webhook.
  let charge=null;
  let paymentIntentId=resource.payment_intent;
@@ -46,7 +47,8 @@ export async function reconcileStripeRiskEvent(event,env){
  if(!isId(paymentIntentId,'pi'))throw new BillingError('Stripe payment intent reference unavailable',422);
  const intent=await stripeRequest(env,'payment_intents/'+encodeURIComponent(paymentIntentId));
  if(intent.id!==paymentIntentId || !livemodeMatches(intent,env) ||
-    intent.currency!==CURRENCY || intent.amount!==PRICE_CENTS ||
+    intent.currency!==CURRENCY || !Number.isSafeInteger(intent.amount) ||
+    intent.amount<PRICE_CENTS || intent.amount>MAX_GROSS_CENTS ||
     intent.metadata?.product!==PRODUCT_CODE)
   return {ignored:true}; // Other products on the merchant's Stripe account.
  const uid=intent.metadata?.uid;
@@ -56,12 +58,19 @@ export async function reconcileStripeRiskEvent(event,env){
  const original=await loadBillingLifetime(uid,access);
  if(original?.product!==PRODUCT_CODE || original.paymentIntentId!==paymentIntentId)
   return {ignored:true}; // Never act on unrelated or unrecognized payments.
+ // The Firestore receipt is authoritative for the actual gross customer
+ // charge. Old no-tax receipts may omit amountCents but are never accepted as
+ // the basis for a taxed payment in live mode.
+ const originalGross=original.amountCents??(taxMode(env)==='none'?PRICE_CENTS:null);
+ if(originalGross!==intent.amount || resource.amount>originalGross ||
+    charge && charge.amount!==originalGross)
+  return {ignored:true};
  const status=dispute?resource.status:(refund?resource.status:
   (resource.refunded?'refunded_full':'refunded_partial'));
  if(typeof status!=='string' || !/^[a-z_]{2,40}$/.test(status))
   throw new BillingError('Invalid Stripe payment audit status',422);
  const amountCents=refund||dispute?resource.amount:resource.amount_refunded;
- if(!Number.isSafeInteger(amountCents)||amountCents<0||amountCents>PRICE_CENTS)
+ if(!Number.isSafeInteger(amountCents)||amountCents<0||amountCents>originalGross)
   throw new BillingError('Invalid Stripe payment audit amount',422);
  const kind=dispute?'dispute':refund?'refund':'charge_refunded';
  const result=await recordBillingReview(uid,access,event.id,{

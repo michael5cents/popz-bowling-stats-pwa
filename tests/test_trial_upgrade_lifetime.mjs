@@ -5,7 +5,7 @@ import {effectiveAccess,PRO_FEATURES,canUseFeature} from '../entitlements.mjs';
 
 const uid='qa_expired_trial_ready_to_buy';
 const session={
- id:'cs_test_trial_upgrade_mock',payment_intent:'pi_trial_upgrade_mock'
+ id:'cs_test_trial_upgrade_mock',payment_intent:'pi_trial_upgrade_mock',amount_subtotal:999,amount_total:999,total_details:{amount_tax:0,amount_discount:0,amount_shipping:0},automatic_tax:{enabled:false}
 };
 const eventId='evt_trial_purchase_complete';
 const {privateKey}=generateKeyPairSync('rsa',{modulusLength:2048});

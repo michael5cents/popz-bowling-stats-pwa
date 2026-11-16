@@ -102,7 +102,7 @@ assert(REVIEW_EVENT_TYPES.has('refund.created'));
 assert(REVIEW_EVENT_TYPES.has('charge.dispute.created'));
 globalThis.fetch=fakeFetch;
 try{
- const second={id:'cs_test_second_paid',payment_intent:'pi_second_paid'};
+ const second={id:'cs_test_second_paid',payment_intent:'pi_second_paid',amount_subtotal:999,amount_total:999,total_details:{amount_tax:0,amount_discount:0,amount_shipping:0},automatic_tax:{enabled:false}};
  let result=await grantStripeLifetime(uid,second,'evt_duplicate1',env);
  assert.equal(result.already,true);
  assert.equal(result.duplicate,true);
@@ -120,7 +120,7 @@ try{
 
  // First purchase replay must not create a review record.
  entitlement='lifetime';
- result=await grantStripeLifetime(uid,{id:originalSession,payment_intent:originalIntent},'evt_original_replay',env);
+ result=await grantStripeLifetime(uid,{id:originalSession,payment_intent:originalIntent,amount_subtotal:999,amount_total:999,total_details:{amount_tax:0,amount_discount:0,amount_shipping:0},automatic_tax:{enabled:false}},'evt_original_replay',env);
  assert.equal(result.already,true);
  assert.equal(result.duplicate,false);
  assert.equal(audit.size,1);

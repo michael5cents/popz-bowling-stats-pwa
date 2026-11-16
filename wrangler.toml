@@ -27,6 +27,14 @@ migrations_dir = "runtime-migrations"
 
 [env.production.vars]
 LIVE_SHARE_PREVIEW = "true"
+BILLING_CHECKOUT_ENABLED = "false"
+BILLING_TRIAL_ENABLED = "false"
+BILLING_REVIEW_PRODUCTION_ENABLED = "false"
+STRIPE_LIFETIME_PRODUCT_ID = "prod_VdUdkV2ijsyKCv"
+STRIPE_LIFETIME_PRICE_ID = "price_1UcDf2PWlfgsVLEISDJ6MZaL"
+BILLING_TAX_BEHAVIOR = "inclusive"
+BILLING_AUTOMATIC_TAX_ENABLED = "false"
+BILLING_TAX_REGISTRATION_CONFIRMED = "false"
 
 [[env.production.d1_databases]]
 binding = "TELEMETRY_DB"

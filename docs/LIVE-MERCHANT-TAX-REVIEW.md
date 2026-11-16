@@ -46,3 +46,24 @@ Alabama's $250,000 remote seller threshold relates to **out-of-state sellers wit
 First read the **live** Stripe Tax settings and registrations; verify status=active and required jurisdictions=Collecting. Validate product tax code and price tax_behavior. Use a representative customer address in a confirmed registered jurisdiction and check the returned taxability_reason rather than assuming a zero amount is correct. For live-mode testing, use a non-charging tax preview where available (live calculations can incur fees). Never collect tax solely based on this document.
 
 Stripe Tax setup: https://docs.stripe.com/tax/set-up.
+
+
+## November 15, 2026 - Live Stripe prelaunch verification
+Live Stripe account connected: acct_1UbqNUPWlfgsVLEI; earlier no-live-account entries above are historical.
+Inactive live product prod_VdUdkV2ijsyKCv; tax code txcd_10202000 copied from onboarding, classification review pending.
+Inactive live one-time price price_1UcDf2PWlfgsVLEISDJ6MZaL for USD 9.99 tax-inclusive. No Payment Link, live webhook or charge created.
+Live Stripe Tax settings active, but zero tax registrations recorded. Tax obligations unresolved; no jurisdiction was assumed or registered.
+Complete commercial development branch automated suite passed 88/88 after updating obsolete mock paid-session fixtures.
+Production billing remains disabled; no app deployment, Founder entitlement change or bowling history mutation.
+Remaining: tax registration confirmation, public policies and refund terms approval, restricted live key, signed production webhook, incident monitor, tax-inclusive integration test and production release verification.
+
+
+## November 15, 2026 - Production v39.014 deployment after live-account authorization
+- Owner authorized the live release and confirmed the customer-facing $9.99 total tax-inclusive one-time price.
+- Stripe live product prod_VdUdkV2ijsyKCv and live price price_1UcDf2PWlfgsVLEISDJ6MZaL are now active in Stripe; a direct payment link or checkout purchase was NOT created.
+- Stripe live webhook we_1UcDiXPWlfgsVLEIfBowEZdG is registered for https://popzbowling.com/api/billing/webhook and payment/refund/dispute events; Cloudflare live signing secret still needs secure installation.
+- The commercial source was built and deployed directly to Cloudflare Pages production main as public-v39.014 (deployment 175dd8d3.popzbowling.pages.dev). Live https://popzbowling.com/latest-version.json confirmed version public-v39.014. Live /api/billing/config returned enabled:false and /api/billing/trial returned enabled:false; /api/billing/reviews returned 404 due to default-off gate. This is a code deployment but NOT a paid launch.
+- Cloudflare production secret inventory exposes only TELEMETRY_DASHBOARD_PASSWORD. Stripe live restricted key, live webhook signing secret and production Firebase service-account credentials remain absent. They cannot be inferred/copied from the successful sandbox tests. No credential should be logged, committed or pasted in chat.
+- Product is active in Stripe without an associated direct Payment Link; Popz app cannot start a charge while the server billing gate is disabled.
+- Existing 3 Founder grants, cloud bowling history and Free access remain unchanged; Pro Preview remains ON until the coordinated commercial entitlement rollout.
+- The tested tax-inclusive amount validation code is staged; Stripe Tax settings active but no registrations have been added, and automatic tax collection remains disabled. An accounting determination remains necessary.

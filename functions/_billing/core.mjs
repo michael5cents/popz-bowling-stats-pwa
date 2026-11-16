@@ -1,7 +1,9 @@
 import {queueBillingReview} from './review-queue.mjs';
+import {BASE_PRICE_CENTS,MAX_GROSS_CENTS,validateStripeSessionAmounts,
+  taxMode,automaticTaxAllowed} from './amounts.mjs';
 // Server-only billing helpers. Not included in the public browser bundle.
 export const PRODUCT_CODE='popz_bowling_lifetime_v1';
-export const PRICE_CENTS=999;
+export const PRICE_CENTS=BASE_PRICE_CENTS;
 export const CURRENCY='usd';
 export const PROJECT_ID='popz-bowling-stats';
 export const PUBLIC_ORIGIN='https://popzbowling.com';
@@ -51,7 +53,7 @@ export function webhookConfigured(env={}){
 }
 export function checkoutEnabled(env={}){
  return env.BILLING_CHECKOUT_ENABLED==='true' && webhookConfigured(env)
-  && !!env.FIREBASE_WEB_API_KEY;
+  && !!env.FIREBASE_WEB_API_KEY && automaticTaxAllowed(env);
 }
 export function isPermanentPro(entitlement){
  return entitlement?.plan==='pro'
@@ -91,6 +93,7 @@ export function validateStripePrice(price,env){
  return price?.id===env.STRIPE_LIFETIME_PRICE_ID && price?.active===true
   && price?.type==='one_time' && price?.currency===CURRENCY
   && price?.unit_amount===PRICE_CENTS && !price?.recurring
+  && (taxMode(env)==='none' || price?.tax_behavior===taxMode(env))
   && price?.livemode===stripeIsLive(env.STRIPE_SECRET_KEY)
   && (!env.STRIPE_LIFETIME_PRODUCT_ID || price?.product===env.STRIPE_LIFETIME_PRODUCT_ID);
 }
@@ -100,7 +103,8 @@ export function validatePaidSession(session,env){
  if(!/^[A-Za-z0-9_-]{1,128}$/.test(uid||'')||uid!==session?.metadata?.uid)return null;
  if(session?.metadata?.product!==PRODUCT_CODE||!previewSandboxAccountAllowed(uid,env))return null;
  if(session?.mode!=='payment'||session?.status!=='complete'||session?.payment_status!=='paid')return null;
- if(session?.currency!==CURRENCY||session?.amount_subtotal!==PRICE_CENTS||session?.amount_total!==PRICE_CENTS)return null;
+ if(session?.currency!==CURRENCY||
+    !validateStripeSessionAmounts(session,env,{paid:true}))return null;
  if(session?.livemode!==stripeIsLive(env.STRIPE_SECRET_KEY))return null;
  const items=session?.line_items?.data;
  if(!Array.isArray(items)||items.length!==1)return null;
@@ -169,10 +173,16 @@ export async function loadBillingLifetime(uid,token){
  if(res.status===404)return null;
  if(!res.ok)throw new BillingError('Cannot check original payment record',503);
  const doc=await res.json();
+ const numericField=name=>{
+  const raw=doc.fields?.[name]?.integerValue;
+  return raw!==undefined && /^\d+$/.test(String(raw))?Number(raw):null;
+ };
  return {product:readField(doc.fields,'product'),
   checkoutSessionId:readField(doc.fields,'checkoutSessionId'),
   paymentIntentId:readField(doc.fields,'paymentIntentId'),
   stripeEventId:readField(doc.fields,'stripeEventId'),
+  amountCents:numericField('amountCents'),
+  taxCents:numericField('taxCents'),
   updateTime:doc.updateTime};
 }
 // Append-only per-event review documents: repeated webhooks cannot duplicate a review.
@@ -180,7 +190,7 @@ export async function recordBillingReview(uid,token,eventId,{kind,status,referen
  if(!/^[A-Za-z0-9_-]{1,128}$/.test(uid||'')||!/^evt_[A-Za-z0-9_]+$/.test(eventId||''))
   throw new BillingError('Invalid billing audit reference',400);
  if(!/^[a-z_]{3,40}$/.test(kind||'')||!status||!referenceId||!paymentIntentId||
-    !Number.isSafeInteger(amountCents)||amountCents<0)
+    !Number.isSafeInteger(amountCents)||amountCents<0||amountCents>MAX_GROSS_CENTS)
   throw new BillingError('Invalid billing audit event',422);
  const name=pathOf(uid,'billing/review_'+eventId);
  const fields={
@@ -216,11 +226,14 @@ async function reconcilePaidReplay(uid,token,existing,session,eventId,env){
  const same=prior?.checkoutSessionId===session.id && prior?.paymentIntentId===session.payment_intent;
  if(!same)await recordBillingReview(uid,token,eventId,{
   kind:'duplicate_paid_purchase',status:'needs_review',referenceId:session.id,
-  paymentIntentId:session.payment_intent,amountCents:PRICE_CENTS,
+  paymentIntentId:session.payment_intent,
+  amountCents:validateStripeSessionAmounts(session,env,{paid:true})?.grossCents??PRICE_CENTS,
  },env);
  return {already:true,status:existing.status,duplicate:!same};
 }
 export async function grantStripeLifetime(uid,session,eventId,env){
+ const amounts=validateStripeSessionAmounts(session,env,{paid:true});
+ if(!amounts)throw new BillingError('Checkout amount verification failed',422);
  const token=await firestoreAccessToken(env);
  const existing=await loadEntitlement(uid,token);
  if(isPermanentPro(existing))return reconcilePaidReplay(uid,token,existing,session,eventId,env);
@@ -234,7 +247,10 @@ export async function grantStripeLifetime(uid,session,eventId,env){
   name:pathOf(uid,'billing/stripeLifetime'),
   fields:{provider:stringField('stripe'),product:stringField(PRODUCT_CODE),
    checkoutSessionId:stringField(session.id),paymentIntentId:stringField(session.payment_intent),
-   stripeEventId:stringField(eventId),amountCents:{integerValue:String(PRICE_CENTS)},
+   stripeEventId:stringField(eventId),
+   amountCents:{integerValue:String(amounts.grossCents)},
+   baseAmountCents:{integerValue:String(amounts.baseCents)},
+   taxCents:{integerValue:String(amounts.taxCents)},
    currency:stringField(CURRENCY),updatedAt:stringField(now)}
  };
  const writes=[
