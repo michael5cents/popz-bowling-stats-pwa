@@ -10,6 +10,10 @@ An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, 
 
 **November 11 source alignment:** MacBook, .56 fallback, GitHub and Gitea shared commit 2f4501d before this documentation update. Deployment uses the explicit dist/ allowlist; never deploy the repository root. The modified QA-phone launcher remains uncommitted. See [source sync audit](docs/releases/2026-11-11-public-v39.013-source-sync.md).
 
+## Owner payment review launcher (LIVE)
+
+**November 15, 2026:** Installed `~/Desktop/Popz Bowling Payment Reviews.app` plus a Finder-launchable shortcut in the Desktop flyer folder. The private, signed Mac GUI reads the production duplicate-payment/refund/dispute review inbox; normal payments need no owner action. It can acknowledge/resolve a flagged review only on explicit confirmation, but cannot issue refunds, charge, change Pro access or unlock Checkout reservations. The bundled CLI performs a production-only live review lookup using the owner's existing protected token. Smoke test: zero open LIVE issues; payment backend and website not changed. [Owner workflow and build source](docs/BILLING-REVIEW-MAC-LAUNCHER-2026-11-15.md).
+
 ## Launch flyer and owner Founder Admin
 
 Current public promotional flyers (print PNG, Facebook JPG) are tracked in [`marketing/launch-2026-11-15/`](marketing/launch-2026-11-15/) and archived/backed up on the owner Mac. The printed flyer explicitly states **BASIC VERSION STAYS FREE** and **30-DAY PRO TRIAL - OPTIONAL $9.99 LIFETIME PRO**; scanning its verified QR opens https://popzbowling.com. A Founder Admin shortcut in the Desktop flyers folder launches the owner-only signed Mac app without creating a duplicate. Read [`docs/LAUNCH-FLYER-AND-FOUNDER-ADMIN-SHORTCUT-2026-11-15.md`](docs/LAUNCH-FLYER-AND-FOUNDER-ADMIN-SHORTCUT-2026-11-15.md). No commercial runtime was changed for this documentation/marketing sync.

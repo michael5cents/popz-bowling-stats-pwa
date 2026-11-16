@@ -1,5 +1,7 @@
 # Popz Bowling — Production Billing Review Operations
 
+**LATEST VERIFIED OWNER WORKFLOW (late November 15, 2026):** The previously planned production operator API is now authorized for the owner: the read-only production CLI successfully returned **0 open** and **0 historical** review records, without modifying Stripe or customer data. A signed, Finder-launchable, production-only **Popz Bowling Payment Reviews.app** has been installed on the MacBook Desktop and a shortcut placed in the desktop flyers folder. Its READ-ONLY launch check passed against the bundled CLI and the app launched successfully. [Current launcher operations](BILLING-REVIEW-MAC-LAUNCHER-2026-11-15.md). The original infrastructure and activation checklist below records an EARLIER preparation stage; its former v39.013/no-live-Checkout status is historical and must not override the verified **public-v39.017** live commercial app. This check confirms the production owner review endpoint is accessible; it does NOT independently establish whether every possible future payment exception is delivered through the live alert-monitoring timer.
+
 **Status: PRODUCTION INFRASTRUCTURE PREPARED BUT NOT CONNECTED OR ACTIVATED.**
 As of November 15, 2026. The live app is still public-v39.013; no live Stripe Checkout or trial enrollment is enabled. No production merchant account is available through the connected Stripe integration.
 
