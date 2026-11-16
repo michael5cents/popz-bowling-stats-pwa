@@ -2,7 +2,7 @@
 
 Production URL: **https://popzbowling.com**
 
-Release candidate **public-v39.016** (November 15, 2026), built from verified production baseline **public-v39.015**. The new runtime provides per-lane Advanced Shot Tracking and Pro insights without changing Free scoring or customer billing. Verify actual deployment at `https://popzbowling.com/latest-version.json` before declaring the candidate live.
+**Current production release: public-v39.016**, deployed November 15, 2026 to Cloudflare Pages `popzbowling` production branch `main` from source commit `4643a83`. Direct production check of `https://popzbowling.com/latest-version.json` returned public-v39.016. The release adds per-lane Advanced Shot Tracking and Pro insights without changing Free scoring or customer billing. Live phone/tablet browser checks passed.
 
 An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 

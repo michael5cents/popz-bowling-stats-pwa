@@ -1,6 +1,6 @@
 # Popz Bowling Stats — User Guide
 
-Release guide: **public-v39.016 advanced bowling analytics candidate**, November 15, 2026. The most recent verified production baseline before this release is **public-v39.015**. Installed users update in place; no reinstall or deletion of bowling data is required.
+Release guide: **public-v39.016**, deployed and verified on popzbowling.com November 15, 2026. Installed users update in place; no reinstall or deletion of bowling data is required.
 
 ## Share Live Scores — Pro
 
