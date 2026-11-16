@@ -113,13 +113,16 @@ text(201,1220,"INSTALL FREE",68,gold,impact,3,3,max_width=410)
 
 # Clear, non-mandatory paid upgrade: the standard Free app remains usable.
 # Keep the QR code and existing website above the footer untouched.
-panel((0,1380,1060,1484),(4,21,61,255),radius=0)
+# The printer's borderless overspray can trim about 1/16 inch off the bottom.
+# Keep the full-bleed navy background, but hold all footer text >1/8 inch
+# from the physical edge at 5x7 (1060x1484px = 212 pixels per inch).
+panel((0,1368,1060,1484),(4,21,61,255),radius=0)
 d=ImageDraw.Draw(im)
-d.line([(35,1383),(1020,1383)],fill=cyan,width=4)
+d.line([(35,1371),(1020,1371)],fill=cyan,width=4)
 
 footer_lines=[
-    ("BASIC VERSION STAYS FREE", 1385, 55, gold, impact),
-    ("30-DAY PRO TRIAL  •  OPTIONAL $9.99 LIFETIME PRO", 1439, 34, white, impact)
+    ("BASIC VERSION STAYS FREE", 1373, 49, gold, impact),
+    ("30-DAY PRO TRIAL  •  OPTIONAL $9.99 LIFETIME PRO", 1422, 29, white, impact)
 ]
 for caption, top, size, ink, face in footer_lines:
     f=font(face,size)

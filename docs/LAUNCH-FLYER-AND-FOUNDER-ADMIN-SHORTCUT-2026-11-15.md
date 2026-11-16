@@ -48,3 +48,11 @@ This clarifies that the optional Lifetime Pro upgrade is NOT necessary to keep u
 ## Verification
 
 Public source, personal prototype source and Collective `main` were compared to both GitHub and Gitea, and were equal on November 15, 2026 before this documentation follow-up. Personal Bowling v49.10 and its repository are unchanged. After doc/asset commit and dual push, verify final GitHub and Gitea heads again.
+## 5x7 borderless photo-print footer safety (November 15, 2026)
+
+The first proof of the final artwork on the owner's **HP ENVY 6400** using **5x7 Full Bleed, glossy photo paper, High-quality RGB, one-sided** showed about **1/16 inch** of trimming of the bottom price line. The printer's borderless bleed expands/crops the original outer edge; this is a physical print condition, not a web-site or PNG corruption.
+
+- The original requested six-copy CUPS job **#130** was canceled to avoid printing further copies with clipped price text. The number of sheets that physically emerged before cancellation was not confirmed.
+- **Corrected the actual footer geometry** in `marketing/launch-2026-11-15/build_live_flyer.py` and regenerated both PNG and Facebook JPG. The full-bleed navy background remains edge-to-edge, while footer text is moved higher and slightly resized, leaving at least approximately 1/8 inch safe clearance from the 5x7 paper cut edge. The original valid `popzbowling.com` QR bitmap is unchanged.
+- One corrected **borderless 5x7 High-quality glossy print proof, CUPS job #131**, was sent to the HP ENVY. The physical sheet has NOT yet been inspected by the owner in this record. Do not send another six without confirming the proof and knowing how many earlier sheets have printed.
+- Original public Beta artwork and previous launch flyer versions remain archived on the owner's Mac, including the `Archive - Previous Launch Flyer/` and `Archive - Original Beta Flyers/` folders. The updated final PNG, JPG and regenerating script are copied to the public Git repository and the Popz Projects backup drive. No customer app code or production deployment changes.
