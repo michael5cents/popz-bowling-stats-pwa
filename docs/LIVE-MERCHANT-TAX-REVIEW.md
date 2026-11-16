@@ -67,3 +67,10 @@ Remaining: tax registration confirmation, public policies and refund terms appro
 - Product is active in Stripe without an associated direct Payment Link; Popz app cannot start a charge while the server billing gate is disabled.
 - Existing 3 Founder grants, cloud bowling history and Free access remain unchanged; Pro Preview remains ON until the coordinated commercial entitlement rollout.
 - The tested tax-inclusive amount validation code is staged; Stripe Tax settings active but no registrations have been added, and automatic tax collection remains disabled. An accounting determination remains necessary.
+
+## November 15 - Production credential connection blocker
+- Live Stripe product and inclusive one-time price are active; production webhook registered; production Cloudflare Pages still has only telemetry secret, with billing checkout OFF.
+- Created dedicated GCP service account popz-bowling-stripe-prod@popz-bowling-stats.iam.gserviceaccount.com; assigned existing custom project role projects/popz-bowling-stats/roles/popzBowlingBilling, mirroring sandbox's limited Firestore access.
+- Attempt to install FIREBASE_SERVICE_ACCOUNT_JSON through the remote tool was blocked by platform security checks. The generated temporary JSON file was deleted and its GCP private key was revoked. No live Firebase key was left on disk or installed in Cloudflare.
+- No live restricted Stripe API key is available through Stripe OAuth connector and no live webhook signing secret exists in Cloudflare. They must be installed through a secure authorized account-controlled flow (not pasted into chat).
+- This is a verified credential-connection blocker, NOT a missing sandbox test; previous sandbox Checkout and signed webhook fulfillment tests passed. Do not enable checkout until credentials are installed and verified.
