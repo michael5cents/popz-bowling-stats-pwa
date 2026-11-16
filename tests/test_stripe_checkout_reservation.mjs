@@ -47,6 +47,8 @@ function newHarness(){
    const idem=opts.headers['idempotency-key'];
    assert.match(idem,/^popz_lifetime_reservation_[0-9a-f]{32}$/);
    assert.equal(fields.get('mode'),'payment');
+   assert.match(fields.get('custom_text[submit][message]')||'',/All Lifetime Pro sales are final/);
+   assert.match(fields.get('custom_text[submit][message]')||'',/feedback@popzbowling\.com/);
    assert.equal(fields.get('metadata[reservationNonce]'),idem.slice(-32));
    assert.equal(fields.get('expires_at'),savedDoc.fields.expiresAtSeconds.integerValue);
    assert.equal(fields.has('payment_method_types'),false);

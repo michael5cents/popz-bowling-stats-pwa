@@ -157,6 +157,7 @@ function mockNetwork(url,options={}){
   assert.equal(fields.get('client_reference_id'),'popz_preview_e2e_20261114');
   assert.equal(fields.get('metadata[product]'),PRODUCT_CODE);
   assert.equal(fields.get('mode'),'payment');
+  assert.match(fields.get('custom_text[submit][message]')||'',/All Lifetime Pro sales are final/);
   assert.equal(fields.get('success_url'),BILLING_PREVIEW_ORIGIN+'/payment/success/');
   assert.equal(fields.get('cancel_url'),BILLING_PREVIEW_ORIGIN+'/payment/cancel/');
   assert.equal(fields.has('payment_method_types[0]'),false,'Stripe should select dynamic payment methods');

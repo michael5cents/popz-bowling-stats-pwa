@@ -5,6 +5,7 @@
 ## Safety baseline
 
 - Product: $9.99 one-time Lifetime Pro, with a 30-day free Pro trial and three permanent Founder grants. No recurring payments or automatic trial-to-paid conversion.
+- OWNER-APPROVED REFUND RULE (2026-11-15): No voluntary refund of a correctly billed Lifetime Pro purchase. Exceptions are verified billing errors (duplicate/incorrect/unauthorized charges or payment not correctly applying the purchased Pro access) and legally required remedies. No post-purchase 14-day or 30-day money-back window. See docs/REFUND-POLICY-OWNER-APPROVED-2026-11-15.md.
 - Real payment collection and the production review monitor are disabled. The isolated sandbox was proven with a real test-card payment, full refund and Telegram delivery. No actual customer or live transaction was used.
 - Stripe's signed webhooks preserve the payment state, maintain a canonical Firestore receipt, and generate append-only refund/dispute/duplicate reviews. **Receiving a refund/dispute event does not automatically revoke Lifetime Pro or remove scoring history.**
 - Production review storage exists but is dormant; see `docs/PRODUCTION-BILLING-REVIEW-RUNBOOK.md`. The only currently scheduled billing Telegram checker is the SANDBOX monitor.
@@ -15,7 +16,7 @@
 2. Open the exact original Stripe Checkout Session / PaymentIntent / Charge / Refund or Dispute in the appropriate Stripe mode. Independently verify merchant account, livemode, customer reference, one-time product, original $9.99 price and any approved tax, charged amount, currency, payment settlement status, and linked Firebase UID.
 3. Inspect the immutable canonical Firestore payment record and any previous review IDs. Confirm that this is the same purchase, not an unrelated Stripe charge, another user's purchase, or a repeated webhook event.
 4. Acknowledge the review item and record an operator investigation note. Acknowledgement is not a refund or a user-access change.
-5. Determine the necessary customer response under the **approved published Refund Policy** and any applicable legal rights. Confirm transaction state and evidence before taking any action.
+5. Apply the owner-approved **final-sale except billing errors** policy and any mandatory legal rights. Verify whether a billing error actually occurred before proposing any refund; no general change-of-mind refund is offered. The public policy must be legally reviewed and published before launch.
 6. Any actual refund, dispute evidence submission, reservation unlock or customer access change requires explicit owner approval and separate authorized Stripe/Firebase controls. Do not take action merely to make the Telegram alert disappear.
 7. Once the underlying issue is independently verified and the relevant action is complete, resolve the review with a descriptive note. The original Stripe transaction and review audit remain saved.
 8. Monitor webhook failures, D1 delivery, Telegram status and customer support replies until the issue truly closes. Missing D1 records must fail safely and trigger Stripe retry rather than silently losing a billing incident.
@@ -38,7 +39,7 @@ Keep Telegram alerts non-identifying: issue kind, Stripe status, amount and revi
 
 ## Before the first live customer
 
-- Approve refund window/conditions, service lifetime wording, billing support email, incident response owner and escalation contacts, and actual expected response time.
+- Owner refund decision is recorded: final sale except billing errors and mandatory legal rights. Complete legal review/publication, service lifetime wording, incident response owner/escalation contacts and actual expected response time. Customer support address is feedback@popzbowling.com.
 - Verify the live Stripe account/price/webhook, tax settings, production-only D1/tokens, and genuine alert delivery.
 - Implement and test manual stale-reservation unlock safeguards after confirming no payment can still settle.
 - Test both full and partial refunds, two Stripe events for one refund, a real test dispute where supported, duplicate paid-session behavior, tax-inclusive/exclusive totals as approved, Founder preservation, history retention, outage retry, and correct customer messaging.

@@ -15,19 +15,17 @@ Lifetime Pro is associated with the **Google/Firebase account used to buy it** a
 
 Lifetime Pro is a one-time unlock for supported Popz Bowling Pro functionality, not a promise that third-party online services will operate forever without interruption. [OWNER/LEGAL: define what “Lifetime” means if the app is permanently discontinued and whether future major versions are included.]
 
-## Draft refund policy
+## Draft refund policy - owner decision approved November 15, 2026
 
-**Refunds and billing questions**
+**Popz Bowling Lifetime Pro - Final Sale / Billing Errors**
 
-If you have a billing problem, duplicate charge, or want to request a refund for a Lifetime Pro purchase, contact **feedback@popzbowling.com**. Include the purchase date and Stripe receipt or purchase reference; **do not send a full card number, CVV, or passwords**.
+All $9.99 one-time Popz Bowling Lifetime Pro purchases are **final**. We do not offer refunds for change of mind, non-use, or dissatisfaction. Your 30-day free trial runs **before** any optional purchase; it does not create a 30-day post-purchase money-back guarantee.
 
-**Refund eligibility period:** [OWNER APPROVAL REQUIRED — refund period, conditions, and legally required exceptions are not yet chosen]. The 30-day free Pro trial is **not** a 30-day post-purchase money-back guarantee. Nothing in this policy limits mandatory consumer rights applicable to your purchase.
+If there is a **billing error** - such as a duplicate charge, incorrect charge, unauthorized charge, or a completed payment not correctly granting the purchased Pro access - contact **feedback@popzbowling.com**. Provide the purchase date and Stripe receipt or transaction reference. Do not provide your full card number, CVV, or passwords. We will investigate and correct verified billing problems, including a refund when appropriate. Nothing in this policy limits rights or remedies required by applicable law.
 
-Once a refund request is received, our support team will investigate the original Stripe transaction and respond at **[APPROVED RESPONSE TIME]**. A refund, where approved or legally required, will be processed through the original payment channel, with timing depending on the payment provider and issuing bank.
+An approved or legally required refund will be returned through the original Stripe payment channel. The bank or card issuer controls when the refund appears. Stripe refund, dispute, or duplicate-charge notifications are reviewed individually; they do not automatically revoke Pro or erase bowling history. Any entitlement treatment following an actual refund requires an authorized business decision consistent with applicable law.
 
-**Duplicate purchases and disputes:** Please contact us promptly; do not assume a second charge will automatically be reversed. We separately investigate reported duplicate charges, refunds, and chargebacks. Pro access and historical bowling data are never changed automatically solely because a refund/dispute notification arrived; account access after an approved refund must be addressed under **[OWNER-APPROVED REFUND/ENTITLEMENT POLICY]**, subject to applicable law.
-
-This policy must be finalized with a qualified advisor and published before accepting live payments.
+**Owner-approved policy:** docs/REFUND-POLICY-OWNER-APPROVED-2026-11-15.md. **Still pending:** independent legal review, a publishable public policy URL, delivery-tested support mailbox, and final response-time commitment before taking live payments.
 
 ## Draft Terms of Use — product and billing sections
 
@@ -41,7 +39,7 @@ This policy must be finalized with a qualified advisor and published before acce
 
 **Customer data.** Scoring and bowling history must not be automatically deleted because a trial ends or payment changes. Access to Pro-only online sync may end after trial expiration until Lifetime Pro is purchased; local Free scoring and backups remain available.
 
-**Refunds.** The separate published Refund Policy applies. [LEGAL REVIEW REQUIRED: termination of access following a refund, chargeback/dispute response, mandatory warranties, liability, cancellation, account/data deletion, governing law, and service discontinuation terms].
+**Refunds.** Lifetime Pro purchases are final; voluntary refunds are not offered after correct billing. Verified billing errors are investigated and corrected, including refunding an erroneous charge when appropriate. Mandatory consumer rights remain applicable. [LEGAL REVIEW REQUIRED: termination of access following a refund, chargeback/dispute response, mandatory warranties, liability, cancellation, account/data deletion, governing law, and service discontinuation terms].
 
 **Business identification and support.** Seller: [LEGAL ENTITY NAME, BUSINESS ADDRESS OR LEGALLY REQUIRED DISCLOSURE]; contact: feedback@popzbowling.com; effective date: [PUBLICATION DATE].
 

@@ -107,6 +107,8 @@ async function createStripeSession(res,accessToken,env){
   method:'POST',idempotencyKey,fields:{
    ...(taxMode(env)==='none'?{}:{'automatic_tax[enabled]':'true'}),
    mode:'payment',integration_identifier:'popzbowling_'+letters,
+   // Show the final-sale condition on Stripe's actual payment page.
+   'custom_text[submit][message]':'All Lifetime Pro sales are final. Refunds are only for billing errors (such as duplicate or incorrect charges) or where required by law. Billing help: feedback@popzbowling.com.',
    'line_items[0][price]':res.priceId,'line_items[0][quantity]':'1',
    client_reference_id:res.uid,customer_email:res.email,
    'metadata[uid]':res.uid,'metadata[product]':PRODUCT_CODE,
