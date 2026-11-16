@@ -25,3 +25,5 @@ Status: credentials installed, billing launch flags OFF. This is a verification 
 - Owner approved a final-sale refund decision on 2026-11-15: no change-of-mind/non-use refunds; only verified billing errors and mandatory legal exceptions. Policy staged in docs/REFUND-POLICY-OWNER-APPROVED-2026-11-15.md. Customer-facing Privacy Policy, Terms, refund-policy legal review and seller details remain drafts, not yet published.
 - Confirm tax obligations/registration as applicable before enabling automatic tax. Identity-document requirement has cleared after owner verification.
 - No live charge, real customer checkout or signed live webhook E2E has been performed in this verification. Keep the existing three Founder entitlements and bowling data intact.
+
+- OWNER CHANGE after original audit: one specific fourth Founder exception was approved for a customer installing Tuesday, November 17. No Firebase identity is known yet, and no fourth grant was made. Guarded after-install operator procedure is documented in docs/FOUNDER-AND-30DAY-TRIAL-POLICY.md; original three Founders remain intact.

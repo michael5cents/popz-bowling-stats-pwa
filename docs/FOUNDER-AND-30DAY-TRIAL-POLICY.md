@@ -12,6 +12,19 @@
 6. After the 30 days, Pro access requires an **explicit $9.99 one-time Lifetime Pro purchase**, not a recurring subscription or automatic charge. Purchases use hosted Stripe Checkout with signed webhook fulfillment to status=lifetime, restoring Pro on all devices for that Google account. A user may purchase while their trial is still active.
 7. Founder, complimentary and paid Lifetime Pro always remain active. Existing bowling histories must never be deleted due to trial expiry or billing. Previously verified entitlements can be cached locally for offline use, and the app clears the cached grant when users explicitly sign out.
 
+## One owner-approved fourth Founder exception - November 15, 2026
+
+The owner explicitly approved ONE additional permanent Founder for a customer expected to install Tuesday, November 17, 2026. The original three permanent Founder accounts remain unchanged. General Founder enrollment remains closed: all other new users receive the standard 30-day trial, followed by optional $9.99 Lifetime Pro purchase.
+
+The fourth person is NOT yet registered in the verified three-user Firebase inventory, so no fourth grant can be applied today. Once the customer installs and signs into Popz Bowling with Google, confirm the exact Google account and run a read-only preflight, then the guarded one-off grant:
+
+    node scripts/grant-fourth-founder.mjs --email CUSTOMER@EXAMPLE.COM
+    node scripts/grant-fourth-founder.mjs --email CUSTOMER@EXAMPLE.COM --apply --confirm-email CUSTOMER@EXAMPLE.COM
+
+The second command is only for a verified, owner-approved account after inspecting the first result. It requires exactly three existing live Founders, a verified non-disabled Google account, no paid Lifetime Stripe record, no Checkout reservation, and either no entitlement or an existing server-issued installation trial. Any existing trial is atomically replaced using Firestore updateTime to avoid races; existing Founder/paid/complimentary grants are never overwritten. After successful verification, the Mac-only private roster is extended from three to four. The original three are never changed, and no score/history document is touched. No UID or email is recorded in the repository. Do not have this customer buy the $9.99 upgrade before the fourth Founder is granted.
+
+After the grant, independently audit the private Founder roster and confirm four permanent entitlements. This exception is NOT an approval to grant all new users Founder status or a change to the original pre-cutoff three-person migration.
+
 ## Implementation status and release blockers
 
 - **LIVE:** Three permanent Founder entitlements created and independently verified in Firebase. Only the three approved entitlement documents were changed in production data.
