@@ -98,6 +98,7 @@ forbidden=(
   firestore.commercial.rules
   firebase.commercial.emulator.json
   emulator-tests
+  mac-founder-admin
   firestore.indexes.json
   scripts
   monitoring

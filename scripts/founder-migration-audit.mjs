@@ -92,4 +92,4 @@ if(manifest){
  console.log('No owner-approved Founder roster supplied; no accounts selected.');
  console.log('Writes performed: 0');
 }
-console.log('IMPORTANT: Browser Pro Preview is still enabled; no production entitlement was modified.');
+console.log('IMPORTANT: Founder inventory audit is READ ONLY; no production entitlement was modified.');

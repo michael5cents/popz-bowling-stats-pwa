@@ -26,3 +26,19 @@ Owner specifically authorized public deployment on November 15, 2026. This rollo
 ## Rollback
 
 Keep prelaunch `main` code and the previous firestore.rules source in a private local backup. If billing or trial cannot be reached, restore last stable Pro Preview app with old permissive rules to avoid locking existing users out of Google Sync. Never delete or edit customer bowling records during rollback.
+
+## Actual verified production cutover - November 15, 2026
+
+- Wrangler successfully deployed **public-v39.015** to the exact Cloudflare Pages production branch `main` (deployment https://1b121169.popzbowling.pages.dev). Public https://popzbowling.com/latest-version.json returned version public-v39.015, and GET /api/billing/config returned enabled=true with amountCents=999 and lifetime=true. GET /api/billing/trial returned enabled=true and trialDays=30.
+- Public /terms.html, /privacy.html and /refund-policy.html each returned HTTP 200; customer-facing no-refund-except-billing-issues notice is in the bundled app and Stripe Checkout.
+- Unsigned POST to /api/billing/webhook returned HTTP 400 `Invalid signature` (secret present, signature checking active). No real charge was made in deployment testing.
+- Firebase CLI `firebase deploy --only firestore:rules --project popz-bowling-stats --non-interactive` succeeded, including rules compilation, upload and release to cloud.firestore. No bowling records were changed by rule deployment. Existing 3 Founder accounts were audited read-only immediately after, 3/3 permanent grants, 0 writes.
+- Live operator review CLI verified production-only D1 is reachable and currently empty. Created two separate encrypted Cloudflare production review tokens, with owner credential on Mac and scoped monitor token on PopzVPS. PopzVPS installed its independent production Telegram billing monitor and enabled the new per-minute user systemd timer. Its first one-shot run exited successfully. Existing sandbox timer remains active separately.
+- Owner's Mac Desktop Founder Admin app was locally built, signed, and launched; source is private/local only, with no public HTTP admin route. The packaged backend read-only Google-account lookup succeeded. No real customer's Founder record was written in test. The original three Founder entitlements remain unchanged. See docs/FOUNDER-ADMIN-MAC-2026-11-15.md.
+- Full source test suite: **90 passed / 0 failed**, including new safe manual Founder grant tests. Swift GUI compiled and macOS bundle signature validated. The optional older full Playwright phone QA script has stale layout assumptions and did not produce a passing verdict; the release does not change the core scoring layout. Avoid claiming browser regression certification from that script.
+
+**Ongoing business obligation:** Stripe Tax has ZERO registered tax jurisdictions and automatic tax remains disabled. Business owner must confirm applicable sales-tax compliance separately. Account support is feedback@popzbowling.com; live Stripe payments and payouts are enabled. Customer-facing policy was published under owner launch authorization and should receive independent legal/accounting review as appropriate.
+
+## Additional browser verification
+
+A fresh installed-PWA browser context using actual **https://popzbowling.com**, Google Chrome on Mac and 390x844 phone / 820x1180 tablet viewports PASSED both direct live smoke tests: correct public-v39.015 HTML version, Bowl default landing, automatically Compact Phone for phone, preserved Full Layout for tablet, Start Series reached scoring controls, and ZERO JavaScript page errors in either context. The older extended browser QA script still contains unrelated stale button/display assumptions; the focused production smoke test does not claim to cover every extended browser path.

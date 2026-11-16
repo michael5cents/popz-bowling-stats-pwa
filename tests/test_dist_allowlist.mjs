@@ -65,7 +65,7 @@ const forbidden=[
   'COMMERCIALIZATION-ROADMAP.md','USER-GUIDE.md','wrangler.toml','.firebaserc',
   'firebase.json','firestore.rules','firestore.indexes.json','scripts','monitoring',
   'migrations','live-migrations','runtime-migrations','docs','tests','tools','functions',
-  'dashboard.mjs','runtime.mjs','live-share-server.mjs'
+  'dashboard.mjs','runtime.mjs','live-share-server.mjs','mac-founder-admin'
 ];
 for(const rel of forbidden)assert.equal(existsSync(resolve(dist,rel)),false,rel+' must not be published');
 
