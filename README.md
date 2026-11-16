@@ -10,6 +10,10 @@ An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, 
 
 **November 11 source alignment:** MacBook, .56 fallback, GitHub and Gitea shared commit 2f4501d before this documentation update. Deployment uses the explicit dist/ allowlist; never deploy the repository root. The modified QA-phone launcher remains uncommitted. See [source sync audit](docs/releases/2026-11-11-public-v39.013-source-sync.md).
 
+## Launch flyer and owner Founder Admin
+
+Current public promotional flyers (print PNG, Facebook JPG) are tracked in [`marketing/launch-2026-11-15/`](marketing/launch-2026-11-15/) and archived/backed up on the owner Mac. The printed flyer explicitly states **BASIC VERSION STAYS FREE** and **30-DAY PRO TRIAL - OPTIONAL $9.99 LIFETIME PRO**; scanning its verified QR opens https://popzbowling.com. A Founder Admin shortcut in the Desktop flyers folder launches the owner-only signed Mac app without creating a duplicate. Read [`docs/LAUNCH-FLYER-AND-FOUNDER-ADMIN-SHORTCUT-2026-11-15.md`](docs/LAUNCH-FLYER-AND-FOUNDER-ADMIN-SHORTCUT-2026-11-15.md). No commercial runtime was changed for this documentation/marketing sync.
+
 ## Separation from Michael's personal app
 This repository is the public/friends version only. It is completely separate from Michael's personal bowling app (`bowling-stats-offline`) and has its own code, IndexedDB database, deployment, and update path. Changes here must not be applied to the personal app unless explicitly requested.
 

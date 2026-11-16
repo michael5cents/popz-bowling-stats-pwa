@@ -12,6 +12,10 @@ Installed on the owner's MacBook Desktop as **Popz Bowling Founder Admin.app**. 
 
 The owner may manually grant any number of additional approved Founders. General Founder registration stays closed and all other new users follow the 30-day trial -> optional $9.99 Lifetime Pro path. The first three Founder accounts remain unchanged. The older fourth-Founder script is historical; this Mac application is the reusable way to approve future manual grants.
 
+## Desktop Finder shortcut (added November 15, 2026)
+
+A second launchable Finder icon lives at `~/Desktop/Popz Bowling Public Beta/Popz Bowling Founder Admin.app`. It is a symlink to `../Popz Bowling Founder Admin.app`, the original signed app on the Desktop. Both icons run the exact same installation. The shortcut was launched and verified; it does not contain any Firebase credentials and is not part of the public PWA. If the original Desktop app is moved, recreate or fix the relative shortcut. Owner promotional flyers are located in the same folder. See `docs/LAUNCH-FLYER-AND-FOUNDER-ADMIN-SHORTCUT-2026-11-15.md`.
+
 ## Security
 
 - No web-exposed Founder admin route is created. The app runs on this authorized Mac user account and uses `gcloud auth print-access-token` for the Google Cloud owner session, never a copy of the production Firebase service-account private key.
