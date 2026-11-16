@@ -2,9 +2,9 @@
 
 Production URL: **https://popzbowling.com**
 
-**Current production release: public-v39.016**, deployed November 15, 2026 to Cloudflare Pages `popzbowling` production branch `main` from source commit `4643a83`. Direct production check of `https://popzbowling.com/latest-version.json` returned public-v39.016. The release adds per-lane Advanced Shot Tracking and Pro insights without changing Free scoring or customer billing. Live phone/tablet browser checks passed.
+**Previous verified production release: public-v39.016**, deployed November 15, 2026 to Cloudflare Pages `popzbowling` production branch `main` from source commit `4643a83`. Direct production check of `https://popzbowling.com/latest-version.json` returned public-v39.016. The release adds per-lane Advanced Shot Tracking and Pro insights without changing Free scoring or customer billing. Live phone/tablet browser checks passed.
 
-An offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
+\n**public-v39.017 in-app Help refinement (November 15, 2026):** Expanded Help card 4 with lane-pair setup, physical lane selection and game-to-game lane alternation; updated Stats card 9; and added cards 10-12 covering Pro Ball & Line metrics, same-lane transitions with evidence limits, and offline deterministic evaluations. Subsequent Help cards remain in their original reading order, now 13-19. The installed PWA release version and offline cache are bumped together; scoring and billing engines are unchanged.\n\nAn offline-first bowling scoring and statistics app hosted on Cloudflare Pages, with optional Google Sync for automatic multi-device history.
 
 **November 11 source alignment:** MacBook, .56 fallback, GitHub and Gitea shared commit 2f4501d before this documentation update. Deployment uses the explicit dist/ allowlist; never deploy the repository root. The modified QA-phone launcher remains uncommitted. See [source sync audit](docs/releases/2026-11-11-public-v39.013-source-sync.md).
 

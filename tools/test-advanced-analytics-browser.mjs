@@ -28,7 +28,7 @@ try{
   await page.goto(local+'?qa=1&'+name+'=1',{waitUntil:'domcontentloaded',timeout:25000});
   await page.waitForFunction(()=>document.querySelector('#bowlView')?.classList.contains('active')===true,null,{timeout:25000});
   const meta=await page.locator('meta[name="popz-app-version"]').getAttribute('content');
-  assert.equal(meta,'public-v39.016');
+  assert.equal(meta,'public-v39.017');
   await page.waitForFunction(expected=>document.querySelector('#layoutModeStatus')?.textContent?.includes(expected),name==='phone'?'QA Phone Simulator':'QA Tablet Simulator',{timeout:20000});
   const onPhone=await page.evaluate(()=>document.body.classList.contains('phone-layout'));
   assert.equal(onPhone,name==='phone');
