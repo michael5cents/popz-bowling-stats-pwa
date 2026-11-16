@@ -16,7 +16,7 @@ Located on the MacBook at `~/Desktop/Popz Bowling Public Beta/` (the folder reta
 
 - **Print-quality flyer:** `Popz-Bowling-Live-Launch-Flyer.png` (1060 x 1484 PNG)
 - **Facebook/groups flyer:** `Popz-Bowling-Live-Launch-Flyer-Facebook.jpg` (1060 x 1484 JPEG)
-- Source build script: `build_live_flyer.py` in the same desktop folder.
+- Source build script: `build_live_flyer.py` in the same desktop folder, also committed at `marketing/launch-2026-11-15/build_live_flyer.py`. It expects the original archived beta PNG on the owner Mac; the complete originals and script are also backed up to the Popz Projects drive.
 - Version-controlled copies of these two FINAL promotional images are in `marketing/launch-2026-11-15/` in the public source repository. This marketing directory is not part of the Cloudflare Pages production allowlist.
 - Previous launch flyers and the original Public Beta flyers are separately preserved under `Archive - Previous Launch Flyer/` and `Archive - Original Beta Flyers/` inside the same desktop folder.
 
