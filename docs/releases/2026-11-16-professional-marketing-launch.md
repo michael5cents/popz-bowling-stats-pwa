@@ -47,3 +47,11 @@ The website first published with an obsolete 2:29 demonstration. The owner rejec
 - Updated marketing CTA, video description, duration (0:53), thumbnail, accessible labels, modal player, video source and JS playback fallback.
 - Existing flyer, scoring app, PWA service worker, app version, Stripe/Firebase, and payment/Pro access are untouched.
 - Rebuilt exact `dist/` allowlist and ran 93/93 passing Node tests, including absence of obsolete video/thumbnail from dist.
+
+### LIVE COMMERCIAL REPLACEMENT VERIFIED
+- Cloudflare Pages production, commit `1dbb030f67311cf0eff6de37f4eba9718cb13e4d` at `https://effedac5.popzbowling.pages.dev`.
+- Live `https://popzbowling.com/features/` shows new 00:53 Watch the Commercial button and the official league-night film. No old video or thumbnail is referenced by the live page.
+- Live MP4: 16,218,473 bytes, exact SHA256 `7694dbc41dc17d25be73b569e79625c1b3d9567b4c3bed8a6e0f7b804fcc4f40`, matching owner's APPROVED master.
+- Chrome player readyState 4, video duration 52.875 seconds, width 1280; all 93 automated tests passed.
+- `/api/health` OK, latest app version public-v39.018 unchanged; no app/Stripe/Firebase data changes or flyer revision.
+- Cloudflare may retain previously published static-asset URLs; obsolete video is neither in new source/dist nor referenced by the live website. Historical deployment snapshots unchanged.
