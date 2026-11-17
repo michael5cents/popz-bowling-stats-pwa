@@ -1,6 +1,6 @@
 # Popz Bowling professional marketing website and launch gateway
 
-Date: 2026-11-16 America/Chicago. Production release: public-v39.018. Status: **prepared for Cloudflare deployment** (see later verification entry).
+Date: 2026-11-16 America/Chicago. Production release: public-v39.018. Status: **PRODUCTION LIVE AND VERIFIED**.
 
 ## Owner-approved direction
 - Publish the owner's previously approved **Professional-Website-Redesign** concept as the real site, not a generic feature sheet.
@@ -27,3 +27,15 @@ Date: 2026-11-16 America/Chicago. Production release: public-v39.018. Status: **
 
 ## Rollback
 Cloudflare previous Production Pages deployment ID: `339feab7-2488-4489-af35-2d7cc1417dcd`, source commit `71872f5` and deployment `https://339feab7.popzbowling.pages.dev`. Do not roll back Stripe/D1 or Firebase; rollback is site bundle only.
+
+## Cloudflare production publication and final checks (November 16, 2026)
+- Production deployment ID: `9b6c73fe-d6ca-4a76-9152-23a39cb36efe` (`https://9b6c73fe.popzbowling.pages.dev`); Cloudflare branch `main`; source commit `e9c292d`.
+- Cloudflare Pages preview deployment first verified with a complete Functions bundle, then production deployment uploaded the exact verified dist bundle.
+- Live root `https://popzbowling.com/`: HTTP 200, `public-v39.018`, verified welcome heading and both Explore the Website + Install Popz Bowling choices; Chrome confirmed `body.install-required` in browser mode with no horizontal overflow.
+- Live marketing `https://popzbowling.com/features/`: HTTP 200, real professional title, no draft `noindex` flag, canonical link, stylesheet/JS/photography/MP4 200. Chrome confirmed visual headline and no overflow. Local dist browser QA confirmed all 10 images and video preview dialog playback.
+- Live `/latest-version.json`: `public-v39.018`. `/api/health`: HTTP 200, `ok:true`, `status:ok`, `version:public-v39.018`.
+- Live PWA service worker and bootstrap/app JavaScript at new version: HTTP 200; manifest `start_url` and `scope` remain `./`.
+- Live Stripe payment success and cancel pages: HTTP 200. There were **no new test charges**, no changes to live subscription/entitlement operations, and no modifications to D1/Firebase/Stripe.
+- SEO `/robots.txt`, `/sitemap.xml` both HTTP 200 and list the new marketing route.
+- **The existing flyer remains valid and unchanged.** No redesign is needed to reach the new landing experience.
+- A pre-existing dirty `tools/launch-qa-phone.sh` remains unmodified and outside the release.
