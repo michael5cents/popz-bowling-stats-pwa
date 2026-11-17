@@ -103,6 +103,6 @@ assert.match(app,/statsBowlerId\(\)==='all'/);
 assert.match(app,/g\.frames\[fi\]\.firstBallLane=physicalLane/);
 assert.match(app,/frameLane\(g,fi\)/);
 assert.match(app,/function saveStartingLane\(\)/);
-assert.match(sw,/transition-analytics\.mjs\?v=39\.017/);
-assert.match(sw,/stats-evaluation\.mjs\?v=39\.017/);
+assert.match(sw,/transition-analytics\.mjs\?v=39\.018/);
+assert.match(sw,/stats-evaluation\.mjs\?v=39\.018/);
 console.log('PASS: strict Free/Pro analytics boundaries, mixed-ball accuracy, per-lane attribution, transitions, honest evidence, legacy data, backups and offline caches.');

@@ -307,3 +307,10 @@ main{width:min(1100px,100%);margin:0 auto;padding:18px;flex:1 1 auto;min-height:
 }
 
 #proAnalyticsSection .panel[data-stats-collapse="1"].stats-collapsed>:not(.panel-title){display:none!important}
+
+/* public-v39.018: harmless marketing route from browser install gate; never affects standalone scoring UI. */
+.install-card{width:min(480px,100%)}
+.install-explore-link{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:56px;border-radius:14px;background:#f3fbf7;border:2px solid #c9efcd;color:#15352c;text-decoration:none;font-size:18px;font-weight:800;transition:background-color .15s,border-color .15s}
+.install-explore-link:hover,.install-explore-link:focus-visible{background:#e4f8dc;border-color:#a7e2a7}
+.install-option-or{margin:11px 0;color:#a9b7c9;font-size:12px;font-weight:800;letter-spacing:.16em}
+.install-card>a.install-explore-link:focus-visible,.install-card>button:focus-visible{outline:3px solid #bfe5ce;outline-offset:3px}

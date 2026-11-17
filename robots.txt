@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /telemetry-dashboard
+Disallow: /payment/
+Disallow: /live/
+Sitemap: https://popzbowling.com/sitemap.xml

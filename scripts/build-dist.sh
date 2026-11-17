@@ -38,6 +38,8 @@ runtime_files=(
   service-worker.js
   manifest.webmanifest
   latest-version.json
+  robots.txt
+  sitemap.xml
 
   scoring.mjs
   transition-analytics.mjs
@@ -83,6 +85,38 @@ done
 copy_optional live-share.css
 copy_optional _redirects
 copy_optional favicon.ico
+
+# Precisely allowlist the public product marketing page. Excludes all docs and operator secrets.
+site_files=(
+  index.html
+  styles.css
+  script.js
+  assets/00-install-gate-phone.png
+  assets/04-scoring-progress-phone.png
+  assets/06b-series-complete-phone.png
+  assets/07-stats-phone.png
+  assets/08-history-phone.png
+  assets/12-pro-team-scoring.png
+  assets/14-pro-google-sync.png
+  assets/15-pro-lane-pair-tracking.png
+  assets/16-pro-ball-line-results.png
+  assets/17-pro-lane-transition-analysis.png
+  assets/18-pro-performance-evaluations.png
+  assets/Popz-Bowling-Demo.mp4
+  assets/YouTube-Pro-Focused-Thumbnail.png
+  assets/app-icon.png
+  assets/bowling-lanes-anna-shvets-pexels-5952998.jpg
+)
+for rel in "${site_files[@]}"; do
+  src="$ROOT/marketing/professional-site/$rel"
+  dst="$DIST/features/$rel"
+  if [[ ! -f "$src" ]]; then
+    echo "ERROR: missing marketing runtime asset $rel" >&2
+    exit 1
+  fi
+  mkdir -p "$(dirname "$dst")"
+  cp "$src" "$dst"
+done
 
 # Hard safety assertions: source, operator, config, test, and migration files
 # must never be part of the Pages static output.
