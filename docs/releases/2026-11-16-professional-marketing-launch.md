@@ -39,3 +39,11 @@ Cloudflare previous Production Pages deployment ID: `339feab7-2488-4489-af35-2d7
 - SEO `/robots.txt`, `/sitemap.xml` both HTTP 200 and list the new marketing route.
 - **The existing flyer remains valid and unchanged.** No redesign is needed to reach the new landing experience.
 - A pre-existing dirty `tools/launch-qa-phone.sh` remains unmodified and outside the release.
+
+## APPROVED COMMERCIAL REPLACEMENT — November 16, 2026
+The website first published with an obsolete 2:29 demonstration. The owner rejected that and directed its immediate removal. Replaced it with the exact approved official 52.88-second league-night commercial (original ClaviCrazy music, Ryan narration) from `Social-Launch-2026-11-16/Popz-Bowling-League-Night-Official-Commercial.mp4`, SHA-256 `7694dbc41dc17d25be73b569e79625c1b3d9567b4c3bed8a6e0f7b804fcc4f40`.
+- Website bundle now includes `features/assets/Popz-Bowling-League-Night-Official-Commercial.mp4` and a new frame-extracted `features/assets/Popz-Bowling-League-Night-Poster.jpg`.
+- The old `Popz-Bowling-Demo.mp4` and `YouTube-Pro-Focused-Thumbnail.png` are no longer in the website source or Cloudflare deploy allowlist; original copies were archived at `/Volumes/Popz Projects/Backups/Public Bowling/Marketing/Website-Launch-2026-11-16/Video-Commercial-Repair/` for disaster recovery only.
+- Updated marketing CTA, video description, duration (0:53), thumbnail, accessible labels, modal player, video source and JS playback fallback.
+- Existing flyer, scoring app, PWA service worker, app version, Stripe/Firebase, and payment/Pro access are untouched.
+- Rebuilt exact `dist/` allowlist and ran 93/93 passing Node tests, including absence of obsolete video/thumbnail from dist.

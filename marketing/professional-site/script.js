@@ -75,7 +75,7 @@
         if (play?.catch) play.catch(() => {}); // browser may require user to press Play
       }
     } else {
-      window.open('assets/Popz-Bowling-Demo.mp4', '_blank', 'noopener');
+      window.open('assets/Popz-Bowling-League-Night-Official-Commercial.mp4', '_blank', 'noopener');
     }
   }
   function closeDemo() {
