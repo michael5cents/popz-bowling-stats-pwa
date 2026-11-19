@@ -88,6 +88,10 @@ The Telegram monitor accepts numeric patch releases such as the current `public-
 - Adoption queue/ack/first-seen keys and runtime queue use v2 namespaces. Old v1 queues are removed by public-v39.004, and old `_telemetry.version=1` series are not reconciled into the new baseline.
 - Normal public-beta users cannot disable adoption telemetry or runtime diagnostics. Only `?qa=1`, WebDriver, and HeadlessChrome suppress them.
 
+## Owner iPad QA install (public-v39.020)
+
+Owner QA URL: https://popzbowling.com/?qa=1&tablet=1 . Add to Home Screen in iPad Safari. When this page is opened it selects the separate qa-tablet.webmanifest with id /qa-tablet and start_url /?qa=1&tablet=1; normal customer manifest unchanged. Its distinct icon label is Popz QA. Before scoring, confirm the visible OWNER QA - TELEMETRY OFF header on every installed launch. Adoption and runtime telemetry are suppressed, new QA series have _telemetry.eligible=false so offline milestone reconciliation cannot backfill. If the banner disappears on an installed launch, stop testing and use the exact QA URL for diagnosis. QA does not bypass Pro plan rules and does not sandbox Google Sync, Live Scores or real Stripe checkout. See docs/releases/2026-11-19-public-v39.020-owner-ipad-qa.md.
+
 ## MacBook QA simulators
 - **Canonical phone launcher:** `~/Desktop/Test Popz Bowling - Pixel 7.command`. It starts the fixed Electron QA shell at **412×915 CSS px, DPR 2.625**, Android Pixel 7 user agent, 5-point touch emulation, 100% locked zoom, and a non-resizable/non-maximizable/non-fullscreenable window. It always loads live production at `https://popzbowling.com/?qa=1&phone=1&qaLaunch=<timestamp>`.
 - **Canonical tablet launcher:** `~/Desktop/Test Popz Bowling - Galaxy Tab S7.command`. It starts the fixed Electron tablet shell at **1280×800 CSS px, DPR 2** (matching the 2560×1600 Galaxy Tab S7 panel), Android `SM-T878U` user agent, touch emulation, locked zoom, and fixed Full Layout. It loads `?qa=1&tablet=1&qaLaunch=<timestamp>`.

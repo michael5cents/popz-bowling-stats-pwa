@@ -203,6 +203,9 @@ public-v26 introduced the early **Pro Preview** (historical). As of public-v39.0
 - PopzVPS health monitor was updated for the new bootstrap architecture: homepage checks now require `runtime-monitor.js` + `entry.js`, then separately verify that `entry.js` points to the current versioned `app.js` and that the full installed-app asset still reports the expected `APP_VERSION`.
 - The temporary v39.003 dashboard display rule that inferred a missing Series Started count from Series Completed is superseded by public-v39.004. The dashboard now shows only raw accepted events and never manufactures funnel counts.
 
+## public-v39.020 - owner iPad QA without adoption pollution
+- Owner QA iPad installation: https://popzbowling.com/?qa=1&tablet=1, separate QA PWA manifest and Popz QA app label. It reopens in QA mode, forces full tablet layout and suppresses both adoption and runtime telemetry and milestone backfill. Visible OWNER QA - TELEMETRY OFF badge must appear before scoring; normal customer manifest, pricing and accounts are unchanged. See TELEMETRY-ACCESS.md and docs/releases/2026-11-19-public-v39.020-owner-ipad-qa.md.
+
 ## public-v39.004 — clean telemetry baseline + QA phone simulator
 - Production adoption telemetry and runtime-diagnostic D1 tables are reset to a fresh beta baseline. Counts from the earlier test period are intentionally discarded.
 - The telemetry dashboard now shows **actual accepted events only**. It no longer infers or backfills Series Started from Series Completed.

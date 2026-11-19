@@ -7,6 +7,22 @@ const isProductionWebHost=()=>/^(?:www\.)?popzbowling\.com$/i.test(location.host
 const qaPhoneMode=()=>{try{const q=new URLSearchParams(location.search);return q.get('qa')==='1'&&q.get('phone')==='1'}catch{return false}};
 const qaTabletMode=()=>{try{const q=new URLSearchParams(location.search);return q.get('qa')==='1'&&q.get('tablet')==='1'}catch{return false}};
 const qaSimulatorMode=()=>qaPhoneMode()||qaTabletMode();
+// This is an explicit separate iPad QA installation, not a normal customer PWA.
+// Safari reads this manifest when the owner uses Add to Home Screen.  Its own
+// start_url reopens with qa=1&tablet=1 so telemetry remains suppressed.
+if(qaTabletMode()){
+ const link=document.getElementById('popzAppManifest');
+ if(link)link.href='./qa-tablet.webmanifest';
+ const appleTitle=document.querySelector('meta[name="apple-mobile-web-app-title"]');
+ if(appleTitle)appleTitle.content='Popz Bowling QA';
+ document.title='Popz Bowling QA - iPad';
+ const qaIndicator=document.getElementById('qaTabletIndicator');
+ if(qaIndicator)qaIndicator.classList.remove('hidden');
+ const telemetryBadge=[...document.querySelectorAll('#settingsView .version-badge')]
+  .find(el=>el.textContent.trim()==='Beta telemetry: On');
+ if(telemetryBadge)telemetryBadge.textContent='QA · telemetry off';
+}
+
 const installGateRequired=()=>isProductionWebHost()&&!isInstalled()&&!qaSimulatorMode();
 function setHelp(message=''){const el=$('installGateHelp');if(!el)return;el.textContent=message;el.classList.toggle('hidden',!message)}
 function showGate(){document.body.classList.remove('install-check');document.body.classList.add('install-required');$('installGate')?.classList.remove('hidden');setHelp('')}
@@ -33,7 +49,7 @@ async function prepareInstallability(){
 function loadApp(){
  const script=document.createElement('script');
  script.type='module';
- script.src='./app.js?v=39.019';
+ script.src='./app.js?v=39.020';
  document.body.appendChild(script);
 }
 if(installGateRequired()){

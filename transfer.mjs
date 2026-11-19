@@ -1,4 +1,4 @@
-import{activeSessionIds}from'./multiplayer.mjs?v=39.019';
+import{activeSessionIds}from'./multiplayer.mjs?v=39.020';
 
 const stamp=value=>{
   const t=Date.parse(value||'');

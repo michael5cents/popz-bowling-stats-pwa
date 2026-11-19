@@ -1,4 +1,4 @@
-import{localTrialEntitlement,activeTrialDays}from'./trial-policy.mjs?v=39.019';
+import{localTrialEntitlement,activeTrialDays}from'./trial-policy.mjs?v=39.020';
 export const PRO_FEATURES=Object.freeze({
   GOOGLE_SYNC:'google_sync',
   ADVANCED_SHOT_TRACKING:'advanced_shot_tracking',

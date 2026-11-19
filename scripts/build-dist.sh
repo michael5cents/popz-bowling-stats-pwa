@@ -37,6 +37,7 @@ runtime_files=(
   style.css
   service-worker.js
   manifest.webmanifest
+  qa-tablet.webmanifest
   latest-version.json
   robots.txt
   sitemap.xml

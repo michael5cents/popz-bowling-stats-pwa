@@ -63,6 +63,7 @@ const required=[
   'live/viewer.css',
   'live/viewer.mjs',
   'manifest.webmanifest',
+  'qa-tablet.webmanifest',
   'multiplayer.mjs',
   'payment/cancel/index.html',
   'payment/success/index.html',
