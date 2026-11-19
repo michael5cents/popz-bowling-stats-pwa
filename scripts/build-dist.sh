@@ -110,6 +110,9 @@ site_files=(
   index.html
   styles.css
   script.js
+  watch.html
+  watch.css
+  watch.js
   assets/00-install-gate-phone.png
   assets/04-scoring-progress-phone.png
   assets/06b-series-complete-phone.png

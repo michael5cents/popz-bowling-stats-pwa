@@ -203,6 +203,9 @@ public-v26 introduced the early **Pro Preview** (historical). As of public-v39.0
 - PopzVPS health monitor was updated for the new bootstrap architecture: homepage checks now require `runtime-monitor.js` + `entry.js`, then separately verify that `entry.js` points to the current versioned `app.js` and that the full installed-app asset still reports the expected `APP_VERSION`.
 - The temporary v39.003 dashboard display rule that inferred a missing Series Started count from Series Completed is superseded by public-v39.004. The dashboard now shows only raw accepted events and never manufactures funnel counts.
 
+## Commercial auto-return after playback (2026-11-19)
+- For users who want to continue exploring after the movie, all four marketing Watch links now open a clean standalone /features/watch.html player with the unchanged full-resolution commercial, native controls, and an always-visible Back to website fallback. The video ended event returns to /features/#demo; old iPad Safari native fullscreen exit can also trigger the return if the playback actually finished. Desktop popup closes automatically on ending. Direct full-quality MP4 remains available as fallback if embedded playback fails. See docs/releases/2026-11-19-marketing-commercial-auto-return.md.
+
 ## Older iPad commercial Watch-link correction (2026-11-19)
 - Owner confirmed direct playback of the original-quality 1280x720 commercial works in Safari, but the marketing website's JavaScript Watch buttons do not. All four Watch controls now carry literal MP4 href links, so Apple touch browsers use ordinary native browser navigation and the movie still opens without JavaScript. Desktop modal remains an optional enhancement. The experimental 480p/HLS files were not deployed or kept; commercial video dimensions are unchanged. See docs/releases/2026-11-19-marketing-ipad-direct-watch-links.md.
 

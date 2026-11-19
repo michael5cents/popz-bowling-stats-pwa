@@ -7,7 +7,7 @@
   const dialog = document.getElementById('demo-dialog');
   const video = document.getElementById('demo-video');
   const closeBtn = document.getElementById('demo-close');
-  // All Watch controls are ordinary MP4 links. On Apple touch devices, let
+  // All Watch controls are ordinary HTML links to a standalone player with\n  // a return-to-website handler. Keep the full-resolution MP4 as its fallback.\n  // On Apple touch devices, let
   // the browser follow the link natively; JS-triggered navigation previously
   // failed on an owner's older iPad even though the direct MP4 played fine.
   function isAppleTouchBrowser() {
@@ -99,6 +99,7 @@
   }
   document.querySelectorAll('[data-video-open]').forEach(btn => btn.addEventListener('click', openDemo));
   closeBtn?.addEventListener('click', closeDemo);
+  video?.addEventListener('ended', closeDemo);
   dialog?.addEventListener('cancel', () => {
     video?.pause();
     document.body.classList.remove('dialog-open');
