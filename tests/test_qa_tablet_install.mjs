@@ -15,6 +15,14 @@ const entry=read('entry.js'),html=read('index.html'),runtime=read('runtime-monit
 assert.match(html,/id="popzAppManifest" href="\.\/manifest\.webmanifest"/);
 assert.match(html,/qaTabletIndicator.*OWNER QA · TELEMETRY OFF/);
 assert.match(entry,/if\(qaTabletMode\(\)\)\{/);
+assert.match(entry,/\/CriOS\/i\.test\(ua\)/,'iOS Chrome must be distinguished from Safari');
+assert.match(entry,/Stay in Chrome on this page/);
+assert.match(entry,/Chrome’s Share icon/);
+assert.match(entry,/Confirm Add on the final screen/);
+assert.match(entry,/Do not score without that label/);
+assert.match(read('app.js'),/Stay in Chrome on this page/);
+assert.match(read('app.js'),/OWNER QA · TELEMETRY OFF/);
+
 assert.match(entry,/\.href='\.\/qa-tablet\.webmanifest'/);
 assert.match(entry,/apple-mobile-web-app-title/);
 assert.match(entry,/qaIndicator\.classList\.remove\('hidden'\)/);
@@ -25,5 +33,5 @@ assert.match(telemetry,/q\.get\('qa'\)==='1'/);
 assert.match(runtime,/q\.get\('qa'\)==='1'/);
 assert.match(sw,/\.\/qa-tablet\.webmanifest/);
 assert.match(read('scripts/build-dist.sh'),/^  qa-tablet\.webmanifest$/m);
-assert.match(read('latest-version.json'),/39\.020/);
+assert.match(read('latest-version.json'),/39\.021/);
 console.log('Separate owner QA iPad PWA identity, pinned QA start URL and telemetry suppression tests passed');

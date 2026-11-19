@@ -1,5 +1,5 @@
-import {createLiveShareClient} from './live-share-client.mjs?v=39.020';
-import {PRO_FEATURES} from './entitlements.mjs?v=39.020';
+import {createLiveShareClient} from './live-share-client.mjs?v=39.021';
+import {PRO_FEATURES} from './entitlements.mjs?v=39.021';
 
 export function mountLiveShare({getState,getSession,nameForSession,hasFeature,getIdToken,toast,onContinue}) {
   const panel=document.createElement('section');

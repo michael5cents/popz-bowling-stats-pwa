@@ -1,5 +1,5 @@
-import{normalizeTelemetryEvent,telemetryPlatform}from'./telemetry.mjs?v=39.020';
-import{buildTelemetryMilestones}from'./telemetry-milestones.mjs?v=39.020';
+import{normalizeTelemetryEvent,telemetryPlatform}from'./telemetry.mjs?v=39.021';
+import{buildTelemetryMilestones}from'./telemetry-milestones.mjs?v=39.021';
 
 const QUEUE='popz-bowling-telemetry-queue-v2',ACKED='popz-bowling-telemetry-acked-v3',FIRST='popz-bowling-telemetry-first-v2';
 const LEGACY_KEYS=['popz-bowling-telemetry-queue-v1','popz-bowling-telemetry-acked-v1','popz-bowling-telemetry-first-v1','popz-bowling-telemetry-enabled-v1'];

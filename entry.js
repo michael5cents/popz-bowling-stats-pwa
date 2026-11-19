@@ -38,7 +38,8 @@ async function installApp(){
   updateInstallButton();return;
  }
  const ua=navigator.userAgent||'';
- if(/iphone|ipad|ipod/i.test(ua))return notice('On iPhone/iPad:\n1. Open this page in Safari.\n2. Tap Share.\n3. Tap Add to Home Screen.\n4. Tap Add.\nThen open Popz Bowling from the new Home Screen icon.');
+ if(/CriOS/i.test(ua))return notice('On iPad/iPhone using Chrome:\n1. Stay in Chrome on this page.\n2. Tap Chrome’s Share icon to the right of the address bar.\n3. Choose Add to Home Screen.\n4. Confirm Add on the final screen.\nThen find the icon on your Home Screen. For owner QA, open it and verify OWNER QA · TELEMETRY OFF. Do not score without that label.');
+ if(/iphone|ipad|ipod/i.test(ua))return notice('On iPhone/iPad using Safari:\n1. Tap Share.\n2. Tap Add to Home Screen.\n3. Confirm Add.\nOpen the new Home Screen icon. For owner QA, verify OWNER QA · TELEMETRY OFF before scoring.');
  if(/android/i.test(ua))return notice('On Android, open this page in Chrome. If the install prompt is not ready yet, use Chrome menu > Install app / Add to Home screen, then open Popz Bowling from your Home Screen.');
  notice('Use your browser’s Install App / Add to Home Screen option, then launch Popz Bowling from the installed app icon.');
 }
@@ -49,7 +50,7 @@ async function prepareInstallability(){
 function loadApp(){
  const script=document.createElement('script');
  script.type='module';
- script.src='./app.js?v=39.020';
+ script.src='./app.js?v=39.021';
  document.body.appendChild(script);
 }
 if(installGateRequired()){

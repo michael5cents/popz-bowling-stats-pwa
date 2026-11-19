@@ -1,5 +1,5 @@
-import {activeSessionIds} from './multiplayer.mjs?v=39.020';
-import {undoRoll} from './scoring.mjs?v=39.020';
+import {activeSessionIds} from './multiplayer.mjs?v=39.021';
+import {undoRoll} from './scoring.mjs?v=39.021';
 
 const VERSION=1;
 const MAX_ACTIONS=512;

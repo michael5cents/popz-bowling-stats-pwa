@@ -1,19 +1,19 @@
-import{emptyFrames,gameComplete,activeFrameIndex,nextRollMax,addRoll,undoRoll,rollMark,scoreGame,summarizeSessions,handicapPins,wholeBowlingAverage,runningLeagueAverage,isSplitLeave,leaveLabel,filterSessionsByMeta,metadataValues,summarizeBreakdown,wholeGameBall,summarizeBallPerformance,summarizeLinePerformance,frameLane,laneNumbers,normalizeFirstBallSetup,getCurrentFirstBallSetup,setCurrentFirstBallSetup,captureFirstBallSetup}from'./scoring.mjs?v=39.020';
-import{groupHistorySessions}from'./history.mjs?v=39.020';
-import{transitionEvents,aggregateTransitions}from'./transition-analytics.mjs?v=39.020';
-import{buildStatsEvaluations}from'./stats-evaluation.mjs?v=39.020';
-import{versionNeedsUpdate,resolveUpdateNotice}from'./update.mjs?v=39.020';
-import{configureTelemetry,startTelemetry,trackTelemetry,flushTelemetry,telemetrySuppressed,reconcileTelemetry}from'./telemetry-client.mjs?v=39.020';
-import{initCloudSync,startCloudSyncWatch,signInGoogle,signOutGoogle,syncCloudNow,cloudUser,accountAccess}from'./cloud-sync.mjs?v=39.020';
-import{fetchBillingOffer,createLifetimeCheckout}from'./billing-client.mjs?v=39.020';
-import{PRO_FEATURES,effectiveAccess}from'./entitlements.mjs?v=39.020';
-import{normalizeRoster,activeSessionIds,activeGroupSessions,nextIncompleteGroupIndex}from'./multiplayer.mjs?v=39.020';
-import{resetRollUndo,rememberRollUndo,undoRecordedRoll}from'./roll-undo.mjs?v=39.020';
-import{prepareBackupImport}from'./backup-validation.mjs?v=39.020';
-import{LAYOUT_MODES,readLayoutMode,writeLayoutMode,resolveLayoutMode,layoutStatus}from'./layout-mode.mjs?v=39.020';
-import {mountLiveShare} from './live-share-ui.mjs?v=39.020';
+import{emptyFrames,gameComplete,activeFrameIndex,nextRollMax,addRoll,undoRoll,rollMark,scoreGame,summarizeSessions,handicapPins,wholeBowlingAverage,runningLeagueAverage,isSplitLeave,leaveLabel,filterSessionsByMeta,metadataValues,summarizeBreakdown,wholeGameBall,summarizeBallPerformance,summarizeLinePerformance,frameLane,laneNumbers,normalizeFirstBallSetup,getCurrentFirstBallSetup,setCurrentFirstBallSetup,captureFirstBallSetup}from'./scoring.mjs?v=39.021';
+import{groupHistorySessions}from'./history.mjs?v=39.021';
+import{transitionEvents,aggregateTransitions}from'./transition-analytics.mjs?v=39.021';
+import{buildStatsEvaluations}from'./stats-evaluation.mjs?v=39.021';
+import{versionNeedsUpdate,resolveUpdateNotice}from'./update.mjs?v=39.021';
+import{configureTelemetry,startTelemetry,trackTelemetry,flushTelemetry,telemetrySuppressed,reconcileTelemetry}from'./telemetry-client.mjs?v=39.021';
+import{initCloudSync,startCloudSyncWatch,signInGoogle,signOutGoogle,syncCloudNow,cloudUser,accountAccess}from'./cloud-sync.mjs?v=39.021';
+import{fetchBillingOffer,createLifetimeCheckout}from'./billing-client.mjs?v=39.021';
+import{PRO_FEATURES,effectiveAccess}from'./entitlements.mjs?v=39.021';
+import{normalizeRoster,activeSessionIds,activeGroupSessions,nextIncompleteGroupIndex}from'./multiplayer.mjs?v=39.021';
+import{resetRollUndo,rememberRollUndo,undoRecordedRoll}from'./roll-undo.mjs?v=39.021';
+import{prepareBackupImport}from'./backup-validation.mjs?v=39.021';
+import{LAYOUT_MODES,readLayoutMode,writeLayoutMode,resolveLayoutMode,layoutStatus}from'./layout-mode.mjs?v=39.021';
+import {mountLiveShare} from './live-share-ui.mjs?v=39.021';
 let liveSharing=null;
-const APP_VERSION='public-v39.020',DB='popz-bowling-public',STORE='state',KEY='master',$=id=>document.getElementById(id);let state,toastTimer,pendingLeave=null,leaveSelection=new Set(),editingFrameIndex=null,deferredInstallPrompt=null,cloudStatus={state:'loading',message:'Checking Google Sync…'},updateSignalVersion='',proAccess=effectiveAccess({}),seriesSetupMode='single',setupRoster=[],phoneSeriesOptionsOpen=false,phoneScoringDetailsOpen=false,layoutResizeTimer=null;
+const APP_VERSION='public-v39.021',DB='popz-bowling-public',STORE='state',KEY='master',$=id=>document.getElementById(id);let state,toastTimer,pendingLeave=null,leaveSelection=new Set(),editingFrameIndex=null,deferredInstallPrompt=null,cloudStatus={state:'loading',message:'Checking Google Sync…'},updateSignalVersion='',proAccess=effectiveAccess({}),seriesSetupMode='single',setupRoster=[],phoneSeriesOptionsOpen=false,phoneScoringDetailsOpen=false,layoutResizeTimer=null;
 let billingOffer={enabled:false},billingBusy=false;
 const uuid=()=>crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(16).slice(2)}`,nowIso=()=>new Date().toISOString();
 const todayLocal=()=>{const d=new Date(),o=d.getTimezoneOffset();return new Date(d.getTime()-o*60000).toISOString().slice(0,10)};
@@ -87,7 +87,7 @@ async function connectGoogleSync(){try{await signInGoogle();trackTelemetry('clou
 async function syncGoogleNow(){try{await syncCloudNow();trackTelemetry('cloud_sync');toast('Google Sync complete')}catch(e){toast(e?.message||'Cloud sync failed')}}
 async function disconnectGoogleSync(){try{await signOutGoogle();renderCloudSync();toast('Google Sync signed out • local data kept')}catch(e){toast(e?.message||'Sign out failed')}}
 function installNotice(message){if(document.body.classList.contains('install-required'))setInstallGateHelp(message);else toast(message,12000,true)}
-async function installApp(){if(isInstalled())return installNotice('Popz Bowling is already installed. Open it from your Home Screen or app launcher.');if(deferredInstallPrompt){const prompt=deferredInstallPrompt;deferredInstallPrompt=null;prompt.prompt();const choice=await prompt.userChoice;if(choice.outcome==='accepted')installNotice('Installation accepted. When it finishes, open Popz Bowling from your Home Screen or app launcher.');else installNotice('Install canceled. Tap Install Popz Bowling whenever you are ready.');updateInstallButton();return}const ua=navigator.userAgent;if(/iphone|ipad|ipod/i.test(ua))return installNotice('On iPhone/iPad:\n1. Open this page in Safari.\n2. Tap Share.\n3. Tap Add to Home Screen.\n4. Tap Add.\nThen open Popz Bowling from the new Home Screen icon.');if(/android/i.test(ua))return installNotice('On Android:\n1. Open this page in Chrome.\n2. Open the Chrome menu.\n3. Tap Install app / Add to Home screen.\n4. Open Popz Bowling from your Home Screen.');installNotice('Use your browser’s Install App / Add to Home Screen option, then launch Popz Bowling from the installed app icon.')}
+async function installApp(){if(isInstalled())return installNotice('Popz Bowling is already installed. Open it from your Home Screen or app launcher.');if(deferredInstallPrompt){const prompt=deferredInstallPrompt;deferredInstallPrompt=null;prompt.prompt();const choice=await prompt.userChoice;if(choice.outcome==='accepted')installNotice('Installation accepted. When it finishes, open Popz Bowling from your Home Screen or app launcher.');else installNotice('Install canceled. Tap Install Popz Bowling whenever you are ready.');updateInstallButton();return}const ua=navigator.userAgent;if(/CriOS/i.test(ua))return installNotice('On iPad/iPhone using Chrome:\n1. Stay in Chrome on this page.\n2. Tap Chrome’s Share icon beside the address bar.\n3. Choose Add to Home Screen.\n4. Confirm Add on the final screen.\nFind the icon on the iPad Home Screen. For owner QA, open it and check OWNER QA · TELEMETRY OFF before scoring.');if(/iphone|ipad|ipod/i.test(ua))return installNotice('On iPhone/iPad using Safari:\n1. Tap Share.\n2. Tap Add to Home Screen.\n3. Confirm Add.\nOpen the Home Screen icon. For owner QA, verify OWNER QA · TELEMETRY OFF before scoring.');if(/android/i.test(ua))return installNotice('On Android:\n1. Open this page in Chrome.\n2. Open the Chrome menu.\n3. Tap Install app / Add to Home screen.\n4. Open Popz Bowling from your Home Screen.');installNotice('Use your browser’s Install App / Add to Home Screen option, then launch Popz Bowling from the installed app icon.')}
 function jumpToFirstFrame(){requestAnimationFrame(()=>requestAnimationFrame(()=>{const first=$('scoreboard')?.querySelector('.frame');(first||$('scoreboard'))?.scrollIntoView({behavior:'smooth',block:'start'})}))}
 function closeApp(){try{window.close()}catch{}setTimeout(()=>{$('appShell').classList.add('hidden');document.querySelector('.bottom-nav').classList.add('hidden');$('exitScreen').classList.remove('hidden')},180)}
 function reopenApp(){$('exitScreen').classList.add('hidden');$('appShell').classList.remove('hidden');document.querySelector('.bottom-nav').classList.remove('hidden');showView('bowl')}

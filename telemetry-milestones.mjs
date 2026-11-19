@@ -1,4 +1,4 @@
-import{gameComplete}from'./scoring.mjs?v=39.020';
+import{gameComplete}from'./scoring.mjs?v=39.021';
 
 const iso=value=>{
  const t=Date.parse(String(value||''));

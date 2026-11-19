@@ -1,5 +1,5 @@
-import{mergeBowlingStates}from'./transfer.mjs?v=39.020';
-import{activeSessionIds}from'./multiplayer.mjs?v=39.020';
+import{mergeBowlingStates}from'./transfer.mjs?v=39.021';
+import{activeSessionIds}from'./multiplayer.mjs?v=39.021';
 
 const stamp=value=>{
   const t=Date.parse(value||'');

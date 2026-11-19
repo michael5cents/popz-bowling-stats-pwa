@@ -35,7 +35,7 @@ try{
  assert.equal(manifest.start_url,'/?qa=1&tablet=1');
  assert.equal(manifest.id,'/qa-tablet');
  await page.waitForFunction(()=>!!document.querySelector('#appVersion')?.textContent?.trim()&&document.querySelector('#appVersion').textContent!=='—',{timeout:15000});
- assert.equal(await page.locator('#appVersion').textContent(),'public-v39.020');
+ assert.equal(await page.locator('#appVersion').textContent(),'public-v39.021');
  assert.equal(await page.locator('#qaTabletIndicator').isVisible(),true);
  // A real QA test series must carry an ineligible milestone marker in IndexedDB,
  // even if it is later completed or the PWA reopens after an offline session.
