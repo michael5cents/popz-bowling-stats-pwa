@@ -203,6 +203,10 @@ public-v26 introduced the early **Pro Preview** (historical). As of public-v39.0
 - PopzVPS health monitor was updated for the new bootstrap architecture: homepage checks now require `runtime-monitor.js` + `entry.js`, then separately verify that `entry.js` points to the current versioned `app.js` and that the full installed-app asset still reports the expected `APP_VERSION`.
 - The temporary v39.003 dashboard display rule that inferred a missing Series Started count from Series Completed is superseded by public-v39.004. The dashboard now shows only raw accepted events and never manufactures funnel counts.
 
+## Marketing-only Safari iPad commercial video repair (2026-11-19)
+- The official 53-second league-night video was losslessly remuxed to a clean H.264/AAC-only fast-start MP4 (original footage and audio unchanged). iPad/iPhone Safari and iOS Chrome Watch buttons open the browser's native player, not the blurred modal that could show a dim/black video surface. Desktop modal playback remains supported with a direct-video fallback link.
+- This updates only the public marketing site and its media allowlist, not the public scoring app, PWA service worker, Stripe or customer telemetry. See docs/releases/2026-11-19-marketing-ipad-safari-commercial.md.
+
 ## public-v39.022 - iPad QA Home Screen pathname fix
 - QA Home Screen icon generated from the old query URL dropped the QA indicator on an actual iPad. Use https://popzbowling.com/qa-ipad/ instead, with a separate statically linked QA manifest and fixed path-based identity.
 - Entry, scoring, runtime and telemetry detect the QA pathname (no query needed), keep telemetry suppressed and all QA-scoring milestones ineligible for retrospective telemetry. Worker precaches separate offline QA HTML.

@@ -121,7 +121,7 @@ site_files=(
   assets/16-pro-ball-line-results.png
   assets/17-pro-lane-transition-analysis.png
   assets/18-pro-performance-evaluations.png
-  assets/Popz-Bowling-League-Night-Official-Commercial.mp4
+  assets/Popz-Bowling-League-Night-Safari-Compatible.mp4
   assets/Popz-Bowling-League-Night-Poster.jpg
   assets/app-icon.png
   assets/bowling-lanes-anna-shvets-pexels-5952998.jpg

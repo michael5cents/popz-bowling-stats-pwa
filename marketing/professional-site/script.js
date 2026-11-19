@@ -7,6 +7,14 @@
   const dialog = document.getElementById('demo-dialog');
   const video = document.getElementById('demo-video');
   const closeBtn = document.getElementById('demo-close');
+  const commercialURL = new URL('assets/Popz-Bowling-League-Night-Safari-Compatible.mp4', document.baseURI).href;
+  // Apple touch browsers may play audio while the video is composited below a
+  // blurred <dialog> backdrop. Use the native iPad/iPhone media player instead.
+  function isAppleTouchBrowser() {
+    const agent = navigator.userAgent || '';
+    return /iPad|iPhone|iPod/i.test(agent) || (/Macintosh/i.test(agent) && navigator.maxTouchPoints > 1);
+  }
+
 
   const gallery = {
     scoring: {
@@ -66,6 +74,10 @@
   function openDemo() {
     if (!dialog) return;
     closeMenu();
+    if (isAppleTouchBrowser()) {
+      window.location.assign(commercialURL);
+      return;
+    }
     if (typeof dialog.showModal === 'function') {
       if (!dialog.open) dialog.showModal();
       document.body.classList.add('dialog-open');
@@ -75,7 +87,7 @@
         if (play?.catch) play.catch(() => {}); // browser may require user to press Play
       }
     } else {
-      window.open('assets/Popz-Bowling-League-Night-Official-Commercial.mp4', '_blank', 'noopener');
+      window.location.assign(commercialURL);
     }
   }
   function closeDemo() {

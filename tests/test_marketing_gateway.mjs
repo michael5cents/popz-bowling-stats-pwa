@@ -19,7 +19,7 @@ assert.doesNotMatch(marketing,/noindex,nofollow|LOCAL DESIGN PREVIEW|NOT PUBLISH
 assert.match(marketing,/href="https:\/\/popzbowling.com\/"/);
 assert.match(marketing,/\$9\.99/);
 assert.match(marketing,/30.day/i);
-assert.match(marketing,/Popz-Bowling-League-Night-Official-Commercial.mp4/);
+assert.match(marketing,/Popz-Bowling-League-Night-Safari-Compatible.mp4/);
 for(const a of [...marketing.matchAll(/(?:src|href)="(assets\/[^"]+)"/g)]){
   assert.ok(existsSync(resolve(base,'marketing/professional-site',a[1])),'missing '+a[1]);
 }

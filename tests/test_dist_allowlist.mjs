@@ -51,7 +51,7 @@ const required=[
   'features/assets/16-pro-ball-line-results.png',
   'features/assets/17-pro-lane-transition-analysis.png',
   'features/assets/18-pro-performance-evaluations.png',
-  'features/assets/Popz-Bowling-League-Night-Official-Commercial.mp4',
+  'features/assets/Popz-Bowling-League-Night-Safari-Compatible.mp4',
   'features/assets/Popz-Bowling-League-Night-Poster.jpg',
   'features/assets/app-icon.png',
   'features/assets/bowling-lanes-anna-shvets-pexels-5952998.jpg',
