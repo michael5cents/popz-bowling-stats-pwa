@@ -27,8 +27,8 @@ for(const text of ['Overall','Spare &amp; Leave','Recent Form','locally','offlin
 }
 assert.match(help,/id="printGuideBtn"/);
 assert.match(html,/id="proAnalyticsContent"/);
-assert.match(app,/APP_VERSION='public-v39\.018'/);
-assert.match(sw,/SW_VERSION='public-v39\.018'/);
-assert.match(sw,/popz-bowling-public-v39\.018/);
+assert.match(app,/APP_VERSION='public-v39\.019'/);
+assert.match(sw,/SW_VERSION='public-v39\.019'/);
+assert.match(sw,/popz-bowling-public-v39\.019/);
 assert.doesNotMatch(help,/During <strong>PRO PREVIEW/);
 console.log('Verified all 19 in-app/printable Help cards, setup instructions, data interpretation, evidence limits, and matching PWA version.');

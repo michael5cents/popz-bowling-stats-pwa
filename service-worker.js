@@ -1,8 +1,8 @@
-const SW_VERSION='public-v39.018';
-const CACHE='popz-bowling-public-v39.018';
-const ASSETS=['./','./index.html','./style.css?v=39.018','./entry.js?v=39.018','./app.js?v=39.018','./scoring.mjs?v=39.018','./transition-analytics.mjs?v=39.018','./stats-evaluation.mjs?v=39.018','./history.mjs?v=39.018','./transfer.mjs?v=39.018','./backup-validation.mjs?v=39.018','./roll-undo.mjs?v=39.018','./update.mjs?v=39.018','./telemetry.mjs?v=39.018','./telemetry-client.mjs?v=39.018','./telemetry-milestones.mjs?v=39.018','./cloud-sync-core.mjs?v=39.018','./cloud-sync.mjs?v=39.018','./billing-client.mjs?v=39.018','./entitlements.mjs?v=39.018','./trial-policy.mjs?v=39.018','./multiplayer.mjs?v=39.018','./layout-mode.mjs?v=39.018','./runtime-monitor.js?v=39.018','./manifest.webmanifest','./icon-192.png?v=39.018','./icon-512.png?v=39.018','./apple-touch-icon.png?v=39.018'];
+const SW_VERSION='public-v39.019';
+const CACHE='popz-bowling-public-v39.019';
+const ASSETS=['./','./index.html','./style.css?v=39.019','./entry.js?v=39.019','./app.js?v=39.019','./scoring.mjs?v=39.019','./transition-analytics.mjs?v=39.019','./stats-evaluation.mjs?v=39.019','./history.mjs?v=39.019','./transfer.mjs?v=39.019','./backup-validation.mjs?v=39.019','./roll-undo.mjs?v=39.019','./update.mjs?v=39.019','./telemetry.mjs?v=39.019','./telemetry-client.mjs?v=39.019','./telemetry-milestones.mjs?v=39.019','./cloud-sync-core.mjs?v=39.019','./cloud-sync.mjs?v=39.019','./billing-client.mjs?v=39.019','./entitlements.mjs?v=39.019','./trial-policy.mjs?v=39.019','./multiplayer.mjs?v=39.019','./layout-mode.mjs?v=39.019','./runtime-monitor.js?v=39.019','./manifest.webmanifest','./icon-192.png?v=39.019','./icon-512.png?v=39.019','./apple-touch-icon.png?v=39.019'];
 
-const PRECACHE_ASSETS=[...ASSETS,'./live-share.mjs?v=39.018','./live-share-client.mjs?v=39.018','./live-share-ui.mjs?v=39.018'];
+const PRECACHE_ASSETS=[...ASSETS,'./live-share.mjs?v=39.019','./live-share-client.mjs?v=39.019','./live-share-ui.mjs?v=39.019'];
 const ASSET_URLS=new Set(PRECACHE_ASSETS.map(asset=>new URL(asset,self.location.href).href));
 const MODULE_VERSION=SW_VERSION.replace('public-v','');
 const shellURL=url=>url.origin===self.location.origin&&(url.pathname==='/'||url.pathname==='/index.html');

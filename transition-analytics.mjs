@@ -1,4 +1,4 @@
-import{gameComplete,normalizeFirstBallSetup}from'./scoring.mjs';
+import{gameComplete,normalizeFirstBallSetup}from'./scoring.mjs?v=39.019';
 
 const text=v=>String(v??'').trim().replace(/\s+/g,' ');
 const key=v=>text(v).toLocaleLowerCase();

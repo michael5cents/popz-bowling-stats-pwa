@@ -1,3 +1,4 @@
+import{verifiedBillingMetrics}from'./_billing/verified-metrics.mjs';
 import{validDashboardAuth,validDashboardPassword,dashboardSessionToken,validDashboardSession,renderTelemetryDashboard}from'../dashboard.mjs';
 import{TELEMETRY_BASELINE_VERSION,TELEMETRY_BASELINE_AT}from'../telemetry.mjs';
 const html=(body,status=200,extra={})=>new Response(body,{status,headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store','x-robots-tag':'noindex, nofollow','strict-transport-security':'max-age=31536000','content-security-policy':"default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",...extra}});
@@ -66,6 +67,7 @@ export async function onRequestGet({request,env}){
    runtime={available:true,installedBoots24:one(rr[0]),installedReady24:one(rr[1]),installedStartupFailures24:one(rr[2]),browserBoots24:one(rr[3]),errors24:one(rr[4]),latestErrors:rr[5]?.results||[]};
   }catch{}
  }
- const data={totalDevices:one(r[0]),active7:one(r[1]),active30:one(r[2]),completedDevices30:one(r[3]),seriesCompleted30:one(r[4]),newDevices7:one(r[5]),newDevices30:one(r[6]),returningDevices30:one(r[7]),invalidFunnelEvents:one(r[8]),events:r[9]?.results||[],platforms:r[10]?.results||[],modes:r[11]?.results||[],funnel:r[12]?.results||[],daily:r[13]?.results||[],runtime};
+ const billing=await verifiedBillingMetrics(env);
+ const data={billing,totalDevices:one(r[0]),active7:one(r[1]),active30:one(r[2]),completedDevices30:one(r[3]),seriesCompleted30:one(r[4]),newDevices7:one(r[5]),newDevices30:one(r[6]),returningDevices30:one(r[7]),invalidFunnelEvents:one(r[8]),events:r[9]?.results||[],platforms:r[10]?.results||[],modes:r[11]?.results||[],funnel:r[12]?.results||[],daily:r[13]?.results||[],runtime};
  return html(renderTelemetryDashboard(data));
 }

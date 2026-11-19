@@ -30,6 +30,16 @@ export function renderTelemetryDashboard(data,generatedAt=new Date().toISOString
   ['New profiles • 7d',data.newDevices7],['New profiles • 30d',data.newDevices30],['Seen on 2+ days • 30d',data.returningDevices30],
   ['Invalid funnel events',data.invalidFunnelEvents]
  ];
+ const billing=data.billing||{available:false,reason:'Payment verification unavailable'};
+ const usd=value=>'$'+(Number(value)/100).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+ const billCards=billing.available?[
+  ['Unique paying accounts',n(billing.customers)],['Verified lifetime purchases',n(billing.payments)],
+  ['Gross paid',usd(billing.grossCents)],['Refunds',usd(billing.refundedCents)],
+  ['Gross less refunds',usd(billing.netCents)],['Disputed payments',n(billing.disputed)]
+ ]:[];
+ const billingPanel=billing.available
+ ? '<div class="panel"><h2>Verified Lifetime Pro payments • Live Stripe</h2><div class="grid">'+billCards.map(([label,value])=>'<div class="card"><span>'+esc(label)+'</span><strong>'+esc(value)+'</strong></div>').join('')+'</div><div class="note">Live successful Popz Lifetime Pro payments only; excludes Founders, trials and test mode. Gross less refunds excludes fees and dispute outcomes. Paying accounts are not anonymous telemetry profiles.</div></div>'
+ : '<div class="panel"><h2>Verified Lifetime Pro payments • Live Stripe</h2><p>'+esc(billing.reason||'Unavailable, not zero')+'</p></div>';
  const rows=(data.daily||[]).map(r=>`<tr><td>${esc(r.day)}</td><td>${n(r.devices)}</td><td>${n(r.opens)}</td><td>${n(r.bowl_views)}</td><td>${n(r.started)}</td><td>${n(r.first_rolls)}</td><td>${n(r.games_completed)}</td><td>${n(r.completed)}</td></tr>`).join('');
  const events=(data.events||[]).map(r=>`<tr><td>${esc(r.event)}</td><td>${n(r.events)}</td><td>${n(r.devices)}</td></tr>`).join('');
  const platformOrder=[['android','Android'],['ios','iOS'],['windows','Windows'],['mac','Mac'],['linux','Linux'],['other','Other']],platformCounts=new Map(platformOrder.map(([key])=>[key,0]));
@@ -57,6 +67,7 @@ th,td{padding:9px 8px;border-bottom:1px solid #2d3a58;text-align:left;font-size:
 <div class="panel"><h2>Current runtime errors • 24h</h2><table><thead><tr><th>Time CT</th><th>Event</th><th>Version</th><th>Platform</th><th>Mode</th><th>Kind</th><th>Sanitized message</th><th>Source</th></tr></thead><tbody>${runtimeErrors||'<tr><td colspan="8">No current runtime errors requiring attention.</td></tr>'}</tbody></table></div>
 <div class="grid">${cards.map(([label,value])=>`<div class="card"><span>${esc(label)}</span><strong>${n(value)}</strong></div>`).join('')}</div>
 <div class="note"><strong>How to read adoption:</strong> adoption/scoring events come from a separate database from runtime health. A runtime website boot does <strong>not</strong> mean somebody opened the installed bowling app. Each adoption profile is an anonymous installation/browser profile, not guaranteed to be one unique person. <strong>Seen</strong> means at least one accepted adoption event during the period. Completed-series profiles and repeat activity across multiple days are stronger adoption signals than raw opens.<br><br><strong>Fresh-baseline note:</strong> the adoption database was deliberately reset for public-v39.004, so older real scoring is absent from the live counts even though a private pre-reset backup still exists. Fresh post-reset events from older <em>installed</em> PWAs are accepted; old browser/QA traffic and pre-reset timestamps remain excluded.<br><br><strong>QA protection:</strong> automated WebDriver/HeadlessChrome sessions and explicit <code>?qa=1</code> production checks are excluded from telemetry and runtime diagnostics.</div>
+${billingPanel}
 <div class="panel"><h2>Activation funnel • 30d</h2><p class="muted">Fresh baseline begins with public-v39.004. Funnel values are actual accepted events only—nothing is inferred or backfilled. The telemetry endpoint rejects downstream funnel events when their prerequisite stage is missing.</p><table><thead><tr><th>Stage</th><th>Profiles</th></tr></thead><tbody>${funnelRows||'<tr><td colspan="2">No funnel telemetry yet.</td></tr>'}</tbody></table></div>
 <div class="panel"><h2>Recent daily activity</h2><table><thead><tr><th>Date</th><th>Profiles</th><th>App opens</th><th>Bowl views</th><th>Series started</th><th>First rolls</th><th>Games completed</th><th>Series completed</th></tr></thead><tbody>${rows||'<tr><td colspan="8">No telemetry yet.</td></tr>'}</tbody></table></div>
 <div class="two"><div class="panel"><h2>Event totals</h2><table><thead><tr><th>Event</th><th>Events</th><th>Profiles</th></tr></thead><tbody>${events||'<tr><td colspan="3">No telemetry yet.</td></tr>'}</tbody></table></div>
