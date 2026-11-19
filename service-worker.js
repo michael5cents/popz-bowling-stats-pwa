@@ -1,11 +1,12 @@
-const SW_VERSION='public-v39.021';
-const CACHE='popz-bowling-public-v39.021';
-const ASSETS=['./','./index.html','./style.css?v=39.021','./entry.js?v=39.021','./app.js?v=39.021','./scoring.mjs?v=39.021','./transition-analytics.mjs?v=39.021','./stats-evaluation.mjs?v=39.021','./history.mjs?v=39.021','./transfer.mjs?v=39.021','./backup-validation.mjs?v=39.021','./roll-undo.mjs?v=39.021','./update.mjs?v=39.021','./telemetry.mjs?v=39.021','./telemetry-client.mjs?v=39.021','./telemetry-milestones.mjs?v=39.021','./cloud-sync-core.mjs?v=39.021','./cloud-sync.mjs?v=39.021','./billing-client.mjs?v=39.021','./entitlements.mjs?v=39.021','./trial-policy.mjs?v=39.021','./multiplayer.mjs?v=39.021','./layout-mode.mjs?v=39.021','./runtime-monitor.js?v=39.021','./manifest.webmanifest','./qa-tablet.webmanifest','./icon-192.png?v=39.021','./icon-512.png?v=39.021','./apple-touch-icon.png?v=39.021'];
+const SW_VERSION='public-v39.022';
+const CACHE='popz-bowling-public-v39.022';
+const ASSETS=['./','./index.html','./qa-ipad/index.html','./style.css?v=39.022','./entry.js?v=39.022','./app.js?v=39.022','./scoring.mjs?v=39.022','./transition-analytics.mjs?v=39.022','./stats-evaluation.mjs?v=39.022','./history.mjs?v=39.022','./transfer.mjs?v=39.022','./backup-validation.mjs?v=39.022','./roll-undo.mjs?v=39.022','./update.mjs?v=39.022','./telemetry.mjs?v=39.022','./telemetry-client.mjs?v=39.022','./telemetry-milestones.mjs?v=39.022','./cloud-sync-core.mjs?v=39.022','./cloud-sync.mjs?v=39.022','./billing-client.mjs?v=39.022','./entitlements.mjs?v=39.022','./trial-policy.mjs?v=39.022','./multiplayer.mjs?v=39.022','./layout-mode.mjs?v=39.022','./runtime-monitor.js?v=39.022','./manifest.webmanifest','./qa-tablet.webmanifest','./icon-192.png?v=39.022','./icon-512.png?v=39.022','./apple-touch-icon.png?v=39.022'];
 
-const PRECACHE_ASSETS=[...ASSETS,'./live-share.mjs?v=39.021','./live-share-client.mjs?v=39.021','./live-share-ui.mjs?v=39.021'];
+const PRECACHE_ASSETS=[...ASSETS,'./live-share.mjs?v=39.022','./live-share-client.mjs?v=39.022','./live-share-ui.mjs?v=39.022'];
 const ASSET_URLS=new Set(PRECACHE_ASSETS.map(asset=>new URL(asset,self.location.href).href));
 const MODULE_VERSION=SW_VERSION.replace('public-v','');
-const shellURL=url=>url.origin===self.location.origin&&(url.pathname==='/'||url.pathname==='/index.html');
+const shellURL=url=>url.origin===self.location.origin&&(url.pathname==='/'||url.pathname==='/index.html'||url.pathname==='/qa-ipad/'||url.pathname==='/qa-ipad/index.html');
+const shellCacheKey=url=>url.pathname.startsWith('/qa-ipad/')?'./qa-ipad/index.html':'./index.html';
 
 function cacheableResponse(response,{precache=false}={}){
   if(!response||response.status!==200||!response.ok)return false;
@@ -73,11 +74,11 @@ self.addEventListener('fetch',e=>{
     e.respondWith((async()=>{
       try{
         const response=await fetch(e.request);
-        try{await refreshCache(await caches.open(CACHE),'./index.html',response,true)}catch{}
+        try{await refreshCache(await caches.open(CACHE),shellCacheKey(u),response,true)}catch{}
         return response;
       }catch{
         const cache=await caches.open(CACHE);
-        return(await cache.match('./index.html'))||Response.error();
+        return(await cache.match(shellCacheKey(u)))||Response.error();
       }
     })());
     return;

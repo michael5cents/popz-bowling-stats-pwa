@@ -21,6 +21,6 @@ assert.deepEqual(
   resolveUpdateNotice('public-v24','public-v24','public-v24'),
   {needed:false,version:'public-v24',source:'current'}
 );
-assert.deepEqual(resolveUpdateNotice('public-v39.021','public-v39.021','public-v39.018'),
- {needed:false,version:'public-v39.021',source:'current'},'stale worker signal must not trigger update');
+assert.deepEqual(resolveUpdateNotice('public-v39.022','public-v39.022','public-v39.018'),
+ {needed:false,version:'public-v39.022',source:'current'},'stale worker signal must not trigger update');
 console.log('update-version and dual-signal tests passed');

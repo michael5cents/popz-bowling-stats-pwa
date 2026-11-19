@@ -1,19 +1,19 @@
-import{emptyFrames,gameComplete,activeFrameIndex,nextRollMax,addRoll,undoRoll,rollMark,scoreGame,summarizeSessions,handicapPins,wholeBowlingAverage,runningLeagueAverage,isSplitLeave,leaveLabel,filterSessionsByMeta,metadataValues,summarizeBreakdown,wholeGameBall,summarizeBallPerformance,summarizeLinePerformance,frameLane,laneNumbers,normalizeFirstBallSetup,getCurrentFirstBallSetup,setCurrentFirstBallSetup,captureFirstBallSetup}from'./scoring.mjs?v=39.021';
-import{groupHistorySessions}from'./history.mjs?v=39.021';
-import{transitionEvents,aggregateTransitions}from'./transition-analytics.mjs?v=39.021';
-import{buildStatsEvaluations}from'./stats-evaluation.mjs?v=39.021';
-import{versionNeedsUpdate,resolveUpdateNotice}from'./update.mjs?v=39.021';
-import{configureTelemetry,startTelemetry,trackTelemetry,flushTelemetry,telemetrySuppressed,reconcileTelemetry}from'./telemetry-client.mjs?v=39.021';
-import{initCloudSync,startCloudSyncWatch,signInGoogle,signOutGoogle,syncCloudNow,cloudUser,accountAccess}from'./cloud-sync.mjs?v=39.021';
-import{fetchBillingOffer,createLifetimeCheckout}from'./billing-client.mjs?v=39.021';
-import{PRO_FEATURES,effectiveAccess}from'./entitlements.mjs?v=39.021';
-import{normalizeRoster,activeSessionIds,activeGroupSessions,nextIncompleteGroupIndex}from'./multiplayer.mjs?v=39.021';
-import{resetRollUndo,rememberRollUndo,undoRecordedRoll}from'./roll-undo.mjs?v=39.021';
-import{prepareBackupImport}from'./backup-validation.mjs?v=39.021';
-import{LAYOUT_MODES,readLayoutMode,writeLayoutMode,resolveLayoutMode,layoutStatus}from'./layout-mode.mjs?v=39.021';
-import {mountLiveShare} from './live-share-ui.mjs?v=39.021';
+import{emptyFrames,gameComplete,activeFrameIndex,nextRollMax,addRoll,undoRoll,rollMark,scoreGame,summarizeSessions,handicapPins,wholeBowlingAverage,runningLeagueAverage,isSplitLeave,leaveLabel,filterSessionsByMeta,metadataValues,summarizeBreakdown,wholeGameBall,summarizeBallPerformance,summarizeLinePerformance,frameLane,laneNumbers,normalizeFirstBallSetup,getCurrentFirstBallSetup,setCurrentFirstBallSetup,captureFirstBallSetup}from'./scoring.mjs?v=39.022';
+import{groupHistorySessions}from'./history.mjs?v=39.022';
+import{transitionEvents,aggregateTransitions}from'./transition-analytics.mjs?v=39.022';
+import{buildStatsEvaluations}from'./stats-evaluation.mjs?v=39.022';
+import{versionNeedsUpdate,resolveUpdateNotice}from'./update.mjs?v=39.022';
+import{configureTelemetry,startTelemetry,trackTelemetry,flushTelemetry,telemetrySuppressed,reconcileTelemetry}from'./telemetry-client.mjs?v=39.022';
+import{initCloudSync,startCloudSyncWatch,signInGoogle,signOutGoogle,syncCloudNow,cloudUser,accountAccess}from'./cloud-sync.mjs?v=39.022';
+import{fetchBillingOffer,createLifetimeCheckout}from'./billing-client.mjs?v=39.022';
+import{PRO_FEATURES,effectiveAccess}from'./entitlements.mjs?v=39.022';
+import{normalizeRoster,activeSessionIds,activeGroupSessions,nextIncompleteGroupIndex}from'./multiplayer.mjs?v=39.022';
+import{resetRollUndo,rememberRollUndo,undoRecordedRoll}from'./roll-undo.mjs?v=39.022';
+import{prepareBackupImport}from'./backup-validation.mjs?v=39.022';
+import{LAYOUT_MODES,readLayoutMode,writeLayoutMode,resolveLayoutMode,layoutStatus}from'./layout-mode.mjs?v=39.022';
+import {mountLiveShare} from './live-share-ui.mjs?v=39.022';
 let liveSharing=null;
-const APP_VERSION='public-v39.021',DB='popz-bowling-public',STORE='state',KEY='master',$=id=>document.getElementById(id);let state,toastTimer,pendingLeave=null,leaveSelection=new Set(),editingFrameIndex=null,deferredInstallPrompt=null,cloudStatus={state:'loading',message:'Checking Google Sync…'},updateSignalVersion='',proAccess=effectiveAccess({}),seriesSetupMode='single',setupRoster=[],phoneSeriesOptionsOpen=false,phoneScoringDetailsOpen=false,layoutResizeTimer=null;
+const APP_VERSION='public-v39.022',DB='popz-bowling-public',STORE='state',KEY='master',$=id=>document.getElementById(id);let state,toastTimer,pendingLeave=null,leaveSelection=new Set(),editingFrameIndex=null,deferredInstallPrompt=null,cloudStatus={state:'loading',message:'Checking Google Sync…'},updateSignalVersion='',proAccess=effectiveAccess({}),seriesSetupMode='single',setupRoster=[],phoneSeriesOptionsOpen=false,phoneScoringDetailsOpen=false,layoutResizeTimer=null;
 let billingOffer={enabled:false},billingBusy=false;
 const uuid=()=>crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(16).slice(2)}`,nowIso=()=>new Date().toISOString();
 const todayLocal=()=>{const d=new Date(),o=d.getTimezoneOffset();return new Date(d.getTime()-o*60000).toISOString().slice(0,10)};
@@ -26,7 +26,7 @@ function toast(msg,duration=2400,wide=false){const el=$('toast');el.textContent=
 function isInstalled(){return window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}
 const isProductionWebHost=()=>/^(?:www\.)?popzbowling\.com$/i.test(location.hostname);
 const qaPhoneMode=()=>{try{const q=new URLSearchParams(location.search);return q.get('qa')==='1'&&q.get('phone')==='1'}catch{return false}};
-const qaTabletMode=()=>{try{const q=new URLSearchParams(location.search);return q.get('qa')==='1'&&q.get('tablet')==='1'}catch{return false}};
+const qaTabletMode=()=>{try{if(/^\/qa-ipad(?:\/|$)/.test(location.pathname))return true;const q=new URLSearchParams(location.search);return q.get('qa')==='1'&&q.get('tablet')==='1'}catch{return false}};
 const qaSimulatorMode=()=>qaPhoneMode()||qaTabletMode();
 const installGateRequired=()=>isProductionWebHost()&&!isInstalled()&&!qaSimulatorMode();
 function setInstallGateHelp(message=''){const help=$('installGateHelp');if(!help)return;help.textContent=message;help.classList.toggle('hidden',!message)}

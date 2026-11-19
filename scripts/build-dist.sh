@@ -81,6 +81,24 @@ for rel in "${runtime_files[@]}"; do
   copy_required "$rel"
 done
 
+# Owner iPad uses an immutable QA pathname rather than a query-only shortcut.
+# Generate from the canonical public shell to keep all app assets in sync.
+mkdir -p "$DIST/qa-ipad"
+python3 - "$DIST/index.html" "$DIST/qa-ipad/index.html" <<'PYQA'
+from pathlib import Path
+import sys
+html=Path(sys.argv[1]).read_text()
+assert '<head>' in html
+html=html.replace('<head>','<head><base href="/"><meta name="robots" content="noindex,nofollow">',1)
+# iOS Chrome may inspect the original HTML before entry.js swaps manifests.
+# Set the QA install identity statically as well, so the icon never points to '/'.
+assert 'id="popzAppManifest" href="./manifest.webmanifest"' in html
+html=html.replace('id="popzAppManifest" href="./manifest.webmanifest"','id="popzAppManifest" href="/qa-tablet.webmanifest"',1)
+html=html.replace('<meta name="apple-mobile-web-app-title" content="Popz Bowling">','<meta name="apple-mobile-web-app-title" content="Popz QA">',1)
+html=html.replace('<title>Popz Bowling Stats</title>','<title>Popz Bowling QA - iPad</title>',1)
+Path(sys.argv[2]).write_text(html)
+PYQA
+
 # Exact-name optional runtime files. These are not present in the current
 # release, but remain explicitly allowlisted if restored later.
 copy_optional live-share.css

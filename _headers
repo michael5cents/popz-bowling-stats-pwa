@@ -18,3 +18,7 @@
   X-Robots-Tag: noindex, nofollow
   X-Content-Type-Options: nosniff
   Content-Security-Policy: default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+
+/qa-ipad/*
+  Cache-Control: no-store, max-age=0
+  X-Robots-Tag: noindex, nofollow

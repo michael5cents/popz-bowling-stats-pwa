@@ -203,6 +203,11 @@ public-v26 introduced the early **Pro Preview** (historical). As of public-v39.0
 - PopzVPS health monitor was updated for the new bootstrap architecture: homepage checks now require `runtime-monitor.js` + `entry.js`, then separately verify that `entry.js` points to the current versioned `app.js` and that the full installed-app asset still reports the expected `APP_VERSION`.
 - The temporary v39.003 dashboard display rule that inferred a missing Series Started count from Series Completed is superseded by public-v39.004. The dashboard now shows only raw accepted events and never manufactures funnel counts.
 
+## public-v39.022 - iPad QA Home Screen pathname fix
+- QA Home Screen icon generated from the old query URL dropped the QA indicator on an actual iPad. Use https://popzbowling.com/qa-ipad/ instead, with a separate statically linked QA manifest and fixed path-based identity.
+- Entry, scoring, runtime and telemetry detect the QA pathname (no query needed), keep telemetry suppressed and all QA-scoring milestones ineligible for retrospective telemetry. Worker precaches separate offline QA HTML.
+- Create a NEW icon from the dedicated path in iPad Chrome; do not test from the old icon or any launch missing OWNER QA / TELEMETRY OFF. See TELEMETRY-ACCESS.md and docs/releases/2026-11-19-public-v39.022-qa-ipad-stable-path.md.
+
 ## public-v39.020 - owner iPad QA without adoption pollution
 - Owner QA iPad installation: https://popzbowling.com/?qa=1&tablet=1, separate QA PWA manifest and Popz QA app label. It reopens in QA mode, forces full tablet layout and suppresses both adoption and runtime telemetry and milestone backfill. Visible OWNER QA - TELEMETRY OFF badge must appear before scoring; normal customer manifest, pricing and accounts are unchanged. See TELEMETRY-ACCESS.md and docs/releases/2026-11-19-public-v39.020-owner-ipad-qa.md.
 

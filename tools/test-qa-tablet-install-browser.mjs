@@ -1,9 +1,12 @@
 // Owner QA iPad installation smoke test, isolated: never transmits production events.
 import assert from'node:assert/strict';
 import{readFileSync,existsSync}from'node:fs';
+import{execFileSync}from'node:child_process';
 import{resolve,extname}from'node:path';
 const{chromium}=await import(process.env.PLAYWRIGHT_MODULE||'playwright');
-const root=resolve(import.meta.dirname,'..');
+const repo=resolve(import.meta.dirname,'..');
+execFileSync(resolve(repo,'scripts/build-dist.sh'),{cwd:repo,stdio:'pipe'});
+const root=resolve(repo,'dist');
 const types={'.html':'text/html','.css':'text/css','.js':'text/javascript','.mjs':'text/javascript','.json':'application/json','.webmanifest':'application/manifest+json','.png':'image/png'};
 const browser=await chromium.launch({headless:true,...(process.env.CHROME_BIN?{executablePath:process.env.CHROME_BIN}:{})});
 let telemetryPosts=0,runtimePosts=0;
@@ -19,23 +22,23 @@ await ctx.route('**/*',route=>{
  if(u.pathname==='/api/telemetry'&&route.request().method()==='POST')telemetryPosts++;
  if(u.pathname==='/api/runtime'&&route.request().method()==='POST')runtimePosts++;
  if(u.pathname.startsWith('/api/'))return route.fulfill({status:503,contentType:'application/json',body:'{}'});
- const rel=u.pathname==='/'?'index.html':u.pathname.slice(1),f=resolve(root,rel);
+ const rel=u.pathname==='/'?'index.html':u.pathname==='/qa-ipad/'?'qa-ipad/index.html':u.pathname.slice(1),f=resolve(root,rel);
  if(!f.startsWith(root+'/')||!existsSync(f))return route.fulfill({status:404,body:''});
  return route.fulfill({status:200,contentType:types[extname(f)]||'application/octet-stream',body:readFileSync(f)});
 });
 try{
  const page=await ctx.newPage(),errors=[];page.on('pageerror',err=>errors.push(err.message));
- await page.goto('https://popzbowling.com/?qa=1&tablet=1');
+ await page.goto('https://popzbowling.com/qa-ipad/');
  await page.waitForFunction(()=>document.querySelector('#qaTabletIndicator')&&!document.querySelector('#qaTabletIndicator').classList.contains('hidden'));
  assert.match(await page.locator('#qaTabletIndicator').textContent(),/TELEMETRY OFF/);
- assert.equal(await page.locator('link[rel=manifest]').getAttribute('href'),'./qa-tablet.webmanifest');
+ assert.equal(await page.locator('link[rel=manifest]').getAttribute('href'),'/qa-tablet.webmanifest');
  assert.match(await page.title(),/Popz Bowling QA/);
  assert.equal(await page.locator('#installGate').isVisible(),false);
  const manifest=await page.evaluate(async()=>await(await fetch(document.querySelector('link[rel=manifest]').href)).json());
- assert.equal(manifest.start_url,'/?qa=1&tablet=1');
- assert.equal(manifest.id,'/qa-tablet');
+ assert.equal(manifest.start_url,'/qa-ipad/');
+ assert.equal(manifest.id,'/qa-ipad/');
  await page.waitForFunction(()=>!!document.querySelector('#appVersion')?.textContent?.trim()&&document.querySelector('#appVersion').textContent!=='—',{timeout:15000});
- assert.equal(await page.locator('#appVersion').textContent(),'public-v39.021');
+ assert.equal(await page.locator('#appVersion').textContent(),'public-v39.022');
  assert.equal(await page.locator('#qaTabletIndicator').isVisible(),true);
  // A real QA test series must carry an ineligible milestone marker in IndexedDB,
  // even if it is later completed or the PWA reopens after an offline session.

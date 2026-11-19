@@ -5,14 +5,13 @@ let deferredInstallPrompt=null;
 const isInstalled=()=>{try{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch{return false}};
 const isProductionWebHost=()=>/^(?:www\.)?popzbowling\.com$/i.test(location.hostname);
 const qaPhoneMode=()=>{try{const q=new URLSearchParams(location.search);return q.get('qa')==='1'&&q.get('phone')==='1'}catch{return false}};
-const qaTabletMode=()=>{try{const q=new URLSearchParams(location.search);return q.get('qa')==='1'&&q.get('tablet')==='1'}catch{return false}};
+const qaTabletMode=()=>{try{if(/^\/qa-ipad(?:\/|$)/.test(location.pathname))return true;const q=new URLSearchParams(location.search);return q.get('qa')==='1'&&q.get('tablet')==='1'}catch{return false}};
 const qaSimulatorMode=()=>qaPhoneMode()||qaTabletMode();
 // This is an explicit separate iPad QA installation, not a normal customer PWA.
-// Safari reads this manifest when the owner uses Add to Home Screen.  Its own
-// start_url reopens with qa=1&tablet=1 so telemetry remains suppressed.
+// A distinct /qa-ipad/ start path keeps QA mode when iOS Chrome drops URL queries.
 if(qaTabletMode()){
  const link=document.getElementById('popzAppManifest');
- if(link)link.href='./qa-tablet.webmanifest';
+ if(link)link.href='/qa-tablet.webmanifest';
  const appleTitle=document.querySelector('meta[name="apple-mobile-web-app-title"]');
  if(appleTitle)appleTitle.content='Popz Bowling QA';
  document.title='Popz Bowling QA - iPad';
@@ -50,7 +49,7 @@ async function prepareInstallability(){
 function loadApp(){
  const script=document.createElement('script');
  script.type='module';
- script.src='./app.js?v=39.021';
+ script.src='./app.js?v=39.022';
  document.body.appendChild(script);
 }
 if(installGateRequired()){

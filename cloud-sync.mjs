@@ -1,5 +1,5 @@
-import{mergeCloudBowlingState,stateForCloud,cloudSnapshotToState,cloudDocForSession,normalizeCloudDocument}from'./cloud-sync-core.mjs?v=39.021';
-import{PRO_FEATURES,effectiveAccess,canUseFeature}from'./entitlements.mjs?v=39.021';
+import{mergeCloudBowlingState,stateForCloud,cloudSnapshotToState,cloudDocForSession,normalizeCloudDocument}from'./cloud-sync-core.mjs?v=39.022';
+import{PRO_FEATURES,effectiveAccess,canUseFeature}from'./entitlements.mjs?v=39.022';
 
 const FIREBASE_VERSION='12.19.0';
 const config={

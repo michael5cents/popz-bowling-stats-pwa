@@ -1,3 +1,7 @@
+import{execFileSync}from'node:child_process';
+import{resolve}from'node:path';
+const repo=resolve(import.meta.dirname,'..');
+execFileSync(resolve(repo,'scripts/build-dist.sh'),{cwd:repo,stdio:'pipe'});
 import assert from'node:assert/strict';
 import{readFileSync}from'node:fs';
 const read=f=>readFileSync(new URL('../'+f,import.meta.url),'utf8');
@@ -5,13 +9,18 @@ const normal=JSON.parse(read('manifest.webmanifest')),qa=JSON.parse(read('qa-tab
 assert.notEqual(normal.id,qa.id,'QA must install separately from real customer PWA');
 assert.equal(normal.start_url,'./','normal customer launch remains unchanged');
 assert.equal(normal.name,'Popz Bowling Stats');
-assert.equal(qa.start_url,'/?qa=1&tablet=1');
-assert.equal(qa.scope,'/');
+assert.equal(qa.start_url,'/qa-ipad/');
+assert.equal(qa.scope,'/qa-ipad/');
 assert.equal(qa.display,'standalone');
+assert.equal(qa.id,'/qa-ipad/');
 assert.match(qa.short_name,/QA/);
 assert.match(qa.name,/QA/);
 assert.equal(qa.icons.length,2);
 const entry=read('entry.js'),html=read('index.html'),runtime=read('runtime-monitor.js'),telemetry=read('telemetry-client.mjs'),sw=read('service-worker.js');
+assert.match(entry,/qa-ipad/);
+assert.match(telemetry,/qa-ipad/);
+assert.match(runtime,/qa-ipad/);
+
 assert.match(html,/id="popzAppManifest" href="\.\/manifest\.webmanifest"/);
 assert.match(html,/qaTabletIndicator.*OWNER QA · TELEMETRY OFF/);
 assert.match(entry,/if\(qaTabletMode\(\)\)\{/);
@@ -23,7 +32,7 @@ assert.match(entry,/Do not score without that label/);
 assert.match(read('app.js'),/Stay in Chrome on this page/);
 assert.match(read('app.js'),/OWNER QA · TELEMETRY OFF/);
 
-assert.match(entry,/\.href='\.\/qa-tablet\.webmanifest'/);
+assert.match(entry,/\.href='\/qa-tablet\.webmanifest'/);
 assert.match(entry,/apple-mobile-web-app-title/);
 assert.match(entry,/qaIndicator\.classList\.remove\('hidden'\)/);
 assert.match(entry,/Beta telemetry: On/);
@@ -33,5 +42,17 @@ assert.match(telemetry,/q\.get\('qa'\)==='1'/);
 assert.match(runtime,/q\.get\('qa'\)==='1'/);
 assert.match(sw,/\.\/qa-tablet\.webmanifest/);
 assert.match(read('scripts/build-dist.sh'),/^  qa-tablet\.webmanifest$/m);
-assert.match(read('latest-version.json'),/39\.021/);
+assert.match(read('latest-version.json'),/39\.022/);
+const qaHtml=readFileSync(new URL('../dist/qa-ipad/index.html',import.meta.url),'utf8');
+assert.match(qaHtml,/<base href="\/">/,'QA root assets need absolute-base resolution');
+assert.match(qaHtml,/name="robots" content="noindex,nofollow"/);
+assert.match(qaHtml,/popz-app-version" content="public-v39\.022"/);
+assert.match(qaHtml,/id="popzAppManifest" href="\/qa-tablet\.webmanifest"/,'QA manifest must be in initial HTML before JS runs');
+assert.match(qaHtml,/apple-mobile-web-app-title" content="Popz QA"/);
+assert.match(qaHtml,/<title>Popz Bowling QA - iPad<\/title>/);
+const expected=html.replace('<head>','<head><base href="/"><meta name="robots" content="noindex,nofollow">',1).replace('id="popzAppManifest" href="./manifest.webmanifest"','id="popzAppManifest" href="/qa-tablet.webmanifest"',1).replace('<meta name="apple-mobile-web-app-title" content="Popz Bowling">','<meta name="apple-mobile-web-app-title" content="Popz QA">',1).replace('<title>Popz Bowling Stats</title>','<title>Popz Bowling QA - iPad</title>',1);
+assert.equal(qaHtml,expected,'QA shell must be derived solely from the current public shell with the QA identity');
+assert.match(sw,/qa-ipad\/index\.html/,'offline QA document must be pre-cached');
+assert.match(sw,/shellCacheKey/,'QA shell must be cached separately from customer shell');
+
 console.log('Separate owner QA iPad PWA identity, pinned QA start URL and telemetry suppression tests passed');

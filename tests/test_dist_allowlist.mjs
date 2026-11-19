@@ -64,6 +64,7 @@ const required=[
   'live/viewer.mjs',
   'manifest.webmanifest',
   'qa-tablet.webmanifest',
+  'qa-ipad/index.html',
   'multiplayer.mjs',
   'payment/cancel/index.html',
   'payment/success/index.html',

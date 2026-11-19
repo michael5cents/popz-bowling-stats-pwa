@@ -1,5 +1,5 @@
-import{normalizeTelemetryEvent,telemetryPlatform}from'./telemetry.mjs?v=39.021';
-import{buildTelemetryMilestones}from'./telemetry-milestones.mjs?v=39.021';
+import{normalizeTelemetryEvent,telemetryPlatform}from'./telemetry.mjs?v=39.022';
+import{buildTelemetryMilestones}from'./telemetry-milestones.mjs?v=39.022';
 
 const QUEUE='popz-bowling-telemetry-queue-v2',ACKED='popz-bowling-telemetry-acked-v3',FIRST='popz-bowling-telemetry-first-v2';
 const LEGACY_KEYS=['popz-bowling-telemetry-queue-v1','popz-bowling-telemetry-acked-v1','popz-bowling-telemetry-first-v1','popz-bowling-telemetry-enabled-v1'];
@@ -24,7 +24,7 @@ const acknowledge=ids=>{
 const clearQueue=()=>{memoryQueue=[];try{localStorage.removeItem(QUEUE)}catch{}};
 export const telemetryEnabled=()=>true;
 export function telemetrySuppressed(){
- try{const q=new URLSearchParams(globalThis.location?.search||'');if(q.get('qa')==='1')return true}catch{}
+ try{if(/^\/qa-ipad(?:\/|$)/.test(globalThis.location?.pathname||''))return true;const q=new URLSearchParams(globalThis.location?.search||'');if(q.get('qa')==='1')return true}catch{}
  try{const n=globalThis.navigator;if(n?.webdriver===true||/HeadlessChrome/i.test(n?.userAgent||''))return true}catch{}
  return false;
 }

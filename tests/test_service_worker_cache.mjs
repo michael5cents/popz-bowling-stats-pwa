@@ -169,7 +169,7 @@ function worker(){
 
 {
   const h=worker();
-  h.setNetwork(url=>url.pathname==='/'||url.pathname==='/index.html'
+  h.setNetwork(url=>url.pathname==='/'||url.pathname==='/index.html'||url.pathname==='/qa-ipad/index.html'
     ?html(appHTML,{headers:{'cache-control':'no-store'}})
     :new Response('bundled asset',{headers:{'cache-control':'no-store'}}));
   await h.install();
@@ -183,7 +183,7 @@ function worker(){
 {
   for(const invalid of['wrong shell','private response']){
     const h=worker();
-    h.setNetwork(url=>url.pathname==='/'||url.pathname==='/index.html'
+    h.setNetwork(url=>url.pathname==='/'||url.pathname==='/index.html'||url.pathname==='/qa-ipad/index.html'
       ?html(invalid==='wrong shell'?'not the scoring app':appHTML,{headers:invalid==='private response'?{'cache-control':'private'}:{}})
       :new Response('bundled asset'));
     await assert.rejects(h.install(),/Invalid precache response/);
@@ -205,7 +205,7 @@ function worker(){
   };
   h.setNetwork(async url=>{
     await acquire();
-    const isShell=url.pathname==='/'||url.pathname==='/index.html';
+    const isShell=url.pathname==='/'||url.pathname==='/index.html'||url.pathname==='/qa-ipad/index.html';
     const bytes=new TextEncoder().encode(isShell?appHTML:'body for '+url.pathname);
     let sent=false;
     const body=new ReadableStream({pull(controller){
@@ -226,3 +226,21 @@ function worker(){
 }
 
 console.log('Service worker preserves verified offline scoring, excludes APIs/admin/live data, rejects unsafe refreshes, drains streamed precache bodies, and retains bundled modules');
+
+
+{
+  const h=worker(),qaShell=html(shell('owner QA offline shell'));
+  h.seed('/qa-ipad/index.html',qaShell);
+  h.setNetwork(offline);
+  assert.equal(await(await h.fetch('/qa-ipad/',{mode:'navigate'})).text(),await qaShell.text(),'QA pathname must work offline without query parameters');
+  assert.equal(h.requests.length,1,'QA offline navigation should request network first');
+}
+{
+  const h=worker(),regular=shell('normal customer scoring'),qa=shell('iPad owner QA');
+  h.seed('/index.html',html(regular));
+  h.seed('/qa-ipad/index.html',html(qa));
+  h.setNetwork(url=>url.pathname.startsWith('/qa-ipad/')?html(shell('new QA shell')):html(shell('new customer shell')));
+  await h.fetch('/qa-ipad/',{mode:'navigate'});
+  assert.equal(await(await h.cached('/index.html')).text(),regular,'QA browsing must never poison the customer shell');
+  assert.equal(await(await h.cached('/qa-ipad/index.html')).text(),shell('new QA shell'),'valid QA HTML updates only QA cache');
+}

@@ -4,7 +4,7 @@ const files=['app.js','scoring.mjs','cloud-sync.mjs','live-share.mjs','entry.js'
 for(const file of files){
  const source=readFileSync(new URL('../'+file,import.meta.url),'utf8');
  for(const match of source.matchAll(/from\s*['"](\.\/[^'"]+\.mjs(?:\?v=[^'"]+)?)['"]/g))
-  assert.match(match[1],/\?v=39\.021$/,file+' imported '+match[1]);
+  assert.match(match[1],/\?v=39\.022$/,file+' imported '+match[1]);
 }
-assert.match(readFileSync(new URL('../app.js',import.meta.url),'utf8'),/scoring\.mjs\?v=39\.021/);
+assert.match(readFileSync(new URL('../app.js',import.meta.url),'utf8'),/scoring\.mjs\?v=39\.022/);
 console.log('iOS atomic module import tests passed');

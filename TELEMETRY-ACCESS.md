@@ -88,6 +88,12 @@ The Telegram monitor accepts numeric patch releases such as the current `public-
 - Adoption queue/ack/first-seen keys and runtime queue use v2 namespaces. Old v1 queues are removed by public-v39.004, and old `_telemetry.version=1` series are not reconciled into the new baseline.
 - Normal public-beta users cannot disable adoption telemetry or runtime diagnostics. Only `?qa=1`, WebDriver, and HeadlessChrome suppress them.
 
+## Current owner iPad QA install - stable pathname (public-v39.022)
+
+Use https://popzbowling.com/qa-ipad/ in iPad Chrome. Do not install from the older query URL with qa=1&tablet=1; that method produced a Home Screen shortcut which lost the QA badge on an actual iPad. The dedicated static QA page has its own install manifest and fixed start_url /qa-ipad/. From Chrome tap Share > Add to Home Screen > final Add, then launch the NEW icon. Before any scoring confirm OWNER QA / TELEMETRY OFF appears. Do not use the old icon for testing. Real iPad verification remains pending until the owner reports it.
+
+This pathname is recognized by the runtime monitor, adoption telemetry client, entry and scoring app before queuing any telemetry. Every QA session is stamped ineligible for telemetry reconciliation. A separate offline cache and noindex page cannot overwrite the customer root shell. See docs/releases/2026-11-19-public-v39.022-qa-ipad-stable-path.md. Older query-path instructions below are historical, for MacBook simulations only.
+
 ## iPad Chrome install correction (public-v39.021)
 
 Chrome on iPad uses its own Share button beside the address bar. From https://popzbowling.com/?qa=1&tablet=1, tap Chrome Share > Add to Home Screen > final Add. Neither entry.js nor the app Install App prompt should tell Chrome users to open Safari. If the iPad still does not display a Home Screen icon, verify the final Chrome Add confirmation; a Chrome shortcut may open in the default browser rather than standalone. After launching any shortcut, verify OWNER QA · TELEMETRY OFF before scoring to avoid telemetry pollution.

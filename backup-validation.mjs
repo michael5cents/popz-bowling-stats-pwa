@@ -1,4 +1,4 @@
-import {mergeBowlingStates} from './transfer.mjs?v=39.021';
+import {mergeBowlingStates} from './transfer.mjs?v=39.022';
 
 const isRecord=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
 const fail=(path,message)=>{throw new Error(`Invalid bowling backup: ${path} ${message}. Your saved data has not been changed.`)};

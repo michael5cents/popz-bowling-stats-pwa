@@ -3,7 +3,7 @@
 const ENDPOINT='/api/runtime',QUEUE_KEY='popz-bowling-runtime-queue-v2',RID_KEY='popz-bowling-runtime-id-v1',LEGACY_QUEUE_KEY='popz-bowling-runtime-queue-v1',MAX_QUEUE=60;
 let memoryQueue=[],ready=false,flushing=false;
 const qa=()=>{
- try{const q=new URLSearchParams(location.search);if(q.get('qa')==='1')return true}catch{}
+ try{if(/^\/qa-ipad(?:\/|$)/.test(location.pathname))return true;const q=new URLSearchParams(location.search);if(q.get('qa')==='1')return true}catch{}
  try{if(navigator.webdriver===true||/HeadlessChrome/i.test(navigator.userAgent||''))return true}catch{}
  return false;
 };
