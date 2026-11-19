@@ -7,9 +7,9 @@
   const dialog = document.getElementById('demo-dialog');
   const video = document.getElementById('demo-video');
   const closeBtn = document.getElementById('demo-close');
-  const commercialURL = new URL('assets/Popz-Bowling-League-Night-Safari-Compatible.mp4', document.baseURI).href;
-  // Apple touch browsers may play audio while the video is composited below a
-  // blurred <dialog> backdrop. Use the native iPad/iPhone media player instead.
+  // All Watch controls are ordinary MP4 links. On Apple touch devices, let
+  // the browser follow the link natively; JS-triggered navigation previously
+  // failed on an owner's older iPad even though the direct MP4 played fine.
   function isAppleTouchBrowser() {
     const agent = navigator.userAgent || '';
     return /iPad|iPhone|iPod/i.test(agent) || (/Macintosh/i.test(agent) && navigator.maxTouchPoints > 1);
@@ -71,23 +71,22 @@
     });
   });
 
-  function openDemo() {
-    if (!dialog) return;
+  function openDemo(event) {
     closeMenu();
-    if (isAppleTouchBrowser()) {
-      window.location.assign(commercialURL);
-      return;
-    }
-    if (typeof dialog.showModal === 'function') {
+    // Do not cancel the actual hyperlink on an iPad/iPhone. The browser
+    // itself can open the same 1280x720 MP4 that the owner verified.
+    if (isAppleTouchBrowser() || !dialog || typeof dialog.showModal !== 'function') return;
+    try {
       if (!dialog.open) dialog.showModal();
-      document.body.classList.add('dialog-open');
-      if (video) {
-        video.currentTime = 0;
-        const play = video.play();
-        if (play?.catch) play.catch(() => {}); // browser may require user to press Play
-      }
-    } else {
-      window.location.assign(commercialURL);
+    } catch {
+      return; // Fallback: let the native MP4 link work everywhere.
+    }
+    event.preventDefault();
+    document.body.classList.add('dialog-open');
+    if (video) {
+      video.currentTime = 0;
+      const play = video.play();
+      if (play?.catch) play.catch(() => {}); // desktop browser may require Play
     }
   }
   function closeDemo() {

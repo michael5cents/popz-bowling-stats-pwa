@@ -33,13 +33,14 @@ const origin='http://127.0.0.1:'+server.address().port;
 const browser=await chromium.launch({headless:true,...(process.env.CHROME_BIN?{executablePath:process.env.CHROME_BIN}:{})});
 const tests=[
  {label:'iPad Safari',ua:'Mozilla/5.0 (iPad; CPU OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1',touch:5,native:true},
+ {label:'iPad Safari without JS',ua:'Mozilla/5.0 (iPad; CPU OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1',touch:5,native:true,noJS:true},
  {label:'iPad Chrome',ua:'Mozilla/5.0 (iPad; CPU OS 18_0 like Mac OS X) AppleWebKit/605.1.15 CriOS/154.0.0.0 Mobile/15E148 Safari/604.1',touch:5,native:true},
  {label:'iPad desktop UA',ua:'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) AppleWebKit/605.1.15 Version/18.0 Safari/605.1.15',touch:5,native:true},
  {label:'Desktop Safari',ua:'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) AppleWebKit/605.1.15 Version/18.0 Safari/605.1.15',touch:0,native:false}
 ];
 try{
  for(const t of tests){
-  const ctx=await browser.newContext({viewport:{width:t.native?820:1300,height:960},userAgent:t.ua,serviceWorkers:'block'});
+  const ctx=await browser.newContext({viewport:{width:t.native?820:1300,height:960},userAgent:t.ua,serviceWorkers:'block',javaScriptEnabled:!t.noJS});
   await ctx.addInitScript(touches=>Object.defineProperty(navigator,'maxTouchPoints',{value:touches,configurable:true}),t.touch);
   const page=await ctx.newPage(),errors=[];
   page.on('pageerror',e=>errors.push(e.message));

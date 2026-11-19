@@ -203,6 +203,9 @@ public-v26 introduced the early **Pro Preview** (historical). As of public-v39.0
 - PopzVPS health monitor was updated for the new bootstrap architecture: homepage checks now require `runtime-monitor.js` + `entry.js`, then separately verify that `entry.js` points to the current versioned `app.js` and that the full installed-app asset still reports the expected `APP_VERSION`.
 - The temporary v39.003 dashboard display rule that inferred a missing Series Started count from Series Completed is superseded by public-v39.004. The dashboard now shows only raw accepted events and never manufactures funnel counts.
 
+## Older iPad commercial Watch-link correction (2026-11-19)
+- Owner confirmed direct playback of the original-quality 1280x720 commercial works in Safari, but the marketing website's JavaScript Watch buttons do not. All four Watch controls now carry literal MP4 href links, so Apple touch browsers use ordinary native browser navigation and the movie still opens without JavaScript. Desktop modal remains an optional enhancement. The experimental 480p/HLS files were not deployed or kept; commercial video dimensions are unchanged. See docs/releases/2026-11-19-marketing-ipad-direct-watch-links.md.
+
 ## Marketing-only Safari iPad commercial video repair (2026-11-19)
 - The official 53-second league-night video was losslessly remuxed to a clean H.264/AAC-only fast-start MP4 (original footage and audio unchanged). iPad/iPhone Safari and iOS Chrome Watch buttons open the browser's native player, not the blurred modal that could show a dim/black video surface. Desktop modal playback remains supported with a direct-video fallback link.
 - This updates only the public marketing site and its media allowlist, not the public scoring app, PWA service worker, Stripe or customer telemetry. See docs/releases/2026-11-19-marketing-ipad-safari-commercial.md.
