@@ -11,7 +11,7 @@ assert.match(html,/href="\/features\/#demo"/);
 assert.match(html,/src="assets\/Popz-Bowling-League-Night-Safari-Compatible.mp4"/);
 assert.match(html,/If your older iPad won't show the picture/);
 assert.doesNotMatch(html,/<dialog|backdrop-filter|filter:blur/);
-assert.equal((site.match(/href="watch.html" data-video-open/g)||[]).length,4);
+assert.equal((site.match(/href="watch" data-video-open/g)||[]).length,4);
 assert.doesNotMatch(site,/<button[^>]*data-video-open/);
 const playEvents={},playClicks={},returns=[],status={textContent:''},button={addEventListener(type,fn){playClicks[type]=fn}};
 const video={ended:false,duration:52.875,currentTime:0,addEventListener(type,fn){playEvents[type]=fn},play(){return Promise.resolve()}};

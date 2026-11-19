@@ -13,7 +13,7 @@ const types={'.html':'text/html; charset=utf-8','.css':'text/css','.js':'text/ja
 const movie='Popz-Bowling-League-Night-Safari-Compatible.mp4',requestPaths=[];
 const server=createServer((req,res)=>{
  const u=new URL(req.url,'http://127.0.0.1');requestPaths.push(u.pathname);
- const rel=u.pathname==='/'?'index.html':u.pathname==='/features/'?'features/index.html':u.pathname.slice(1);
+ const rel=u.pathname==='/'?'index.html':u.pathname==='/features/'?'features/index.html':u.pathname==='/features/watch'?'features/watch.html':u.pathname.slice(1);
  const file=resolve(root,decodeURIComponent(rel));
  if(!file.startsWith(root+'/')||!existsSync(file)){res.writeHead(404);res.end('Not found');return}
  const len=statSync(file).size;
@@ -48,7 +48,7 @@ try{
   assert.equal(await page.locator('a[data-video-open]').count(),4);
   await page.locator('.video-preview').click();
   if(t.native){
-   await page.waitForURL('**/features/watch.html',{timeout:16000});
+   await page.waitForURL('**/features/watch',{timeout:16000});
    assert.equal(await page.locator('a.return-link').getAttribute('href'),'/features/#demo');
    assert.ok((await page.locator('.fallback a').getAttribute('href')).endsWith(movie));
    const dimensions=await page.evaluate(async()=>{

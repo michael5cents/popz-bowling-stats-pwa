@@ -15,7 +15,7 @@ assert.doesNotMatch(script,/Popz-Bowling-League-Night-Official-Commercial\.mp4/)
 assert.match(script,/isAppleTouchBrowser\(\)/);
 assert.doesNotMatch(script,/window\.location\.assign/,'iPad Watch should use browser native link, not JS navigation');
 assert.match(script,/navigator\.maxTouchPoints > 1/);
-const href='watch.html';
+const href='watch';
 const watchLinks=[...html.matchAll(/<a\b[^>]*data-video-open[^>]*>/g)];
 assert.equal(watchLinks.length,4,'all four Watch controls must be real links');
 for(const link of watchLinks)assert.ok(link[0].includes('href="'+href+'"'),'Watch links must open the dedicated video page');
@@ -56,7 +56,7 @@ function click(ua,touches=0){
  assert.equal(typeof listeners.click,'function');
  let prevented=false;
  listeners.click({preventDefault(){prevented=true;calls.push('preventDefault')}});
- if(!prevented)calls.push(['native-link','https://popzbowling.com/features/watch.html']);
+ if(!prevented)calls.push(['native-link','https://popzbowling.com/features/watch']);
  return{calls,dialog,prevented};
 }
 const apple=[
@@ -69,7 +69,7 @@ for(const [ua,touches] of apple){
  assert.equal(result.calls.length,1,'touch Apple browser must follow the direct MP4 link');
  assert.equal(result.prevented,false,'Safari navigation must never be cancelled');
  assert.equal(result.calls[0][0],'native-link');
- assert.equal(result.calls[0][1],'https://popzbowling.com/features/watch.html');
+ assert.equal(result.calls[0][1],'https://popzbowling.com/features/watch');
  assert.equal(result.dialog.open,false,'iPad must not enter blurred dialog that hid its video');
 }
 for(const ua of ['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) AppleWebKit/605.1.15 Version/18 Safari/605.1.15',
